@@ -1,12 +1,14 @@
 import { useAnalysis } from '../store'
 import { JOINT_NAMES, type JointName, type OverlayName, type Session } from '../types'
+import { MetricsPanel } from './MetricsPanel'
 import { UploadPanel } from './UploadPanel'
 
 const OVERLAY_LABEL: Record<OverlayName, string> = {
+  segment_frames: 'Segment frames (triads)',
+  axial_dial: 'Axial-rotation dial',
+  angle_readouts: 'Angle readouts',
   motion_trail: 'Motion trail',
   event_markers: 'Event markers',
-  reference_ghost: 'Reference ghost',
-  angle_readouts: 'Angle readouts',
 }
 
 const PLANES = ['free', 'sagittal', 'frontal', 'transverse'] as const
@@ -48,6 +50,7 @@ function SessionMeta({ session }: { session: Session }) {
 }
 
 export function SidePanel({ session }: { session: Session | null }) {
+  const analysis = useAnalysis((s) => s.analysis)
   const index = useAnalysis((s) => s.index)
   const loadSession = useAnalysis((s) => s.loadSession)
   const selectedJoint = useAnalysis((s) => s.selectedJoint)
@@ -82,6 +85,8 @@ export function SidePanel({ session }: { session: Session | null }) {
 
       {session && (
         <>
+          {analysis && <MetricsPanel session={session} analysis={analysis} />}
+
           <section>
             <h2>Capture</h2>
             <SessionMeta session={session} />
@@ -110,9 +115,7 @@ export function SidePanel({ session }: { session: Session | null }) {
                     onChange={(e) => setOverlay(o, e.target.checked)}
                   />
                   <span>{OVERLAY_LABEL[o]}</span>
-                  {(o === 'reference_ghost' || o === 'angle_readouts') && (
-                    <span className="tag soon">task 12</span>
-                  )}
+
                 </label>
               ))}
             </div>

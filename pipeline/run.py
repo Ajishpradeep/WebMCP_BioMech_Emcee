@@ -159,6 +159,35 @@ def run_clip(clip: dict, estimator, detector, device: str, stride: int,
 
     if not raw_frames:
         raise RuntimeError("no frames read")
+
+    # Duplicate-frame (freeze) detection. Coaching breakdowns often hold a still frame
+    # for several seconds; a frozen run silently wrecks event detection and every rate
+    # metric downstream, so surface it loudly rather than analysing it.
+    diffs = []
+    for a, b in zip(raw_frames, raw_frames[1:]):
+        ga = cv2.cvtColor(cv2.resize(a[1], (160, 160)), cv2.COLOR_RGB2GRAY).astype(np.float32)
+        gb = cv2.cvtColor(cv2.resize(b[1], (160, 160)), cv2.COLOR_RGB2GRAY).astype(np.float32)
+        diffs.append(float(np.abs(gb - ga).mean()))
+    still = [d < 0.35 for d in diffs]
+    runs, i = [], 0
+    while i < len(still):
+        if still[i]:
+            j = i
+            while j < len(still) and still[j]:
+                j += 1
+            if (j - i) >= max(5, int(eff_fps_guess := fps / stride * 0.5)):
+                runs.append((i, j))
+            i = j
+        else:
+            i += 1
+    if runs:
+        total = sum(b - a for a, b in runs)
+        print(f"    !! WARNING: {len(runs)} frozen run(s), {total} frames "
+              f"({total / (fps / stride):.2f}s) of duplicate video:")
+        for a, b in runs:
+            print(f"       frames {a}-{b} of this window")
+        print("       Event detection and all rate metrics will be wrong. "
+              "Adjust startSec/endSec in clips.json to exclude them.")
     print(f"    detected on {len(raw_frames)} frames in {time.time() - t_start:.0f}s")
 
     sboxes = smooth_boxes(boxes)

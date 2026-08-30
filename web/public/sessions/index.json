@@ -1,11 +1,19 @@
 {
   "sessions": [
     {
+      "sessionId": "skenes-delivery-01",
+      "label": "Paul Skenes \u2014 full delivery, elevated third-base side",
+      "handedness": "right",
+      "view": "elevated third-base side",
+      "frameCount": 1034,
+      "file": "skenes-delivery-01.json"
+    },
+    {
       "sessionId": "scherzer-delivery-01",
       "label": "Max Scherzer \u2014 full delivery, third-base side",
       "handedness": "right",
       "view": "third-base side, ~90 deg to throwing direction",
-      "frameCount": 869,
+      "frameCount": 357,
       "file": "scherzer-delivery-01.json"
     }
   ]

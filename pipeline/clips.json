@@ -1,23 +1,23 @@
 {
-  "_comment": "Clip manifest — the declarative input to pipeline/extract.py. Windows are in SOURCE video seconds. See ATTRIBUTION.md for provenance and licensing.",
+  "_comment": "Clip manifest \u2014 the declarative input to pipeline/extract.py. Windows are in SOURCE video seconds. See ATTRIBUTION.md for provenance and licensing.",
   "clips": [
     {
       "sessionId": "scherzer-delivery-01",
-      "label": "Max Scherzer — full delivery, third-base side",
+      "label": "Max Scherzer \u2014 full delivery, third-base side",
       "source": "input_baseball/Max Scherzer Ground Force Application _ ROBBY ROWLAND BREAKDOWNS.mp4",
-      "startSec": 0.0,
-      "endSec": 14.48,
+      "startSec": 8.5,
+      "endSec": 14.45,
       "videoFps": 60.0,
       "handedness": "right",
       "view": "third-base side, ~90 deg to throwing direction",
       "slowMotion": true,
       "realTimeScale": null,
-      "notes": "Subject fills most of frame height. A second player stands near the outfield wall - the person detector must select the largest/most central box.",
+      "notes": "Coaching-breakdown video: the source FREEZES for 2.90 s (5.55-8.45 s) mid-stride. Window starts after the freeze and covers a complete stride -> plant -> MER -> release -> follow-through.",
       "primary": true
     },
     {
       "sessionId": "skenes-delivery-01",
-      "label": "Paul Skenes — full delivery, elevated third-base side",
+      "label": "Paul Skenes \u2014 full delivery, elevated third-base side",
       "source": "input_baseball/Paul Skenes Slow Motion Pitching Mechanics Throwing Motion Pitcher Video Instruc.mp4",
       "startSec": 6.0,
       "endSec": 40.5,

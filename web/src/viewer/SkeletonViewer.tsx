@@ -15,6 +15,7 @@ import * as THREE from 'three'
 import { useAnalysis } from '../store'
 import type { Session } from '../types'
 import { buildViewerFrames, jointAt, type ViewerFrames } from './geometry'
+import { AxialRotationDial, SegmentFrames } from './SegmentFrames'
 
 const JOINT_COLOR = new THREE.Color('#5eead4')
 const JOINT_SELECTED = new THREE.Color('#fbbf24')
@@ -227,6 +228,8 @@ export function SkeletonViewer({ session }: { session: Session }) {
       />
 
       <Skeleton session={session} vf={vf} />
+      <SegmentFrames session={session} vf={vf} />
+      <AxialRotationDial session={session} vf={vf} />
       <AnnotationPins session={session} vf={vf} />
       <PlaybackClock session={session} />
       <CameraRig vf={vf} />

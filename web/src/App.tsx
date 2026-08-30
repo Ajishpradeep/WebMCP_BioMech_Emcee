@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 
+import { SequenceChart } from './components/SequenceChart'
 import { SidePanel } from './components/SidePanel'
 import { Timeline } from './components/Timeline'
 import { useAnalysis } from './store'
@@ -7,6 +8,7 @@ import { SkeletonViewer } from './viewer/SkeletonViewer'
 
 export default function App() {
   const session = useAnalysis((s) => s.session)
+  const analysis = useAnalysis((s) => s.analysis)
   const sessionState = useAnalysis((s) => s.sessionState)
   const indexState = useAnalysis((s) => s.indexState)
   const index = useAnalysis((s) => s.index)
@@ -86,6 +88,7 @@ export default function App() {
         </div>
 
         {session && <Timeline session={session} />}
+        {session && analysis && <SequenceChart session={session} analysis={analysis} />}
       </main>
 
       <SidePanel session={session} />

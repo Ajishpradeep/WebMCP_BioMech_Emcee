@@ -7,6 +7,7 @@
  */
 
 import { create } from 'zustand'
+import { analyze, type AnalysisResult } from './biomech/analyze'
 import type {
   Annotation,
   EventName,
@@ -28,6 +29,12 @@ interface AnalysisState {
   session: Session | null
   sessionState: LoadState
   error: string | null
+  /**
+   * The derived biomechanical analysis. Computed IN THE BROWSER on session load —
+   * this object has no server representation, which is precisely what the WebMCP
+   * tools will expose and what a backend MCP server could not (SPEC §3).
+   */
+  analysis: AnalysisResult | null
 
   // ── viewer state (client-only; no server representation) ──
   currentFrame: number
@@ -57,8 +64,9 @@ interface AnalysisState {
 }
 
 const DEFAULT_OVERLAYS: Record<OverlayName, boolean> = {
-  reference_ghost: false,
-  angle_readouts: false,
+  segment_frames: true,
+  axial_dial: true,
+  angle_readouts: true,
   motion_trail: true,
   event_markers: true,
 }
@@ -69,6 +77,7 @@ export const useAnalysis = create<AnalysisState>((set, get) => ({
   session: null,
   sessionState: 'idle',
   error: null,
+  analysis: null,
 
   currentFrame: 0,
   playing: false,
@@ -106,14 +115,16 @@ export const useAnalysis = create<AnalysisState>((set, get) => ({
   },
 
   adoptSession(session) {
+    const analysis = analyze(session)
     set({
       session,
+      analysis,
       sessionState: 'ready',
-      currentFrame: 0,
+      currentFrame: analysis.events.find((e) => e.name === 'foot_contact')?.frame ?? 0,
       playing: false,
       selectedJoint: null,
       annotations: [],
-      events: [],
+      events: analysis.events,
       error: null,
     })
   },

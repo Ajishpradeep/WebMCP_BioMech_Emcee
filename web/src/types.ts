@@ -95,7 +95,8 @@ export interface PhaseEvent {
 }
 
 export type OverlayName =
-  | 'reference_ghost'
+  | 'segment_frames'
+  | 'axial_dial'
   | 'angle_readouts'
   | 'motion_trail'
   | 'event_markers'

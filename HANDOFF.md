@@ -3,8 +3,8 @@
 > **New session? Read this file first, then [`CLAUDE.md`](CLAUDE.md).** This is the live log of what
 > is done, what was learned, and what to do next. Updated at the end of every completed task.
 
-**Last updated:** 2026-08-30, end of the web-app build
-**Next task:** [Tasks 8–10 — the TypeScript biomechanics engine](PLAN.md#phase-2--biomechanics-engine-tue-am)
+**Last updated:** 2026-08-31, end of the biomechanics engine
+**Next task:** [Tasks 13–16 — the WebMCP tool surface ★](.claude/steering/webmcp-tools.md)
 
 ---
 
@@ -78,9 +78,9 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 | 7 — Smoothing + export | ✅ | Savitzky–Golay. Proportions validated (§4). |
 | 11 — Web app scaffold | ✅ | React 19 + Vite 8 + r3f + Zustand. |
 | 12 — 3D viewer + timeline | ✅ | Playback, scrub, camera presets, trail, annotation pins. |
-| **8–10 — Biomechanics engine** | ⏭️ **NEXT** | Pure TS in `web/src/biomech/`. |
-| 12b — Metrics panel | ⏳ | Blocked on 8–10. |
-| 13–16 — WebMCP tools ★ | ⏳ | **The graded artifact. Protect this time.** |
+| 8–10 — Biomechanics engine | ✅ | `web/src/biomech/`, 27 unit + real-data tests green. |
+| 12b — Metrics panel | ✅ | Readings, confidence badges, cited definitions, sequence chart. |
+| **13–16 — WebMCP tools ★** | ⏭️ **NEXT** | **The graded artifact. Protect this time.** |
 | 17–18 — Deploy + submit | ⏳ | |
 
 **Reordered vs PLAN.md**: 4–7 and 11–12 were done together because inference turned out to be
@@ -121,11 +121,21 @@ Per-frame segment-length **CV is 3–5%** (a rigid segment should be constant) �
 | `pred_global_rots` | (127, 3, 3) | ★★ per-joint global rotation matrices |
 | `focal_length` | scalar | **estimated**, not calibrated |
 
-> **★★ Still unexploited — read before Task 8.** `pred_global_rots` gives per-joint 3×3 rotation
-> matrices. That is a better basis for joint angles (especially internal/external rotation) than
-> differencing keypoint positions, and could raise shoulder ER from `low` to `medium` confidence.
-> **Not yet in `session.json`** — the 127-joint ordering is unmapped (`mhr70.py` names only the
-> first 70). Decide in Task 8 whether it's worth the mapping work.
+> **★★ INVESTIGATED AND REJECTED — do not retry without new information.**
+> `pred_global_rots` are valid rotation matrices (det = 1, orthonormal to 2.4e-7), and the 127-joint
+> hierarchy *is* recoverable (`joint_parents` in `assets/mhr_model.pt`; chains verified against the
+> named keypoints: legs `2,3,4,5` = LEFT / `18,19,20,21` = RIGHT, arms `38–41` = RIGHT /
+> `74–77` = LEFT — **arms and legs use opposite L/R index order**).
+>
+> But they are **not usable as segment frames**. Two tests both fail:
+> - Forward kinematics does not close: `J[i] ≈ J[parent] + R[parent]·(s·offset[i])` gives a 4.8%-of-span
+>   residual and a *negative* fitted scale.
+> - Bone direction is not constant in the joint's own frame (spread 0.4–0.98 on unit vectors), which
+>   is the defining property of a rigid segment frame.
+>
+> They are Momentum rig frames carrying prerotations and a parameter-transform chain we would have to
+> reverse-engineer. **Not on the critical path.** We build ISB segment frames from landmarks instead
+> (see §9), which is what the biomechanics literature specifies anyway.
 
 ### ⚠️ Two traps that cost time
 1. **`process_one_image` treats an ndarray as RGB and will not convert it.** Passing BGR silently
@@ -142,6 +152,55 @@ Per-frame segment-length **CV is 3–5%** (a rigid segment should be constant) �
   `load_sam_3d_body_hf()` would download a second 2.7 GB copy.
 
 ---
+
+## 4b. The biomechanics engine — how it actually works
+
+`web/src/biomech/` — pure TypeScript, no React, 27 tests.
+
+| File | Role |
+|---|---|
+| `vec.ts` | Vector maths, ISB frame construction, Z–X–Y and Y–X–Y Euler decompositions |
+| `frames.ts` | **Anatomical segment coordinate systems from landmarks** — the core |
+| `angles.ts` | Clinical joint angles, per-frame series, frame continuity pass |
+| `events.ts` | Foot contact · MER · ball release |
+| `sequence.ts` | Angular speed, peak order, proximal-to-distal check |
+| `reference.ts` | Published ranges **with citations** — single source of truth |
+| `confidence.ts` | Grading; the worst of plane / timebase / scale wins |
+| `analyze.ts` | Orchestrator → `AnalysisResult` (what the WebMCP tools will expose) |
+
+**Convention (ISB):** `ey` = long axis proximal · `ez` = medio-lateral to the subject's right ·
+`ex` = anterior. All maths in a Y-up right-handed world.
+
+**Why this beats joint positions:** MHR-70 includes `olecranon` (posterior elbow) and
+`cubital_fossa` (anterior elbow). That pair is the elbow's **antero-posterior axis** (verified:
+|cos| ≈ 0.15 against the flexion-plane normal, i.e. near-perpendicular). Combined with the humerus
+long axis it gives a full 3-DOF arm frame — which is what makes **shoulder axial rotation
+observable at all**. A unit test proves it: rotate the forearm about the humeral axis and the joint
+centres do not move (< 1e-4°), yet the engine recovers the full 90°.
+
+### ⚠️ Two traps this cost us
+1. **Frame flip ambiguity.** `frameFrom` can return a frame or its 180° flip about the long axis —
+   both right-handed, both valid. Frame to frame that produced fake ~70°/frame rotations and
+   angular speeds of 4278 deg/s. `frameSeries()` runs a **continuity pass** to fix it. Do not remove.
+2. **Branch-cut wrap.** atan2-derived angles jump ±360°. `metricSeries()` unwraps the six affected
+   metrics. Do not remove.
+
+### Validation status (2026-08-31)
+On the clean Skenes clip, six metrics land **within** published reference ranges that were never
+tuned to: lead knee flexion 47.9° at FC [40–49], shoulder abduction 97.7° at MER [66–100], lead knee
+37.8° [31.2–41] / elbow 37.8° [24–39] / shoulder abduction 92.3° [70–94] / trunk forward tilt 48.3°
+[30–55] at BR. Sequence is proximal→distal with 14.4% pelvis→trunk separation. That is meaningful
+independent evidence the engine is right.
+
+**Known open items** (honest state, not hidden):
+- `hip_shoulder_separation` reads small and negative at FC (−7°) where literature expects +30–60°.
+  Sign convention and/or reference-frame definition needs review.
+- `shoulder_external_rotation` reads ~85° where the clinical convention reports 166–182°. The ISB
+  Y–X–Y axial term is not the same construct as the clinical "lay-back" measure. Already graded
+  `low`; needs either a convention change or an explicit note that the two are different quantities.
+- `trunk_lateral_tilt` reads ≈0 where 21–29.5° is expected.
+- Event detection on the **Scherzer** clip is poor (FC→BR only 13 frames). It is an edited coaching
+  breakdown; **Skenes is the reference session.**
 
 ## 5. The `session.json` contract (FROZEN)
 
@@ -162,6 +221,11 @@ define the elbow axis — useful for forearm orientation.
 
 **Coordinates are camera-frame**: +X right, **+Y down**, +Z away. The viewer flips Y and Z
 (`web/src/viewer/geometry.ts`); that is a *viewing* transform only — never read distances off it.
+
+### ⚠️ Source clips can contain FREEZES
+The Scherzer clip freezes for **2.90 s** (frames 333–507 of the raw video). A frozen run silently
+destroys event detection and every rate metric. `pipeline/run.py` now **detects duplicate-frame runs
+and warns loudly**; `clips.json` windows are set to exclude them. Always read the pipeline warnings.
 
 ### ⚠️ `timebase` decides which timing metrics are legal
 Both demo clips are slow-motion at an **unknown** factor, so `realTimeScale: null`.
