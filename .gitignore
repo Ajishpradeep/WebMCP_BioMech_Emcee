@@ -8,6 +8,28 @@ wheels/
 
 # Virtual environments
 .venv
+.venv-pipeline
 
-#files
-*.mp4
+# ── NEVER COMMIT MODEL WEIGHTS ──────────────────────────────────
+# SAM 3D Body checkpoints are under Meta's SAM License and must not
+# be redistributed. See .claude/steering/tech.md §7.
+pipeline/checkpoints/
+
+# Vendored upstream repo (cloned by pipeline/setup.sh, not ours to ship)
+pipeline/vendor/
+
+# ── Large / generated pipeline artifacts ────────────────────────
+pipeline/data/frames/
+pipeline/data/raw/
+pipeline/out/
+
+# ── Source footage: third-party video, not redistributable ──────
+# See ATTRIBUTION.md. Derived session.json IS committed; video is not.
+input_baseball/
+
+# OS noise
+.DS_Store
+
+# Node
+node_modules/
+web/dist/

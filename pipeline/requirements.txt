@@ -1,0 +1,49 @@
+# PitchLab offline pipeline (Tier A) — Python deps.
+#
+# Install with:
+#   uv pip install --python .venv/bin/python torch torchvision --index-url https://download.pytorch.org/whl/cu124
+#   uv pip install --python .venv/bin/python -r pipeline/requirements.txt
+#
+# NOTE: torch/torchvision are installed separately from the CUDA index (above) and are
+# intentionally NOT listed here — pinning them here would pull the CPU wheels.
+#
+# Deliberately EXCLUDED from upstream INSTALL.md:
+#   detectron2  — fragile source build; unnecessary because SAM3DBodyEstimator accepts
+#                 explicit `bboxes`. We use torchvision Faster R-CNN instead (BSD, no build).
+#   pyrender    — needs OpenGL; we only render 2D skeleton overlays with OpenCV.
+#   MoGe / SAM3 — optional FOV estimator and mask prompts. Not used; default FOV is fine
+#                 because we never rely on absolute metric scale (tech.md §3.2).
+#   wandb, tensorboard, pytest, black, xtcocotools, pycocotools, seaborn — training/dev only.
+
+# --- core inference ---
+opencv-python
+numpy
+scipy
+huggingface_hub
+timm
+einops
+roma
+pillow
+tqdm
+
+# --- required transitively by the vendored sam_3d_body package ---
+braceexpand
+webdataset
+pytorch-lightning
+dill
+pandas
+rich
+hydra-core
+omegaconf
+pyrootutils
+chump
+networkx==3.2.1
+joblib
+loguru
+optree
+fvcore
+jsonlines
+scikit-image
+yacs
+matplotlib
+trimesh
