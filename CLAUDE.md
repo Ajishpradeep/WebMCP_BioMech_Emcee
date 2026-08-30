@@ -26,6 +26,10 @@ move it.
 - **Baseball pitching only.** Running is deferred (SPEC §7).
 - **Hard offline/online split.** SAM 3D Body inference is offline on the local RTX A6000; the web app
   is a **static build** with no server in the request path.
+- **Dual-mode analysis.** `pipeline/server.py` is a **local-only** FastAPI backend giving a real
+  upload → analyse flow for development and the demo video. The **deployed** build has no backend and
+  serves pre-computed sessions from `web/public/sessions/`; the upload panel degrades to an
+  explanatory state. Never make the deployed app depend on the backend.
 - **Biomechanics are computed in the browser.** This is *what makes WebMCP the right choice* over a
   backend MCP server — it's architectural, not incidental. **Never move metric computation server-side.**
 - **Imperative WebMCP API only.** The declarative form API is unsupported in ChatGPT's in-app browser,

@@ -124,6 +124,26 @@ Consequences, which are already baked into SPEC §6 and must be respected in cod
 If a task tempts you to output a number in newtons, metres, or N·m — stop. It is out of scope by
 construction.
 
+### 3.2b ⚠️ Slow motion breaks absolute timing
+
+**Both demo clips are slow-motion recordings at an unknown slowdown factor** (verified 2026-08-30;
+see `pipeline/clips.json`). Frame timestamps are therefore in *video* seconds, not real seconds.
+
+| Quantity | Valid under unknown slow motion? |
+|---|---|
+| Joint angles at events | ✅ Yes — time-independent |
+| Kinematic sequence **order** (pelvis→trunk→arm→…) | ✅ Yes — any monotonic time warp preserves order |
+| **Normalized** timing (% of the foot-contact→release window) | ✅ Yes |
+| Absolute angular velocity (°/s) | ❌ **No** — grade `unavailable` unless `realTimeScale` is set |
+| Pelvis→trunk separation time in **seconds** | ❌ **No** — report as **% of the FC→BR window** |
+
+`session.json.timebase.realTimeScale` is the single switch. When it is `null`, `confidence.ts` must
+force every rate-derived metric to `unavailable`. When a user supplies it, those metrics unlock at
+`low` confidence (a user estimate is not a measurement).
+
+This is another real limit the tools *declare* rather than paper over — it strengthens the honesty
+contract rather than weakening it.
+
 ### 3.3 Temporal consistency
 
 Per-frame HMR on video flickers and can shift identity. Prior art to follow (not to install —
@@ -184,10 +204,21 @@ Frozen in **Task 6**. Both tiers depend on it; changing it later is expensive.
     "focalLengthEstimated": true,
     "smoothing": { "method": "savgol", "window": 9, "polyorder": 3 }
   },
-  "joints": ["pelvis", "spine", "thorax", "neck", "head",
-             "l_shoulder", "l_elbow", "l_wrist", "r_shoulder", "r_elbow", "r_wrist",
-             "l_hip", "l_knee", "l_ankle", "l_foot",
-             "r_hip", "r_knee", "r_ankle", "r_foot"],
+  // ── TIMEBASE ── both demo clips are slow-motion at an unknown factor.
+  // See §3.2b. This block decides which timing metrics are legal.
+  "timebase": {
+    "videoFps": 60.0,
+    "slowMotion": true,
+    "realTimeScale": null,         // video seconds x this = real seconds; null = unknown
+    "scaleSource": "unknown"       // "unknown" | "user" | "estimated"
+  },
+  // Real MHR-70 subset. Names mirror src/biomech/joints.ts EXACTLY.
+  // pelvis/thorax are DERIVED (midpoints), not model outputs - see below.
+  "joints": ["pelvis", "thorax", "neck", "nose",
+             "l_acromion", "l_elbow", "l_wrist", "r_acromion", "r_elbow", "r_wrist",
+             "l_olecranon", "r_olecranon", "l_cubital_fossa", "r_cubital_fossa",
+             "l_hip", "l_knee", "l_ankle", "l_heel", "l_big_toe",
+             "r_hip", "r_knee", "r_ankle", "r_heel", "r_big_toe"],
   "frames": [
     {
       "index": 0,
@@ -283,7 +314,7 @@ agent from inventing ranges.
 |---|---|---|
 | Hip–shoulder separation at FC | Pelvis–thorax transverse angle; larger separation associates with greater trunk rotation velocity and ball velocity | `medium` |
 | Kinematic sequence order | Ideal is proximal-to-distal: **pelvis → trunk → arm → forearm → hand** | `medium` |
-| Pelvis→trunk separation time | Timing between pelvis and trunk peak angular velocities | `medium` |
+| Pelvis→trunk separation time | Timing between pelvis and trunk peak angular velocities. **Report as % of the FC→BR window, not seconds** (§3.2b) | `medium` |
 
 > **Critical nuance — do not build a "sequence score."** In a study of 208 pitches across 22 pitchers,
 > **not one pitch showed a complete proximal-to-distal sequence**; 14 distinct patterns appeared, the

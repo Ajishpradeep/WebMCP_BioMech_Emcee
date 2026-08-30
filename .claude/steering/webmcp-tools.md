@@ -192,8 +192,12 @@ snapshot it can reason across — something the UI can only show one panel at a 
 ```jsonc
 {
   "observedOrder": ["pelvis", "trunk", "arm", "hand", "forearm"],
-  "peaks": [ { "segment": "pelvis", "frame": 44, "t": 0.733, "peakAngularVelocity": 612, "unit": "deg/s" } ],
-  "pelvisToTrunkSeparationTime": 0.058,
+  "peaks": [ { "segment": "pelvis", "frame": 44, "tVideo": 0.733, "tNormPct": 8.1,
+               "peakAngularVelocity": null,
+               "reason": "Slow-motion source at an unknown factor: absolute angular velocity is not derivable (tech.md 3.2b)." } ],
+  "pelvisToTrunkSeparationPct": 12.4,   // % of the foot-contact -> ball-release window.
+                                        // NOT seconds: clips are slow-motion at an unknown
+                                        // factor, so absolute rates are unavailable (tech.md 3.2b).
   "isProximalToDistal": false,
   "literatureNote": "Complete proximal-to-distal sequencing is uncommon: across 208 analysed pitches, no pitch showed a fully proximal-to-distal order and 14 distinct patterns were observed. The most prevalent was pelvis → trunk → arm → hand → forearm. A non-PDS order is therefore not itself a fault.",
   "meta": { "confidence": "medium", … }

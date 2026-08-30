@@ -1,10 +1,10 @@
 # HANDOFF — running project state
 
 > **New session? Read this file first, then [`CLAUDE.md`](CLAUDE.md).** This is the live log of what
-> is done, what was learned, and what to do next. It is updated at the end of every completed task.
+> is done, what was learned, and what to do next. Updated at the end of every completed task.
 
-**Last updated:** 2026-08-30, end of Task 3
-**Next task:** [Task 4 — frame extraction + person crop](PLAN.md#task-4--frame-extraction--person-crop)
+**Last updated:** 2026-08-30, end of the web-app build
+**Next task:** [Tasks 8–10 — the TypeScript biomechanics engine](PLAN.md#phase-2--biomechanics-engine-tue-am)
 
 ---
 
@@ -17,10 +17,10 @@ the live URL must stay up through **Sep 21**).
 The pitch: *stop trying to be the brain; be the instrument.* A specialist vision model
 (Meta's SAM 3D Body) reconstructs a pitcher in 3D from ordinary video. We derive rigorous
 biomechanics from that, render it in an interactive 3D viewer — and expose the whole analysis as
-**WebMCP tools**, so any agent (ChatGPT's in-app browser, Chrome) can read the measurements *and
-drive the viewer* while the human watches the same reconstruction.
+**WebMCP tools**, so any agent can read the measurements *and drive the viewer* while the human
+watches the same reconstruction.
 
-**The architecture in one line:** heavy GPU inference happens **offline** (Tier A, Python) and emits
+**Architecture in one line:** heavy GPU inference happens **offline** (Tier A, Python) and emits
 `session.json`; the **web app is a static build** (Tier B) that computes all biomechanics **in the
 browser** and registers the WebMCP tools.
 
@@ -39,186 +39,198 @@ browser** and registers the WebMCP tools.
 | Contest rules, judging, submission bar | [`docs/webmcp-challenge-brief.md`](docs/webmcp-challenge-brief.md) |
 | Model/footage licensing + the video-rights problem | [`ATTRIBUTION.md`](ATTRIBUTION.md) |
 
-**Environment:** the project venv is **`.venv` (Python 3.12)** at the repo root — already provisioned.
-Run pipeline scripts as `.venv/bin/python pipeline/<script>.py`. Rebuild from scratch with
-`pipeline/setup.sh`.
-
 ---
 
-## 2. Task status
-
-| Task | Status | Notes |
-|---|---|---|
-| 1 — SAM 3D Body access | ✅ **Done** | Access **approved**. `hf auth whoami` → `AjishPradeep`. Checkpoints downloaded (2.7 GB). |
-| 2 — Env + install + smoke test | ✅ **Done** | torch 2.6.0+cu124, CUDA on RTX A6000. Model runs; skeleton verified against a real frame. |
-| 3 — Demo footage | ✅ **Done** | 2 clips selected + manifested. ⚠️ **Licensing unresolved — see §5.** |
-| 4 — Frame extraction + person crop | ⏭️ **Next** | |
-| 5 — Per-frame inference runner | | |
-| 6 — 🔒 Freeze `session.json` schema | | **Schema needs revision before freezing — see §4.** |
-| 7 — Smoothing + export | | |
-| 8–10 — Biomechanics engine (TS) | | |
-| 11–12b — Web app + 3D viewer | | |
-| 13–16 — WebMCP tools ★ | | The graded artifact. Protect this time. |
-| 17–18 — Deploy + submit | | |
-
----
-
-## 3. Verified facts (measured on this machine — trust these over the docs)
-
-### Hardware / performance
-- **GPU:** NVIDIA RTX A6000, 48 GB, driver 550.54.15, CUDA 12.4
-- **Inference: 160 ms/frame** (6.3 fps), **3.6 GB peak VRAM**, `inference_type="body"`
-- **Model load: ~17 s** — amortize it; never reload per frame
-- **Full frame budget for both clips: ~5 minutes.** No subsampling needed.
-
-### SAM 3D Body output contract (measured, not from the README)
-
-`estimator.process_one_image(img_bgr, bboxes=..., inference_type="body")` → `list[dict]`, one per box:
-
-| Key | Shape | Use |
-|---|---|---|
-| `pred_keypoints_3d` | **(70, 3)** | ★ primary input — MHR-70 keypoints, camera frame |
-| `pred_keypoints_2d` | **(70, 2)** | overlay + sanity checking, in source-image pixels |
-| `pred_joint_coords` | **(127, 3)** | ★ full MHR skeleton joint positions |
-| `pred_global_rots` | **(127, 3, 3)** | ★★ **per-joint global rotation matrices** |
-| `pred_vertices` | (V, 3) | mesh (unused — skeleton is enough) |
-| `pred_cam_t` | (3,) | camera translation |
-| `focal_length` | scalar | **estimated**, e.g. 1018.2 — not calibrated |
-| `body_pose_params` / `shape_params` / `scale_params` | — | MHR parameters |
-| `bbox` | (4,) | the box actually used |
-
-> **★★ Important discovery for Task 8:** `pred_global_rots` gives *per-joint 3×3 rotation matrices*
-> across all 127 MHR joints. This is a much better basis for joint angles — especially
-> internal/external rotation — than differencing keypoint positions. **Investigate this before
-> writing `angles.ts`.** It may let us raise shoulder ER from `low` to `medium` confidence.
-> Caveat: the joint *ordering* for the 127-joint rig is not yet mapped; `mhr70` only names the
-> first 70 keypoints. Mapping it is an open sub-task.
-
-### MHR-70 keypoint indices (from `sam_3d_body/metadata/mhr70.py` — authoritative)
-
-```
- 0 nose            5 left-shoulder    6 right-shoulder   7 left-elbow      8 right-elbow
- 9 left-hip       10 right-hip       11 left-knee       12 right-knee     13 left-ankle
-14 right-ankle    15 l-big-toe       16 l-small-toe     17 l-heel         18 r-big-toe
-19 r-small-toe    20 r-heel          41 right-wrist     62 left-wrist     69 neck
-63 l-olecranon    64 r-olecranon     65 l-cubital-fossa 66 r-cubital-fossa
-67 left-acromion  68 right-acromion
-21–40 right-hand fingers            42–61 left-hand fingers  (out of scope)
-```
-
-**There is no pelvis / spine / thorax keypoint.** Derive them:
-- `pelvis` = midpoint(9, 10) · `pelvis transverse axis` = kp[10] − kp[9]
-- `thorax` = midpoint(67, 68) · `thorax transverse axis` = kp[68] − kp[67]
-- **hip–shoulder separation** = angle between those two axes projected on the transverse plane
-- Prefer **acromion (67/68)** over shoulder (5/6) as the shoulder joint centre
-- `olecranon` + `cubital fossa` (63–66) define the elbow axis → useful for forearm orientation
-
-### Install notes
-- **detectron2 is NOT needed** and is not installed. `process_one_image` accepts explicit `bboxes`,
-  which bypasses the built-in ViTDet detector entirely. Use **torchvision Faster R-CNN** for
-  detection (BSD, no build step, no AGPL).
-- pyrender / MoGe / SAM3 also skipped — see `pipeline/requirements.txt` for the reasoning.
-- Loading prints a long **"missing keys in source state_dict"** warning listing
-  `head_pose.mhr.character_torch.*`. **This is benign** — those buffers come from
-  `assets/mhr_model.pt`, loaded separately with `strict=False`. Output is correct. Don't chase it.
-- Load the model via `load_sam_3d_body(checkpoint_path=..., mhr_path=...)` with **local paths**.
-  `load_sam_3d_body_hf()` calls `snapshot_download` and would fetch a second 2.7 GB copy into the
-  HF cache.
-
----
-
-## 4. ⚠️ Schema changes required before Task 6 freezes it
-
-`.claude/steering/tech.md` §4 sketched `session.json` **before** we knew the real output. Two
-corrections are needed:
-
-**(a) The joint list was guessed.** It named `spine`, `thorax`, `l_foot` — none exist in MHR-70.
-Replace with the real subset, derived per §3 above.
-
-**(b) Add a `timebase` block — both demo clips are slow-motion at an unknown factor.**
-
-```jsonc
-"timebase": {
-  "videoFps": 60.0,
-  "slowMotion": true,
-  "realTimeScale": null,      // multiply video seconds by this for real seconds; null = unknown
-  "scaleSource": "unknown"    // "unknown" | "user" | "estimated"
-}
-```
-
-**Consequences — these are correctness rules, not preferences:**
-
-| Quantity | Valid under unknown slow-motion? |
-|---|---|
-| Joint angles at events | ✅ Yes — time-independent |
-| Kinematic sequence **order** (pelvis→trunk→arm→…) | ✅ Yes — monotonic time reparameterization preserves order |
-| **Normalized** timing (% of the foot-contact→release window) | ✅ Yes |
-| Absolute angular velocity in °/s | ❌ **No** — report `unavailable` unless `realTimeScale` is set |
-| Pelvis→trunk separation time in seconds | ❌ **No** — report as % of the FC→BR window instead |
-
-This *strengthens* the honesty story rather than weakening it: it is another real limit the tools
-declare rather than paper over. Fold it into `confidence.ts` (Task 10) and surface it in the `meta`
-block of every tool response.
-
----
-
-## 5. ⚠️ Open risk: source-footage rights
-
-The clips in `input_baseball/` are YouTube-sourced MLB/broadcast footage. They are **git-ignored**
-and used only as local development input. They are **not** cleared for redistribution, and
-`.claude/steering/tech.md` §7 nominally forbids them.
-
-**Current mitigation (already architectural):** the web app renders the **3D skeleton**, not the
-video. Only derived `session.json` ships. **Do not add a video-playback pane without resolving this.**
-
-**Decide before submission** — see [`ATTRIBUTION.md`](ATTRIBUTION.md) for the full table:
-self-record a pitch (cleanest), or ship 3D-only with no source imagery anywhere including the demo
-video, or re-run on a CC-licensed clip.
-
----
-
-## 6. What exists on disk
-
-```
-pipeline/
-  setup.sh              reproduce the whole Tier-A env from scratch
-  requirements.txt      deps, with notes on what upstream asks for that we skip and why
-  clips.json            ★ clip manifest — declarative input to the pipeline
-  smoke_test.py         Task-2 gate: runs the model on one image, dumps the output contract
-  bench.py              per-frame timing / VRAM measurement
-  checkpoints/          [git-ignored] 2.7 GB SAM 3D Body weights
-  vendor/sam-3d-body/   [git-ignored] upstream repo @ b5c765a
-  data/frames/          [git-ignored] extracted frames
-  out/                  [git-ignored] smoke_overlay.png etc.
-input_baseball/         [git-ignored] source video — see §5
-```
-
-**Verify the environment is healthy at any time:**
+## 2. How to run it
 
 ```bash
+# 1. Web app (this is the product — works with no GPU and no backend)
+cd web && npm install && npm run dev          # → http://localhost:5173
+
+# 2. OPTIONAL: local analysis backend, for real upload → analyse
+.venv/bin/python pipeline/server.py           # → http://127.0.0.1:8000  (vite proxies /api)
+
+# 3. Batch-analyse the manifested demo clips
+.venv/bin/python pipeline/run.py                          # all clips
+.venv/bin/python pipeline/run.py scherzer-delivery-01     # one
+.venv/bin/python pipeline/run.py --stride 8               # fast preview
+
+# 4. Health check for the model env
 .venv/bin/python pipeline/smoke_test.py pipeline/data/frames/smoke_scherzer.png
 ```
 
-Expect: `pred_keypoints_3d (70, 3)`, `focal_length ≈ 1018`, and a written
-`pipeline/out/smoke_overlay.png` whose skeleton lands on the pitcher.
+**Useful dev URLs:** `?session=<id>` opens a specific session, `?frame=640` deep-links a moment.
+
+Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipeline/setup.sh`.
 
 ---
 
-## 7. Task 4 — what to do next
+## 3. Task status
 
-**Goal:** turn each manifest entry into per-frame images + a per-frame person bounding box.
+| Task | Status | Notes |
+|---|---|---|
+| 1 — SAM 3D Body access | ✅ | Approved. Checkpoints local (2.7 GB, git-ignored). |
+| 2 — Env + smoke test | ✅ | torch 2.6.0+cu124, RTX A6000. |
+| 3 — Demo footage | ✅ | 2 clips in `pipeline/clips.json`. ⚠️ **Rights unresolved — §6.** |
+| 4 — Frame extraction + detection | ✅ | `pipeline/run.py`, torchvision Faster R-CNN. |
+| 5 — Inference runner | ✅ | **QA gate passed** — see `pipeline/out/qa_scherzer-delivery-01.mp4`. |
+| 6 — 🔒 Freeze schema | ✅ | **Frozen.** `pipeline/joint_map.py` ↔ `web/src/types.ts`. |
+| 7 — Smoothing + export | ✅ | Savitzky–Golay. Proportions validated (§4). |
+| 11 — Web app scaffold | ✅ | React 19 + Vite 8 + r3f + Zustand. |
+| 12 — 3D viewer + timeline | ✅ | Playback, scrub, camera presets, trail, annotation pins. |
+| **8–10 — Biomechanics engine** | ⏭️ **NEXT** | Pure TS in `web/src/biomech/`. |
+| 12b — Metrics panel | ⏳ | Blocked on 8–10. |
+| 13–16 — WebMCP tools ★ | ⏳ | **The graded artifact. Protect this time.** |
+| 17–18 — Deploy + submit | ⏳ | |
 
-1. Read `pipeline/clips.json`; extract frames with `ffmpeg` over `[startSec, endSec]`, preserving
-   true fps.
-2. Run **torchvision Faster R-CNN** per frame; keep COCO class 1 (person); select the
-   **largest-area box nearest frame centre** — the Scherzer clip has a second player near the
-   outfield wall that must not be selected.
-3. Smooth the box across frames (the pitcher translates a long way during the stride) and pad ~15%.
-4. Write `pipeline/data/frames/<sessionId>/frame_%05d.png` + a `boxes.json` of per-frame boxes.
+**Reordered vs PLAN.md**: 4–7 and 11–12 were done together because inference turned out to be
+~5 min of compute, and a viewer can't be verified without real data. See the callout in `PLAN.md`.
 
-**Design note:** feed the **full frame plus an explicit bbox** to `process_one_image` — *not* a
-pre-cropped image. Then `pred_keypoints_2d` comes back in original-image pixels, which makes the
-Task-5 sanity overlay trivial and removes all crop-offset bookkeeping.
+---
 
-**Verification:** frame count matches `(endSec − startSec) × fps`; render the chosen boxes onto a
-sample of frames and confirm every box contains the pitcher head-to-feet.
+## 4. Verified facts (measured — trust these over docs)
+
+### Performance
+- **160–180 ms/frame** inference, **3.6 GB VRAM**, ~17 s model load (RTX A6000).
+- Person detection adds ~27 ms/frame.
+- Full 869-frame Scherzer clip: **~3 min end-to-end**.
+
+### Reconstruction quality — validated, not assumed
+Segment lengths vs. standard anthropometry (fraction of stature), median over 869 frames:
+
+| Segment | measured | expected | |
+|---|---|---|---|
+| thorax–pelvis | 0.332 | 0.288 | ok (our "thorax" is the acromion midpoint, which sits high) |
+| hip–knee | 0.261 | 0.245 | ok |
+| knee–ankle | 0.250 | 0.246 | ok |
+| acromion–elbow | 0.191 | 0.186 | ok |
+| elbow–wrist | 0.160 | 0.146 | ok |
+
+Per-frame segment-length **CV is 3–5%** (a rigid segment should be constant) — good for markerless.
+**The reconstruction is anatomically sound.** Re-run the check in
+`pipeline/` if you ever change smoothing.
+
+### SAM 3D Body output contract (measured)
+`process_one_image(img_rgb, bboxes=…, inference_type="body")` → `list[dict]`:
+
+| Key | Shape | Use |
+|---|---|---|
+| `pred_keypoints_3d` | (70, 3) | ★ primary — MHR-70, camera frame |
+| `pred_keypoints_2d` | (70, 2) | overlay / QA |
+| `pred_joint_coords` | (127, 3) | full MHR skeleton |
+| `pred_global_rots` | (127, 3, 3) | ★★ per-joint global rotation matrices |
+| `focal_length` | scalar | **estimated**, not calibrated |
+
+> **★★ Still unexploited — read before Task 8.** `pred_global_rots` gives per-joint 3×3 rotation
+> matrices. That is a better basis for joint angles (especially internal/external rotation) than
+> differencing keypoint positions, and could raise shoulder ER from `low` to `medium` confidence.
+> **Not yet in `session.json`** — the 127-joint ordering is unmapped (`mhr70.py` names only the
+> first 70). Decide in Task 8 whether it's worth the mapping work.
+
+### ⚠️ Two traps that cost time
+1. **`process_one_image` treats an ndarray as RGB and will not convert it.** Passing BGR silently
+   swaps channels and degrades accuracy with no error. `pipeline/run.py` passes RGB — keep it that way.
+2. Model loading prints a long **"missing keys in source state_dict"** warning about
+   `head_pose.mhr.character_torch.*`. **Benign** — those buffers load from `assets/mhr_model.pt`
+   separately with `strict=False`. Don't chase it.
+
+### Install notes
+- **detectron2 is not installed and not needed** — `process_one_image` accepts explicit `bboxes`.
+  Person detection uses **torchvision Faster R-CNN** (BSD; avoids Ultralytics' AGPL).
+- pyrender / MoGe / SAM3 skipped — see `pipeline/requirements.txt` for why.
+- Load via `load_sam_3d_body(checkpoint_path=…, mhr_path=…)` with **local paths**;
+  `load_sam_3d_body_hf()` would download a second 2.7 GB copy.
+
+---
+
+## 5. The `session.json` contract (FROZEN)
+
+`pipeline/joint_map.py` `JOINT_NAMES` ↔ `web/src/types.ts` `JOINT_NAMES` must match **exactly, in
+order** — `keypoints3d` rows are index-aligned to it. 24 joints, 19 bones.
+
+```
+pelvis thorax neck nose
+l_acromion l_elbow l_wrist  r_acromion r_elbow r_wrist
+l_olecranon r_olecranon  l_cubital_fossa r_cubital_fossa
+l_hip l_knee l_ankle l_heel l_big_toe
+r_hip r_knee r_ankle r_heel r_big_toe
+```
+
+`pelvis` = midpoint(l_hip, r_hip); `thorax` = midpoint(l_acromion, r_acromion). Neither is a model
+output. Prefer **acromion** over shoulder as the shoulder centre. `olecranon` + `cubital_fossa`
+define the elbow axis — useful for forearm orientation.
+
+**Coordinates are camera-frame**: +X right, **+Y down**, +Z away. The viewer flips Y and Z
+(`web/src/viewer/geometry.ts`); that is a *viewing* transform only — never read distances off it.
+
+### ⚠️ `timebase` decides which timing metrics are legal
+Both demo clips are slow-motion at an **unknown** factor, so `realTimeScale: null`.
+
+| Quantity | Legal? |
+|---|---|
+| Joint angles at events | ✅ |
+| Sequence **order** (pelvis→trunk→arm→…) | ✅ |
+| **Normalized** timing (% of FC→BR window) | ✅ |
+| Absolute angular velocity (°/s) | ❌ `unavailable` |
+| Separation time in **seconds** | ❌ report as **% of FC→BR** |
+
+`confidence.ts` (Task 10) must force rate metrics to `unavailable` while `realTimeScale` is null.
+
+---
+
+## 6. ⚠️ Open risk: source-footage rights
+
+`input_baseball/` holds YouTube-sourced MLB/broadcast clips. **Git-ignored**, local dev only, not
+cleared for redistribution. The architecture already helps — the app renders the **3D skeleton**, not
+the video, and only derived `session.json` ships.
+
+**The demo video is where this bites.** Decide before Task 18: self-record a pitch (cleanest), ship
+3D-only with no source imagery anywhere, or re-run on a CC-licensed clip. Full table in
+[`ATTRIBUTION.md`](ATTRIBUTION.md). **Do not add a video-playback pane without resolving this.**
+
+---
+
+## 7. What exists on disk
+
+```
+pipeline/
+  setup.sh  requirements.txt      reproduce the Tier-A env
+  clips.json                      ★ clip manifest (declarative pipeline input)
+  joint_map.py                    ★ MHR-70 → 24-joint contract + bone topology
+  run.py                          ★ end-to-end: clip → session.json (+ QA overlay video)
+  server.py                       local-only FastAPI upload→analyse backend
+  smoke_test.py  bench.py         env health check / timing
+  checkpoints/ vendor/ data/ out/ [git-ignored]
+web/
+  src/types.ts                    ★ session.json types (mirrors joint_map.py)
+  src/store.ts                    ★ AnalysisStore — WebMCP tools will read/write THIS
+  src/viewer/geometry.ts          camera-frame → viewer-space transform
+  src/viewer/SkeletonViewer.tsx   r3f scene, imperative per-frame updates
+  src/components/                 Timeline · SidePanel · UploadPanel
+  public/sessions/                ★ committed static analyses (the deployed data)
+```
+
+---
+
+## 8. Next: Tasks 8–10 — the biomechanics engine
+
+Pure TypeScript in `web/src/biomech/`, **no React imports**, unit-tested with Vitest (not yet
+installed — `npm i -D vitest`).
+
+1. **`joints.ts` + `angles.ts`** — signed joint angles from `keypoints3d`. Knee/elbow flexion,
+   shoulder abduction + external rotation, trunk forward/lateral tilt, and **hip–shoulder
+   separation** (angle between the pelvis axis `r_hip − l_hip` and the thorax axis
+   `r_acromion − l_acromion`, projected on the transverse plane).
+   *Verify with unit tests on synthetic poses with known angles — every number in the app rests here.*
+2. **`events.ts`** — foot contact, MER, ball release (tech.md §5.1). Return
+   `{ frame, t, method, confidence }`; write into `store.events` so the timeline markers light up.
+3. **`reference.ts` / `confidence.ts` / `sequence.ts` / `analyze.ts`** — published ranges **with
+   citations** (tech.md §5.2), confidence grading, kinematic sequence with the mandatory
+   `literatureNote`.
+
+**Decide first:** whether to plumb `pred_global_rots` through (see §4 ★★). It is the single biggest
+available accuracy win, but costs a 127-joint mapping. If you do, it is a **schema change** — bump
+`schemaVersion` and re-run the pipeline.
+
+The store, the viewer, and the timeline are already wired to consume `events` and `annotations`, so
+the engine should light up the existing UI without new plumbing.

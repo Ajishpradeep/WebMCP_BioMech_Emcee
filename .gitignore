@@ -33,3 +33,7 @@ input_baseball/
 # Node
 node_modules/
 web/dist/
+
+# Uploaded clips (scratch, local backend only)
+pipeline/data/uploads/
+web/tsconfig.tsbuildinfo

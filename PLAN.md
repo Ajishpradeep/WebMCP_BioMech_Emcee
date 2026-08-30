@@ -24,6 +24,20 @@ Read first: [`SPEC.md`](SPEC.md) · [`.claude/steering/tech.md`](.claude/steerin
 **Buffer discipline.** If you reach Wed morning without a working `session.json`, **fall back to the
 Task 5b escape hatch** and keep going. Tier B is the graded artifact; Tier A is a means to it.
 
+> ### 🔄 Reordered 2026-08-30 (after Task 3)
+> Tasks **4–7 and 11–12 were pulled forward and completed together**. Rationale: SAM 3D Body turned
+> out to run at 160 ms/frame, so the whole offline pipeline was ~5 minutes of compute rather than a
+> day of work — and a 3D viewer cannot be built or verified against data that does not exist yet.
+> Building the app on a real `session.json` was strictly cheaper than building it on fixtures and
+> swapping later.
+>
+> **Done:** 1, 2, 3, 4, 5, 6, 7, 11, 12 (viewer; 12b metrics panel still pending the engine).
+> **Next:** Tasks 8–10 (the TypeScript biomechanics engine), then 13–16 (WebMCP tools ★).
+>
+> A third mode was added that the plan did not anticipate: a **local FastAPI backend**
+> (`pipeline/server.py`) giving a real upload → analyse → session flow for demos, while the
+> deployed build stays static. See tech.md §1 — the static path is still the one judges use.
+
 ---
 
 ## Phase 0 — de-risk (Sun night)
@@ -64,6 +78,7 @@ pitches from the *same* pitcher so `compare_pitches` has real data.
 ## Phase 1 — offline pipeline (Mon)
 
 ### Task 4 — Frame extraction + person crop
+> ✅ **DONE** — implemented in `pipeline/run.py` (streams frames, no intermediate dump). Uses **torchvision Faster R-CNN**, not detectron2.
 **Goal:** video → cropped per-frame images ready for inference.
 **Do:** `ffmpeg` frame dump; detectron2 person detection (already installed); pick the largest/most
 central person; crop with padding; keep crop offsets so 2D keypoints can be mapped back to the
@@ -74,6 +89,7 @@ original frame.
 ---
 
 ### Task 5 — Per-frame SAM 3D Body inference runner
+> ✅ **DONE** — `pipeline/run.py`. Sanity gate passed: `pipeline/out/qa_scherzer-delivery-01.mp4` tracks the pitcher through the whole delivery.
 **Goal:** raw model output for every frame.
 **Do:** Batch over the frame folder, persist per-frame `pred_keypoints_3d`, `pred_keypoints_2d`,
 `pred_cam_t`, `focal_length`, `shape_params`. Cache to disk so reruns are free.
@@ -96,6 +112,7 @@ original frame.
 ---
 
 ### Task 6 — 🔒 Freeze the `session.json` schema
+> ✅ **DONE** — `pipeline/joint_map.py` (24 joints) + `web/src/types.ts` mirror each other. **Schema is now frozen.**
 **Goal:** lock the contract between tiers so they can proceed in parallel.
 **Do:** Implement the schema in tech.md §4. Write `pipeline/joint_map.py` mapping MHR's 127 joints to
 our ~19-joint biomechanical subset. **Mirror the joint names exactly in the TS engine.** Round to 4
@@ -107,6 +124,7 @@ frozen** — changing it later breaks both tiers at once.
 ---
 
 ### Task 7 — Temporal smoothing + `session.json` export
+> ✅ **DONE** — Savitzky–Golay (window 9, order 3). Segment-length CV is 3–5%, proportions within 5% of standard anthropometry.
 **Goal:** one committed, jitter-free `session.json` per demo clip.
 **Do:** Savitzky–Golay over joint-angle series first (tech.md §3.3). Escalate to Kalman on 3D
 positions only if visibly jittery. **Do not over-smooth — we measure peaks, and an aggressive filter
@@ -155,6 +173,7 @@ grade and a citation; **`get_kinematic_sequence`'s `literatureNote` is present**
 ## Phase 3 — web app (Tue PM)
 
 ### Task 11 — Vite + React + TypeScript scaffold
+> ✅ **DONE** — `web/`. React 19 + Vite 8 + r3f + drei + Zustand. `npm run build` and `tsc --noEmit` both clean.
 **Goal:** app boots, loads a session, runs the engine.
 **Do:** `npm create vite@latest web -- --template react-ts`; add react-three-fiber, drei, Zustand,
 Vitest. Build the `AnalysisStore` (session, currentFrame, selectedJoint, overlays, annotations).
@@ -164,6 +183,7 @@ Vitest. Build the `AnalysisStore` (session, currentFrame, selectedJoint, overlay
 ---
 
 ### Task 12 — 3D viewer + timeline
+> ✅ **DONE** — `web/src/viewer/`. Imperative `useFrame` updates (no per-frame React reconciliation), orbit controls, camera-plane presets, motion trail, annotation pins, scrub timeline, keyboard shortcuts.
 **Goal:** the visual centrepiece.
 **Do:** r3f scene rendering the skeleton from `keypoints3d`; orbit controls; playback + scrub timeline
 with FC/MER/BR markers; joint highlighting; overlay layers (reference ghost, angle readouts, motion

@@ -1,0 +1,12 @@
+{
+  "sessions": [
+    {
+      "sessionId": "scherzer-delivery-01",
+      "label": "Max Scherzer \u2014 full delivery, third-base side",
+      "handedness": "right",
+      "view": "third-base side, ~90 deg to throwing direction",
+      "frameCount": 869,
+      "file": "scherzer-delivery-01.json"
+    }
+  ]
+}
