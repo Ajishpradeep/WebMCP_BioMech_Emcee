@@ -5,6 +5,10 @@ Read with [`../../SPEC.md`](../../SPEC.md) and
 [`../../docs/webmcp-technical-reference.md`](../../docs/webmcp-technical-reference.md) — do not
 re-derive them.
 
+This document describes Biomech Emcee's implemented baseball-pitching reference workflow. The tier
+split and human-agent review pattern are reusable; the event detector, biomechanical metrics,
+reference constructs, and validation are not automatically sport-agnostic.
+
 ---
 
 ## 1. The governing decision: hard offline/online split

@@ -1,4 +1,4 @@
-# PitchLab offline pipeline (Tier A) — Python deps.
+# Biomech Emcee offline pipeline (Tier A) — Python deps.
 #
 # Install with:
 #   uv pip install --python .venv/bin/python torch torchvision --index-url https://download.pytorch.org/whl/cu124

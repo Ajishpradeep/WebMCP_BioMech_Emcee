@@ -1,7 +1,7 @@
 [project]
-name = "webmcp-biomech-analyzer"
+name = "biomech-emcee"
 version = "0.1.0"
-description = "Add your description here"
+description = "Offline motion reconstruction pipeline for the Biomech Emcee WebMCP review workspace"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = []

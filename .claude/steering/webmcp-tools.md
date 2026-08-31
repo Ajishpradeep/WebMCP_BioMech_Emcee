@@ -6,6 +6,10 @@ tiebreaker*, so this file gets more care than any other.
 API mechanics: [`../../docs/webmcp-technical-reference.md`](../../docs/webmcp-technical-reference.md).
 Do not re-derive signatures — they are already verified there.
 
+**Positioning boundary:** this is the Biomech Emcee WebMCP tool surface. The interaction pattern
+(live evidence reads plus visible write-back) is intended to generalize across sports-analysis web
+apps, but the current tool vocabulary and evidence definitions implement baseball pitching only.
+
 ---
 
 ## 1. Design principles

@@ -123,7 +123,7 @@ export const REFUSALS: Record<string, { reason: string; insteadUse: string[] }> 
   },
   injury_risk: {
     reason:
-      'PitchLab does not predict injury. The prospective evidence linking individual biomechanical measures to injury is weak, and deviation from a reference range is an observation, not a diagnosis.',
+      'Biomech Emcee does not predict injury. The prospective evidence linking individual biomechanical measures to injury is weak, and deviation from a reference range is an observation, not a diagnosis.',
     insteadUse: ['hip_shoulder_separation', 'shoulder_external_rotation'],
   },
   pitch_velocity: {

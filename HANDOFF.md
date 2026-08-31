@@ -3,27 +3,30 @@
 > **New session? Read this file first, then [`CLAUDE.md`](CLAUDE.md).** This is the live log of what
 > is done, what was learned, and what to do next. Updated at the end of every completed task.
 
-**Last updated:** 2026-08-31, after initializing the official Devpost workflow and drafting the
-submission package
-**Next task:** finish Task 16 against the public HTTPS origin, then replace the provisional
-professional-player sessions with cleared footage before recording the final demo. The public
-workspace is <https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app>; the requirements-backed submission
-draft is [`devpost-submission.md`](devpost-submission.md), and deployment details are in
-[`docs/deployment.md`](docs/deployment.md). Recovery sequence and commit gates: [`PLAN.md`](PLAN.md).
+**Last updated:** 2026-08-31, after locking the Biomech Emcee identity and cross-project reframing
+**Current state:** **OWNER APP-REVIEW HOLD.** The canonical product name is Biomech Emcee and the
+participant identity is recorded as Pradeep Rajasekar (preferred name: Ajish). The next session is
+for the owner's application observations and requested fixes—not Devpost submission work. Do not
+redeploy, capture final assets, or advance the Devpost workflow during that review unless explicitly
+requested. After the app review is declared complete, use [`docs/devpost-resume.md`](docs/devpost-resume.md)
+to reconcile the entire final product before resuming compliance, testing, and validation. The
+currently deployed build predates this rename.
 
 ---
 
 ## 0. What is this project? (30-second orientation)
 
-**PitchLab Review** — a shared baseball-pitching biomechanics evidence workspace built for
+**Biomech Emcee** — a WebMCP-enabled workspace for human-agent review of movement evidence, built for
 [The WebMCP Challenge](https://webmcp.devpost.com/) (**deadline Thu Sep 3, 2026, 1:00 PM PDT**;
 the live URL must stay up through **Sep 21**).
 
 The pitch: *stop trying to be the coach; be the shared instrument.* A specialist vision model
-(Meta's SAM 3D Body) reconstructs a pitcher in 3D from video. The browser turns that reconstruction
-into a deliberately bounded set of kinematic observations and renders them in an interactive 3D
+(currently Meta's SAM 3D Body) reconstructs movement in 3D from video. The browser turns that
+reconstruction into deliberately bounded observations and renders them in an interactive 3D
 workspace. **WebMCP tools** let an agent inspect the live session, navigate to evidence, explain
-limitations, and pin review notes while the human judges the same reconstruction.
+limitations, and pin review notes while the human judges the same reconstruction. Baseball pitching
+is the only implemented reference workflow, not the intended product boundary; other sports are not
+claimed until their domain metrics and validation exist.
 
 **Claim boundary:** this is a review and evidence-navigation tool, not a validated replacement for
 marker-based motion capture, a diagnostic system, or an autonomous pitching coach. Comparisons are
@@ -46,6 +49,8 @@ browser** and registers the WebMCP tools.
 | **The 13 WebMCP tools — the graded artifact** | [`.claude/steering/webmcp-tools.md`](.claude/steering/webmcp-tools.md) |
 | Verified WebMCP API facts (don't re-derive) | [`docs/webmcp-technical-reference.md`](docs/webmcp-technical-reference.md) |
 | Contest rules, judging, submission bar | [`docs/webmcp-challenge-brief.md`](docs/webmcp-challenge-brief.md) |
+| Canonical identity, name, and positioning | [`docs/brand-decision.md`](docs/brand-decision.md) |
+| How to resume Devpost after the owner app review | [`docs/devpost-resume.md`](docs/devpost-resume.md) |
 | Public URL, GCP service, and reproducible deployment | [`docs/deployment.md`](docs/deployment.md) |
 | Model/footage licensing + the video-rights problem | [`ATTRIBUTION.md`](ATTRIBUTION.md) |
 
@@ -335,16 +340,20 @@ evals/pitch-analysis.md           ★ tool-surface verification record + prompt 
 
 ---
 
-## 8. Next: finish Task 16, then ship
+## 8. Next: owner app review, then a fresh compliance session
 
-1. **Task 16, browser half.** Work the unticked boxes in `evals/pitch-analysis.md` §1. The one that
-   can silently invalidate the rest is the **return-shape convention** — confirm against a live
-   agent before recording the demo, and if it needs the envelope, change `toolResult()` only.
-2. **Task 18 — submission assets.** The public Cloud Run deployment, README, license, and initial
+1. **Owner app-review session.** Inspect the product and implement the owner's requested changes.
+   Keep commits atomic and update this handoff, but do not treat the current Devpost draft or live
+   deployment as final.
+2. **Fresh Devpost/testing session.** When the owner declares app review complete, follow
+   [`docs/devpost-resume.md`](docs/devpost-resume.md). Task 16's browser half remains open; the one
+   check that can silently invalidate the rest is the **return-shape convention** against a live
+   agent.
+3. **Task 18 — submission assets.** The current Cloud Run deployment, README, license, and initial
    Devpost draft are complete. Replace the provisional professional-player sessions with cleared
    footage, capture final screenshots, and record the public narrated demo under three minutes.
-3. **Task 18 — final form.** Use [`devpost-submission.md`](devpost-submission.md) as the controlled
-   draft. **Lead with `annotate_frame`** — the
+4. **Task 18 — final form.** Reconcile [`devpost-submission.md`](devpost-submission.md) against the
+   final app and live official form. **Lead with `annotate_frame`** — the
    agent's reasoning becoming a persistent pin in the human's workspace is the strongest single
    argument in the submission. The line for the Devpost description: *4 of 13 tools are write tools
    that act on the human's live 3D view.*

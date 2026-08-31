@@ -2,9 +2,14 @@
 
 **Live workspace:** <https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app>
 
-PitchLab Review is deployed as a public, unauthenticated Cloud Run service in
-`ideaslab-gcp` (`us-central1`). It serves the static Vite build; all session analysis runs in the
-browser, so this production origin has no upload or GPU-inference backend.
+The current public review workspace is a public, unauthenticated Cloud Run service in `ideaslab-gcp`
+(`us-central1`). It serves the static Vite build; all session analysis runs in the browser, so this
+production origin has no upload or GPU-inference backend.
+
+> **Rename hold (2026-08-31):** the live revision and its `pitchlab-webmcp` service identifier
+> predate the Biomech Emcee rename and broader movement-review framing. The source is renamed, but
+> the live application has not been redeployed with that identity. Resume only after the owner app
+> review and the reconciliation in [`devpost-resume.md`](devpost-resume.md).
 
 ## Reproduce a deployment
 

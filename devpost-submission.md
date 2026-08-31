@@ -1,28 +1,28 @@
 # Title
 
-PitchLab Review
+Biomech Emcee — Shared 3D Movement Review with WebMCP
 
 ## One-line Summary
 
-A shared 3D biomechanics evidence workspace where a human reviewer and a WebMCP agent inspect,
-navigate, correct, and annotate the same baseball-pitch reconstruction.
+An agent-ready biomechanics workspace where people and agents inspect, navigate, correct, and
+annotate the same motion evidence; baseball pitching is the first end-to-end workflow.
 
 ## Problem
 
-Pitch-review workflows split evidence across video, charts, notes, and conversation. A human can see
-the movement, but an agent normally has to guess from pixels or rely on a separate backend that does
-not know which pitch, frame, camera view, overlay, or observation the reviewer is currently using.
-That makes collaboration slow and makes it easy to discuss the wrong moment or overstate uncertain
-measurements.
+Sports-analysis applications split evidence across video, charts, measurements, notes, and
+conversation. A human can see the movement, but an agent normally has to guess from pixels or rely
+on a separate backend that does not know which motion, frame, camera view, overlay, or observation
+the reviewer is currently using. That makes collaboration slow and makes it easy to discuss the
+wrong moment or overstate uncertain measurements.
 
 ## Solution
 
-PitchLab Review turns an offline 3D reconstruction into a shared browser workspace. The reviewer can
-scrub the delivery, change anatomical views, inspect bounded kinematic measurements, correct the
-three event frames, and see evidence notes in context. Thirteen WebMCP tools let an agent read the
-live review state, retrieve definitions and caveats, navigate the visible viewer, focus relevant
-joints, toggle evidence overlays, compare only compatible measurements, and pin notes at the moment
-they describe.
+Biomech Emcee turns an offline 3D reconstruction into a shared browser workspace. Its first complete
+workflow applies the pattern to baseball pitching: the reviewer can scrub the delivery, change
+anatomical views, inspect bounded kinematic measurements, correct three pitching event frames, and
+see evidence notes in context. Thirteen WebMCP tools let an agent read the live review state,
+retrieve definitions and caveats, navigate the visible viewer, focus relevant joints, toggle
+evidence overlays, compare only compatible measurements, and pin notes at the moment they describe.
 
 The product deliberately acts as a shared instrument rather than an autonomous coach. It refuses
 kinetic quantities that monocular video cannot establish and does not convert exploratory angles
@@ -30,10 +30,10 @@ into clinical conclusions.
 
 ## Why This Matters
 
-The target users are coaches, athletes, sports-science practitioners, and technical reviewers who
-need to discuss movement evidence together. WebMCP reduces the gap between an agent's explanation
-and the evidence the human is viewing: agent actions visibly move the same interface, and human
-corrections immediately become the source used by the agent tools.
+The target users are movement specialists, coaches, athletes, sports-science practitioners, and
+technical reviewers who need to discuss motion evidence together. WebMCP reduces the gap between an
+agent's explanation and the evidence the human is viewing: agent actions visibly move the same
+interface, and human corrections immediately become the source used by the agent tools.
 
 Without WebMCP, the agent would need brittle UI interpretation or a separate server-side context
 that cannot reliably represent transient browser state. With WebMCP, the page exposes a precise,
@@ -42,8 +42,8 @@ bounded vocabulary for collaborative review.
 ## How We Used AI
 
 - Meta SAM 3D Body reconstructs 3D body landmarks from pitching footage in an offline GPU pipeline.
-- A browser-side biomechanics layer derives deliberately bounded measurements, event signals, and a
-  partial four-segment peak-order view from the reconstructed landmarks.
+- The implemented pitching adapter derives deliberately bounded measurements, event signals, and a
+  partial four-segment peak-order view from the reconstructed landmarks in the browser.
 - WebMCP exposes structured capabilities to an agent. The agent can inspect evidence, explain limits,
   navigate the viewer, and leave review notes while the human remains the final interpreter.
 - The tool surface contains structured refusals for unsupported quantities such as elbow valgus
@@ -58,6 +58,9 @@ building reproducible Cloud Run deployment, and keeping the public documentation
 the code actually proves. Each solid milestone was verified and committed separately.
 
 ## Key Features
+
+The following features work today in the baseball-pitching reference workflow. Other sports would
+need their own event taxonomy, measurements, references, and validation.
 
 - Interactive 3D skeleton viewer with timeline, anatomical camera presets, motion trail, segment
   frames, axial dial, and angle readouts.
@@ -74,7 +77,7 @@ the code actually proves. Each solid milestone was verified and committed separa
 ## Architecture
 
 ```text
-pitch footage
+movement footage (pitching in the implemented workflow)
   → offline Python / SAM 3D Body reconstruction
   → frozen session.json contract
   → React + Three.js browser workspace
@@ -125,7 +128,7 @@ completes. Live-host results must be added before submission.
 
 ## Public Repository Link
 
-<https://github.com/Ajishpradeep/WebMCP_BioMech_Emcee>
+<https://github.com/Ajishpradeep/biomech-emcee>
 
 ## Demo Video
 
@@ -143,7 +146,8 @@ Suggested outline:
 - **1:55–2:25 — Trust boundary:** request torque or injury risk and show the structured refusal;
   explain why only compatible constructs are compared.
 - **2:25–2:45 — Architecture and impact:** briefly show the 13-tool surface, offline-to-browser
-  architecture, and future same-athlete longitudinal workflow.
+  architecture, explain pitching as the first reference workflow, and show how the same WebMCP
+  interaction pattern can support future domain-specific sports adapters.
 - **2:45–2:55 — Close:** live URL, public repository, and the phrase “shared evidence, not automated
   coaching.”
 
@@ -192,6 +196,8 @@ Suggested outline:
 - Event detection is heuristic. Humans can correct events, but a manually labelled accuracy
   benchmark for the final dataset remains required.
 - Live WebMCP registration and tool selection have not yet been recorded in a supported host.
+- Baseball pitching is the only implemented domain workflow. The WebMCP interaction pattern is
+  designed for reuse, but no other sport is represented as implemented or validated.
 
 ## TODO Official Form Fields
 
@@ -203,11 +209,11 @@ personal answers.
 | Submitter Type | **TODO confirm:** Individual / Team of Individuals / Organization |
 | Country of residence | **TODO confirm** |
 | Organization name | Not applicable unless submitting as an organization |
-| App Status | **TODO confirm:** likely New; choose Existing only if PitchLab predates Aug 25, 2026 |
+| App Status | **TODO confirm:** likely New; choose Existing only if Biomech Emcee predates Aug 25, 2026 |
 | Existing-project updates | If Existing: document WebMCP tools, shared-state actions, event correction, deployment, and evidence hardening added during the submission period |
 | Live URL | https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app |
 | Testing instructions / credentials | Use the Testing Instructions above; no credentials required |
-| Public code repository | https://github.com/Ajishpradeep/WebMCP_BioMech_Emcee |
+| Public code repository | https://github.com/Ajishpradeep/biomech-emcee |
 | Agents/clients used to test WebMCP | **TODO after live test:** state the exact ChatGPT in-app browser and/or Chrome version actually tested |
 | AI tools leveraged | OpenAI Codex; Meta SAM 3D Body; **TODO add any others actually used** |
 | Learning level | **TODO choose:** None / Moderate / Significant |

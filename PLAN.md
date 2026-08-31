@@ -1,4 +1,4 @@
-# PLAN — PitchLab Review → verified WebMCP submission
+# PLAN — Biomech Emcee → verified WebMCP submission
 
 This file is the durable execution plan. Work in atomic, verifiable milestones and create a normal
 Git commit after each solid checkpoint. Commit messages must not contain AI-agent signatures,
@@ -13,8 +13,17 @@ Read first: [`SPEC.md`](SPEC.md) · [`.claude/steering/tech.md`](.claude/steerin
 
 The ground-up review found a strong WebMCP-native foundation but two blocking risks: the submission
 package and live integration were incomplete, and several scientific comparisons exceeded what the
-implementation validates. The final product is therefore framed as **PitchLab Review, a shared
-biomechanics evidence workspace**, not an autonomous coach or a motion-capture replacement.
+implementation validates. The final product is therefore framed as **Biomech Emcee, shared 3D
+movement review with WebMCP**, not an autonomous coach or a motion-capture replacement. Baseball
+pitching is the only implemented reference workflow; multi-sport support remains a product direction.
+
+### Owner app-review hold
+
+Devpost compliance work is deliberately paused after the naming/positioning lock. The owner will
+start a fresh session to inspect the application and request product changes. That session may edit
+the app and product documents, but must preserve the evidence boundaries below. When the app review
+is complete, start another fresh session and resume the Devpost, testing, and validation pipeline
+using [`docs/devpost-resume.md`](docs/devpost-resume.md).
 
 ### Execution rules
 
@@ -42,6 +51,7 @@ biomechanics evidence workspace**, not an autonomous coach or a motion-capture r
 | G | P0 | WebMCP runtime hardening | Exactly 13 tools or visible failure; success/error contract tests | 🟡 code complete; live host verification remains |
 | H | P1 | Human event correction loop | Human changes FC/MER/BR; dependent analysis and agent reads update | ✅ store + tool regression test |
 | I | P0 | Submission package | README, license, and Devpost draft complete; cleared footage, live eval, screenshots, and <3 min demo remain | 🟡 |
+| J | P0 | Post-app-review compliance reconciliation | Re-audit the final app against official fields, judging criteria, draft claims, live tests, screenshots, video, repo, and deployment | ⏸️ owner hold |
 
 ### P0 acceptance decisions
 

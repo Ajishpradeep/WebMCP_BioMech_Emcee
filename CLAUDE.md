@@ -1,6 +1,7 @@
-# CLAUDE.md — PitchLab
+# CLAUDE.md — Biomech Emcee
 
-A shared biomechanics evidence workspace for baseball pitching. Built for
+A WebMCP-enabled workspace for human-agent review of movement evidence. Baseball pitching is the
+only implemented reference workflow; do not claim completed multi-sport support. Built for
 [The WebMCP Challenge](https://webmcp.devpost.com/) — **deadline Thu Sep 3, 2026, 1:00 PM PDT**;
 the live URL must stay up through **Sep 21**.
 
@@ -14,6 +15,8 @@ the live URL must stay up through **Sep 21**.
 | [`.claude/steering/webmcp-tools.md`](.claude/steering/webmcp-tools.md) | The 13-tool surface — the graded artifact |
 | [`docs/webmcp-technical-reference.md`](docs/webmcp-technical-reference.md) | Verified WebMCP API facts — **don't re-derive** |
 | [`docs/webmcp-challenge-brief.md`](docs/webmcp-challenge-brief.md) | Rules, judging, submission bar |
+| [`docs/brand-decision.md`](docs/brand-decision.md) | Locked name, identity, and cross-sport positioning boundary |
+| [`docs/devpost-resume.md`](docs/devpost-resume.md) | Full reconciliation after the owner app-review session |
 
 ## The one-line thesis
 
@@ -23,7 +26,8 @@ The human validates the evidence because **agent and human are looking at the sa
 
 ## Settled decisions — do not re-litigate
 
-- **Baseball pitching only.** Running is deferred (SPEC §7).
+- **Baseball pitching is the only implemented workflow.** The review pattern is intended to extend
+  to other sports, but each needs its own domain adapter and validation (SPEC §§5, 8).
 - **Hard offline/online split.** SAM 3D Body inference is offline on the local RTX A6000; the web app
   is a **static build** with no server in the request path.
 - **Dual-mode analysis.** `pipeline/server.py` is a **local-only** FastAPI backend giving a real

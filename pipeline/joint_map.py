@@ -1,4 +1,4 @@
-"""MHR-70 -> PitchLab biomechanical joint subset.
+"""MHR-70 -> Biomech Emcee biomechanical joint subset.
 
 SAM 3D Body returns 70 keypoints in `mhr70` order (see
 pipeline/vendor/sam-3d-body/sam_3d_body/metadata/mhr70.py). We keep a 24-joint subset
@@ -66,7 +66,7 @@ BONES: list[tuple[int, int]] = [
 
 
 def map_keypoints(kp: np.ndarray) -> np.ndarray:
-    """(70, D) MHR keypoints -> (24, D) PitchLab joints. Works for 2D or 3D.
+    """(70, D) MHR keypoints -> (24, D) Biomech Emcee joints. Works for 2D or 3D.
 
     `pelvis` and `thorax` are derived as midpoints; every other joint is a direct copy.
     """

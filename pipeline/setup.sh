@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Reproduce the PitchLab offline pipeline environment (Tier A).
+# Reproduce the Biomech Emcee offline pipeline environment (Tier A).
 #
 # Prerequisites:
 #   - Linux + NVIDIA GPU with CUDA 12.x  (verified on RTX A6000, 48 GB)

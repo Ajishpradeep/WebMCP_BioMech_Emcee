@@ -1,19 +1,26 @@
-# PitchLab Review
+# Biomech Emcee
 
-**A shared biomechanics evidence workspace for baseball-pitch review.**
+**Shared 3D movement review for people and agents, powered by WebMCP.**
 
-PitchLab Review lets a human specialist and an agent inspect the same reconstructed delivery: the
-human controls a live 3D view while WebMCP gives the agent structured access to the current session,
-evidence definitions, limitations, and visible viewer actions such as seeking, focusing, overlays,
-and annotations.
+Biomech Emcee is an agent-ready biomechanics workspace where a human specialist and an agent inspect
+the same motion evidence. The current end-to-end reference workflow is baseball pitching: the human
+controls a live 3D reconstruction while WebMCP gives the agent structured access to the current
+session, evidence definitions, limitations, and visible viewer actions such as seeking, focusing,
+overlays, and annotations.
 
-**Live app:** <https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app>
+**Live app:** <https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app> — this deployed revision predates the
+Biomech Emcee rename and will be reconciled after the owner application review.
 
 Built for [The WebMCP Challenge](https://webmcp.devpost.com/). The product thesis is simple: an
-agent should help a reviewer navigate and document evidence, not impersonate a coach or manufacture
-clinical conclusions.
+agent should help a reviewer navigate and document movement evidence, not impersonate a coach or
+manufacture clinical conclusions. Baseball is the implemented reference workflow, not the intended
+boundary of the human-agent review pattern.
 
 ## What is working
+
+Everything currently implemented below is for the baseball-pitching workflow. Other sports would
+require their own event taxonomy, metric definitions, references, and validation; they are a product
+direction, not a current feature.
 
 - Interactive in-browser 3D skeleton review, timeline scrubbing, camera presets, overlays, and
   persistent annotations.
@@ -79,7 +86,7 @@ the public demo reproducible and makes WebMCP appropriate for the live, human-vi
 
 ## Important boundaries
 
-PitchLab Review is not a marker-based motion-capture replacement, diagnostic system, injury-risk
+Biomech Emcee is not a marker-based motion-capture replacement, diagnostic system, injury-risk
 predictor, medical device, or autonomous pitching coach. It uses camera-frame reconstruction and
 some demo source footage has unresolved broadcast rights; see [ATTRIBUTION.md](ATTRIBUTION.md).
 Do not add a source-video player or use this demo data for clinical decisions. The project’s claim
@@ -92,8 +99,10 @@ boundary and technical decisions are in [SPEC.md](SPEC.md) and [HANDOFF.md](HAND
 - `evals/` — tool-level and live-host verification materials.
 - `docs/` — challenge facts, WebMCP references, and deployment record.
 - `PLAN.md` — pre-submission execution plan and verified milestones.
+- `docs/brand-decision.md` — locked product identity and positioning boundary.
+- `docs/devpost-resume.md` — complete reconciliation protocol after the owner app review.
 
 ## License
 
-PitchLab Review’s source code is released under the [MIT License](LICENSE). Third-party model
+Biomech Emcee’s source code is released under the [MIT License](LICENSE). Third-party model
 weights and their terms are not redistributed; see [ATTRIBUTION.md](ATTRIBUTION.md).

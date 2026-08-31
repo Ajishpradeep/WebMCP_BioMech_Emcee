@@ -1,7 +1,9 @@
-# SPEC — PitchLab Review: A Shared Biomechanics Evidence Workspace
+# SPEC — Biomech Emcee: Shared 3D Movement Review with WebMCP
 
-> **Working name:** PitchLab Review. The POC is baseball-only; the interaction pattern underneath is
-> sport-agnostic. Rename freely before submission.
+> **Canonical product name:** Biomech Emcee. **Submission title:** *Biomech Emcee — Shared 3D
+> Movement Review with WebMCP.* Baseball pitching is the only implemented reference workflow; the
+> human-agent review pattern is intended to generalize, but a finished multi-sport platform is not
+> claimed. Naming and positioning rationale: [`docs/brand-decision.md`](docs/brand-decision.md).
 >
 > **Target:** [The WebMCP Challenge](https://webmcp.devpost.com/) · deadline **Sep 3, 2026 @ 1:00 PM PDT**
 > · live URL must stay up through **Sep 21, 2026**.
@@ -17,9 +19,10 @@ specialized, while consumer video tools often reduce a movement to unexplained s
 both cases the evidence is trapped in a fixed interface: a coach cannot ask a question, inspect the
 supporting frame, and leave a visual note in the same workspace.
 
-PitchLab Review addresses the review problem rather than claiming to replace a motion-capture lab.
-It gives a coach and an agent shared access to the same 3D reconstruction, timeline, measurements,
-definitions, uncertainty, and annotations.
+Biomech Emcee addresses the review problem rather than claiming to replace a motion-capture lab.
+In its implemented pitching workflow, it gives a coach and an agent shared access to the same 3D
+reconstruction, timeline, measurements, definitions, uncertainty, and annotations. The broader
+product idea is a reusable interaction model for evidence-grounded movement review.
 
 ## 2. The core insight
 
@@ -30,10 +33,10 @@ the reconstructed pose and event frame are credible.
 
 So: **stop trying to be the coach. Be the shared instrument.**
 
-PitchLab runs the specialist model (SAM 3D Body → 3D human pose per frame), derives a bounded set of
-kinematic observations, renders them in an interactive 3D viewer, and exposes the live review state
-as **WebMCP tools**. An agent can read the session, navigate to evidence, explain definitions and
-limits, and *drive the viewer* while the human watches.
+Biomech Emcee runs a specialist model (currently SAM 3D Body → 3D human pose per frame), derives a
+bounded set of domain observations, renders them in an interactive 3D viewer, and exposes the live
+review state as **WebMCP tools**. An agent can read the session, navigate to evidence, explain
+definitions and limits, and *drive the viewer* while the human watches.
 
 The specialist model handles perception. The general agent handles intent and orchestration. The
 human validates the visual evidence and owns the conclusion.
@@ -71,18 +74,21 @@ a site can.
 
 | User | What they get |
 |---|---|
-| **Pitching coach / P&C coach** (primary) | Ask open-ended review questions and see the supporting event, joint, definition, and note materialize in the 3D workspace. |
-| **Athlete** | Review a coach-approved evidence trail with plain-language definitions and explicit limits rather than an unexplained score. |
-| **Sports-science / PT student** | A traceable instrument: every metric links to its definition, computation, literature source, and measurement uncertainty. |
-| **Agent developers** (meta-audience) | A reference implementation of a WebMCP tool surface over a specialist ML model — the pattern generalizes far past baseball. |
+| **Movement specialist** (product direction) | Ask open-ended review questions and see supporting events, joints, definitions, and notes materialize in the same visual workspace. |
+| **Pitching coach / P&C coach** (implemented workflow) | Review a reconstructed delivery with pitching events and deliberately bounded measurements. |
+| **Athlete** | Review a specialist-approved evidence trail with plain-language definitions and explicit limits rather than an unexplained score. |
+| **Sports-science / PT student** | Use a traceable instrument where every metric links to its definition, computation, literature source, and measurement uncertainty. |
+| **Agent developers** (meta-audience) | Study a working WebMCP tool surface over a specialist ML model and client-side analysis state. |
 
 ## 5. In scope for this hackathon cycle
 
-**Sport:** baseball pitching only. Chosen because the discriminating metrics
+**Implemented reference workflow:** baseball pitching only. Chosen because the discriminating metrics
 (hip–shoulder separation, kinematic-sequence timing, joint angles at discrete events) are
 **angle-based and segment-relative**, which is exactly what survives monocular camera-frame
 reconstruction. A pitch is also a short discrete event — a ~2-second clip, not a 60-second gait
-capture — which keeps per-frame inference cheap.
+capture — which keeps per-frame inference cheap. The current event detector, metrics, references,
+tool vocabulary, and validation are pitching-specific. Supporting another sport requires an actual
+domain adapter and evidence set; generality is architectural intent, not a completed feature.
 
 **Capabilities:**
 
@@ -121,16 +127,16 @@ bounds for SAM 3D Body on baseball pitching**.
 A small markerless-versus-marker study in boxing reported RMSD of **6.3°–23.0°**, with the weakest
 agreement in internal/external rotation. That study provides context, not validation of this model,
 sport, or implementation. Absolute distances in metric units are treated as **unreliable** — SAM 3D
-Body returns camera-frame coordinates with an *estimated* focal length, so PitchLab reports
+Body returns camera-frame coordinates with an *estimated* focal length, so Biomech Emcee reports
 height-normalized quantities rather than centimetres.
 
-**PitchLab will refuse to answer some questions, on purpose.** Ask it for elbow valgus torque and the
+**Biomech Emcee will refuse to answer some questions, on purpose.** Ask it for elbow valgus torque and the
 tool returns a structured refusal explaining why monocular video cannot support the number, and
 offers the kinematic proxies it *can* stand behind. An instrument that knows its own error bars is
 more useful than one that doesn't — and in a demo, an agent that says "I can't tell you that, here's
 why" is far more credible than one that invents a number.
 
-**Not a medical device.** PitchLab measures and compares against published ranges. It does not
+**Not a medical device.** Biomech Emcee measures and compares against published ranges. It does not
 diagnose, predict injury, or clear anyone to play. Deviation from a reference range is an
 *observation*, not a *finding*. This is stated in the UI and returned in tool metadata. The
 supporting rationale is in [`.claude/steering/tech.md`](.claude/steering/tech.md) §7.
@@ -156,8 +162,9 @@ supporting rationale is in [`.claude/steering/tech.md`](.claude/steering/tech.md
 
 ## 8. Future work (mention in the submission, do not build)
 
-- Running gait, golf, tennis serve, olympic lifts — the tool surface is sport-agnostic; only the
-  metric library and reference ranges change
+- Running gait, golf, tennis serve, and olympic lifts — candidate future workflows. Each needs a
+  domain event taxonomy, metric library, compatible references, UI review, and independent
+  validation; the current pitching implementation does not prove them automatically.
 - Longitudinal athlete tracking — *this is where a companion backend MCP server belongs*, with WebMCP
   handling the live session and MCP handling history
 - Multi-camera capture to lift the transverse-plane and IR/ER confidence grades

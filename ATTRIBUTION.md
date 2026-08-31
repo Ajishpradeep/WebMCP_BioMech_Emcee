@@ -12,7 +12,7 @@
 
 > ⚠️ **Model weights are NOT redistributed in this repository.** `pipeline/checkpoints/` and
 > `pipeline/vendor/` are git-ignored. Reproduce them with `pipeline/setup.sh` after obtaining your
-> own access approval. PitchLab's own code is MIT; Meta's weights remain under Meta's terms.
+> own access approval. Biomech Emcee's own code is MIT; Meta's weights remain under Meta's terms.
 
 **Citation:**
 

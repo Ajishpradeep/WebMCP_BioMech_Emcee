@@ -73,8 +73,8 @@ export default function App() {
         <div className="brand">
           <span className="logo">◈</span>
           <div>
-            <h1>PitchLab Review</h1>
-            <p>shared biomechanics evidence workspace</p>
+            <h1>Biomech Emcee</h1>
+            <p>human-agent movement evidence review</p>
           </div>
         </div>
         <div className="topbar-right">

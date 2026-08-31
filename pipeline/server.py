@@ -1,6 +1,6 @@
 """Local analysis backend — upload a clip, get a session.json.
 
-This exists ONLY for local development and demos. The deployed PitchLab build is a static
+This exists ONLY for local development and demos. The deployed Biomech Emcee build is a static
 bundle with no backend: it serves pre-computed sessions from web/public/sessions/ so a
 judge with no GPU gets a working app instantly. See .claude/steering/tech.md §1.
 
@@ -39,7 +39,7 @@ from sam_3d_body import SAM3DBodyEstimator, load_sam_3d_body  # noqa: E402
 UPLOAD_DIR = REPO / "pipeline" / "data" / "uploads"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
-app = FastAPI(title="PitchLab analysis backend")
+app = FastAPI(title="Biomech Emcee analysis backend")
 app.add_middleware(
     CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"]
 )
@@ -169,6 +169,6 @@ def job_status(job_id: str):
 
 
 if __name__ == "__main__":
-    print("PitchLab analysis backend — http://127.0.0.1:8000")
+    print("Biomech Emcee analysis backend — http://127.0.0.1:8000")
     print("Model loads lazily on the first upload (~20 s).")
     uvicorn.run(app, host="127.0.0.1", port=8000, log_level="info")
