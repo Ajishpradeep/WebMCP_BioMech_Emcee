@@ -59,6 +59,17 @@ function readingFor(
       citations: ref?.citations ?? [],
     }
   }
+  // Preserve the measured value for human inspection, but do not turn an uncertain
+  // event anchor into a confident-looking population comparison. A reviewer can move
+  // the event marker; analysis then recomputes and the comparison becomes available.
+  if (eventConfidence === 'low' || eventConfidence === 'unavailable') {
+    return {
+      metric, event, value, unit: 'deg',
+      reference: ref ? { range: ref.range, typical: ref.typical, sd: ref.sd } : undefined,
+      status: 'unavailable', magnitude: null, confidence, eventConfidence,
+      citations: ref?.citations ?? [],
+    }
+  }
   if (!ref) {
     return {
       metric, event, value, unit: 'deg', status: 'no_reference',

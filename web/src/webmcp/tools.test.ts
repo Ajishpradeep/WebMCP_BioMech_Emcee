@@ -210,6 +210,7 @@ describe('evidence tools', () => {
       'seek_to_event', 'focus_joint', 'annotate_frame',
     ])
     expect(res.causalLimit).toMatch(/not what caused/i)
+    expect(res.comparisonsUnavailable.map((x: any) => x.event)).toContain('max_external_rotation')
 
     const all = (await call('compare_to_reference', { includeWithinRange: true })) as Result
     expect(all.deviations.length).toBeGreaterThanOrEqual(res.deviations.length)
@@ -220,7 +221,8 @@ describe('evidence tools', () => {
     const res = (await call('compare_pitches', { sessionIdB: 'delivery-02' })) as Result
     expect(useAnalysis.getState().session?.sessionId).toBe(before)
     expect(res.comparisonScope).toBe('descriptive_only')
-    expect(res.comparisons.length).toBeGreaterThan(0)
+    expect(res.comparisons).toEqual([])
+    expect(res.excludedLowConfidence).toBeGreaterThan(0)
     for (const c of res.comparisons) expect(typeof c.deltaDeg).toBe('number')
     expect(res.meta.caveats.join(' ')).toMatch(/camera/i)
     expect(res.meta.caveats.join(' ')).toMatch(/athlete identity/i)

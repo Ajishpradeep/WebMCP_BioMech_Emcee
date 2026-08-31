@@ -222,8 +222,9 @@ deg/s remains unavailable because the slow-motion factor is unknown.
 
 The previous 180° segment-frame branch jump is fixed by feeding `metricSeries()` the same
 continuity-corrected frames used by KSA. `delivery-01` now has no adjacent metric step ≥25°. The
-38-frame `delivery-02` ends at its release candidate and has only five FC→BR frames, so all event
-comparisons are low confidence and KSA order/peaks/intervals are explicitly `unavailable` rather
+38-frame `delivery-02` ends at its release candidate and has only five FC→BR frames, so its values
+remain inspectable at low confidence while reference comparisons and KSA order/peaks/intervals are
+explicitly `unavailable` rather
 than four artificial peaks on the same frame.
 
 **Known open items** (honest state, not hidden):

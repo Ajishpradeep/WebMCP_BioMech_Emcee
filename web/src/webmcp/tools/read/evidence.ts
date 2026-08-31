@@ -140,7 +140,9 @@ export const compareToReference: PitchTool = {
     }
 
     const includeWithin = input.includeWithinRange === true
-    const considered = analysis.readings.filter((r) => (event ? r.event === event : true))
+    const selected = analysis.readings.filter((r) => (event ? r.event === event : true))
+    const unavailable = selected.filter((reading) => reading.status === 'unavailable')
+    const considered = selected.filter((reading) => reading.status !== 'unavailable')
     const ranked = considered
       .filter((r) => includeWithin || (r.status === 'above' || r.status === 'below'))
       .sort((a, b) => (b.magnitude ?? 0) - (a.magnitude ?? 0))
@@ -200,10 +202,18 @@ export const compareToReference: PitchTool = {
       })),
       omitted: ranked.length - rows.length,
       summary:
-        `${outside.length} of ${considered.length} referenced measurements fall outside their published range` +
+        (considered.length === 0
+          ? `No reference comparisons are currently interpretable; ${unavailable.length} measurements depend on event frames that require review.`
+          : `${outside.length} of ${considered.length} interpretable referenced measurements fall outside their published range` +
         (biggest
           ? `; the largest is ${METRIC_LABEL[biggest.metric]} at ${EVENT_LABEL[biggest.event]}, ${r1(biggest.magnitude ?? 0)}° ${biggest.status} the range (confidence: ${biggest.confidence}).`
-          : '.'),
+          : '.')),
+      comparisonsUnavailable: unavailable.map((reading) => ({
+        metric: reading.metric,
+        event: reading.event,
+        value: reading.value,
+        reason: 'event frame requires human review',
+      })),
       eventReviewRequired: lowEvents.map((candidate) => ({
         event: candidate.name,
         label: EVENT_LABEL[candidate.name],
@@ -213,7 +223,7 @@ export const compareToReference: PitchTool = {
       reviewPlan,
       causalLimit:
         'These measurements identify where to look, not what caused the motion. The suggested viewer calls highlight the landmarks that define each observation; they do not prove those joints caused another error.',
-      meta: metaFor(session, rows.length ? worst(...rows.map((r) => r.confidence)) : 'high',
+      meta: metaFor(session, rows.length ? worst(...rows.map((r) => r.confidence)) : lowEvents.length ? 'unavailable' : 'high',
         [...citations],
         [
           'Outside a reference range is an observation, not a fault or a diagnosis.',
@@ -270,11 +280,16 @@ export const comparePitches: PitchTool = {
     const keyOf = (m: MetricName, e: EventName) => `${m}@${e}`
     const bByKey = new Map(B.analysis.readings.map((r) => [keyOf(r.metric, r.event), r]))
 
+    let excludedLowConfidence = 0
     const comparisons = A.analysis.readings
       .filter((r) => (event ? r.event === event : true))
       .flatMap((a) => {
         const b = bByKey.get(keyOf(a.metric, a.event))
         if (!b || a.value === null || b.value === null) return []
+        if (a.status === 'unavailable' || b.status === 'unavailable') {
+          excludedLowConfidence++
+          return []
+        }
         return [{
           metric: a.metric,
           event: a.event,
@@ -310,6 +325,7 @@ export const comparePitches: PitchTool = {
       unit: 'deg',
       comparisons: shown,
       omitted: comparisons.length - shown.length,
+      excludedLowConfidence,
       summary: largest
         ? `${comparisons.length} metrics compared at shared events; the largest descriptive difference is ${METRIC_LABEL[largest.metric]} at ${EVENT_LABEL[largest.event]} (${largest.valueA}° vs ${largest.valueB}°, ${largest.deltaDeg > 0 ? '+' : ''}${largest.deltaDeg}°).`
         : 'No metrics were measurable at shared events in both pitches.',

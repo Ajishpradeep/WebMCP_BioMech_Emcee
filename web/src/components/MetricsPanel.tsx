@@ -65,7 +65,9 @@ function Row({ r, onExplain }: { r: MetricReading; onExplain: () => void }) {
         </div>
       )}
       <div className="mrow-meta dim">
-        {ref ? `ref ${ref.range[0]}–${ref.range[1]}°` : 'no published range'}
+        {r.status === 'unavailable'
+          ? 'comparison unavailable · review event frame'
+          : ref ? `ref ${ref.range[0]}–${ref.range[1]}°` : 'no published range'}
         {r.status === 'above' || r.status === 'below'
           ? ` · ${r.status} by ${r.magnitude}°`
           : r.status === 'within'

@@ -60,6 +60,10 @@ describe.each([
       expect(reading.confidence).toBe(
         reading.eventConfidence === 'low' ? 'low' : 'medium',
       )
+      if (reading.eventConfidence === 'low') {
+        expect(reading.status).toBe('unavailable')
+        expect(reading.magnitude).toBeNull()
+      }
     }
   })
 
@@ -123,6 +127,8 @@ describe('cut delivery quality refusal', () => {
     expect(cut.events.every((event) => event.confidence === 'low')).toBe(true)
     expect(cut.events.find((event) => event.name === 'ball_release')?.frame).toBe(37)
     expect(cut.readings.every((reading) => reading.confidence === 'low')).toBe(true)
+    expect(cut.readings.every((reading) => reading.status === 'unavailable')).toBe(true)
+    expect(cut.readings.every((reading) => reading.magnitude === null)).toBe(true)
   })
 
   it('refuses KSA order, peaks, and intervals instead of collapsing them onto one frame', () => {
