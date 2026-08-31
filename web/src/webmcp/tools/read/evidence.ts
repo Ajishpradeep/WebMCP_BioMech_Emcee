@@ -186,7 +186,7 @@ export const comparePitches: PitchTool = {
   name: 'compare_pitches',
   title: 'Compare two pitches',
   description:
-    'Compares two analysed pitches metric by metric at the same events and returns the differences, so you can reason about what changed between attempts. The second pitch is analysed in the background without changing what the human is looking at. Cross-session comparison is only meaningful when the camera setup is similar — check meta.caveats.',
+    'Compares two analysed sessions metric by metric at the same events and returns descriptive differences. It must not imply improvement or change between attempts unless athlete identity and capture comparability are established outside this data contract. The second session is analysed without changing the human view; read meta.caveats.',
   inputSchema: {
     type: 'object',
     properties: {
@@ -248,6 +248,7 @@ export const comparePitches: PitchTool = {
     const shown = comparisons.slice(0, LIMIT)
 
     const caveats = [
+      'The session contract does not encode a stable athlete identity. Treat these as descriptive differences, never improvement or regression, unless the reviewer independently confirms the same athlete and protocol.',
       'Cross-session comparison assumes a comparable camera setup: the reconstruction is camera-frame, so a changed viewpoint moves rotation angles more than sagittal ones.',
     ]
     if (A.session.source.view !== B.session.source.view) {
@@ -260,11 +261,12 @@ export const comparePitches: PitchTool = {
     return {
       sessionA: { sessionId: A.session.sessionId, label: A.session.source.label },
       sessionB: { sessionId: B.session.sessionId, label: B.session.source.label },
+      comparisonScope: 'descriptive_only',
       unit: 'deg',
       comparisons: shown,
       omitted: comparisons.length - shown.length,
       summary: largest
-        ? `${comparisons.length} metrics compared at shared events; the largest change is ${METRIC_LABEL[largest.metric]} at ${EVENT_LABEL[largest.event]} (${largest.valueA}° → ${largest.valueB}°, ${largest.deltaDeg > 0 ? '+' : ''}${largest.deltaDeg}°).`
+        ? `${comparisons.length} metrics compared at shared events; the largest descriptive difference is ${METRIC_LABEL[largest.metric]} at ${EVENT_LABEL[largest.event]} (${largest.valueA}° vs ${largest.valueB}°, ${largest.deltaDeg > 0 ? '+' : ''}${largest.deltaDeg}°).`
         : 'No metrics were measurable at shared events in both pitches.',
       meta: metaFor(A.session, shown.length ? worst(...shown.map((c) => c.confidence)) : 'low',
         [...new Set(A.analysis.readings.flatMap((r) => r.citations))], caveats),

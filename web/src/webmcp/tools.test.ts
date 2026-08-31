@@ -201,9 +201,11 @@ describe('evidence tools', () => {
     const before = useAnalysis.getState().session?.sessionId
     const res = (await call('compare_pitches', { sessionIdB: 'skenes-delivery-01' })) as Result
     expect(useAnalysis.getState().session?.sessionId).toBe(before)
+    expect(res.comparisonScope).toBe('descriptive_only')
     expect(res.comparisons.length).toBeGreaterThan(0)
     for (const c of res.comparisons) expect(typeof c.deltaDeg).toBe('number')
     expect(res.meta.caveats.join(' ')).toMatch(/camera/i)
+    expect(res.meta.caveats.join(' ')).toMatch(/athlete identity/i)
   })
 })
 

@@ -60,6 +60,8 @@ biomechanics evidence workspace**, not an autonomous coach or a motion-capture r
 - The public build presents precomputed review sessions; local CUDA upload is development tooling.
 - Demo comparison data should be the same athlete and camera setup, using self-recorded or clearly
   licensed footage. Until replaced, cross-view demo comparisons remain explicitly unreliable.
+- **Completed 2026-08-31:** `compare_pitches` now labels every result `descriptive_only` and refuses
+  to imply improvement/regression without independently established athlete identity and protocol.
 
 ### P1 after the stable submission baseline
 
