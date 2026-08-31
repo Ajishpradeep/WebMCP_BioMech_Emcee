@@ -21,8 +21,8 @@ const sessionsDir = join(__dirname, '../../public/sessions')
 const read = (f: string) => JSON.parse(readFileSync(join(sessionsDir, f), 'utf8'))
 
 const index: SessionIndexEntry[] = read('index.json').sessions
-const active: Session = read('scherzer-delivery-01.json')
-const other: Session = read('skenes-delivery-01.json')
+const active: Session = read('delivery-01.json')
+const other: Session = read('delivery-02.json')
 
 const byName = (name: string): PitchTool => {
   const t = ALL_TOOLS.find((x) => x.name === name)
@@ -83,7 +83,7 @@ describe('every tool answers with the honesty contract', () => {
     get_kinematic_sequence: {},
     get_metric_definition: { metric: 'hip_shoulder_separation' },
     compare_to_reference: {},
-    compare_pitches: { sessionIdB: 'skenes-delivery-01' },
+    compare_pitches: { sessionIdB: 'delivery-02' },
     seek_to_event: { event: 'max_external_rotation' },
     focus_joint: { joint: 'lead knee' },
     set_overlay: { overlay: 'motion_trail', enabled: true },
@@ -199,7 +199,7 @@ describe('evidence tools', () => {
 
   it('compares two pitches without disturbing the loaded one', async () => {
     const before = useAnalysis.getState().session?.sessionId
-    const res = (await call('compare_pitches', { sessionIdB: 'skenes-delivery-01' })) as Result
+    const res = (await call('compare_pitches', { sessionIdB: 'delivery-02' })) as Result
     expect(useAnalysis.getState().session?.sessionId).toBe(before)
     expect(res.comparisonScope).toBe('descriptive_only')
     expect(res.comparisons.length).toBeGreaterThan(0)

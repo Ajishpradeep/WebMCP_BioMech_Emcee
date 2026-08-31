@@ -34,8 +34,29 @@ const SERIES_LABEL: Record<SequenceSegment, string> = {
 }
 
 const W = 640
-const H = 210
-const M = { top: 14, right: 14, bottom: 26, left: 44 }
+const H = 150
+const M = { top: 9, right: 14, bottom: 24, left: 44 }
+
+/**
+ * Display-only zero-phase Gaussian smoothing. The biomechanics engine retains its
+ * original traces and peak calculations; this removes frame-scale visual chatter from
+ * the chart without moving the values returned by WebMCP or shown in the peak table.
+ */
+function smoothForDisplay(xs: (number | null)[], radius = 16, sigma = 6.5) {
+  return xs.map((value, i) => {
+    if (value === null) return null
+    let weighted = 0
+    let weights = 0
+    for (let offset = -radius; offset <= radius; offset++) {
+      const sample = xs[i + offset]
+      if (sample === undefined || sample === null) continue
+      const weight = Math.exp(-(offset * offset) / (2 * sigma * sigma))
+      weighted += sample * weight
+      weights += weight
+    }
+    return weights ? weighted / weights : value
+  })
+}
 
 export function SequenceChart({
   session,
@@ -54,14 +75,17 @@ export function SequenceChart({
   const seq = analysis.sequence
   const n = session.frames.length
 
-  const { plot, yMax, x, y } = useMemo(() => {
+  const { displayTraces, plot, yMax, x, y } = useMemo(() => {
+    const shown = {} as Record<SequenceSegment, (number | null)[]>
+    for (const s of SEQUENCE_SEGMENTS) shown[s] = smoothForDisplay(seq.traces[s])
+
     let max = 0
     for (const s of SEQUENCE_SEGMENTS) {
-      for (const v of seq.traces[s]) if (v !== null && v > max) max = v
+      for (const v of shown[s]) if (v !== null && v > max) max = v
     }
     // Clip the y-scale to a robust upper bound so one spike can't flatten everything.
     const all = SEQUENCE_SEGMENTS.flatMap((s) =>
-      seq.traces[s].filter((v): v is number => v !== null),
+      shown[s].filter((v): v is number => v !== null),
     ).sort((a, b) => a - b)
     const p98 = all.length ? all[Math.floor(all.length * 0.98)] : max
     const yM = Math.max(1, p98)
@@ -75,7 +99,7 @@ export function SequenceChart({
     for (const s of SEQUENCE_SEGMENTS) {
       let d = ''
       let pen = false
-      seq.traces[s].forEach((v, i) => {
+      shown[s].forEach((v, i) => {
         if (v === null) {
           pen = false
           return
@@ -85,7 +109,7 @@ export function SequenceChart({
       })
       paths[s] = d
     }
-    return { plot: paths, yMax: yM, x: xf, y: yf }
+    return { displayTraces: shown, plot: paths, yMax: yM, x: xf, y: yf }
   }, [seq, n])
 
   const onMove = (e: React.MouseEvent) => {
@@ -179,7 +203,7 @@ export function SequenceChart({
 
           {/* peak markers — 8px, ringed against the surface so overlaps stay legible */}
           {seq.peaks.map((p) => {
-            const v = seq.traces[p.segment][p.frame]
+            const v = displayTraces[p.segment][p.frame]
             if (v === null) return null
             return (
               <circle key={p.segment} cx={x(p.frame)} cy={y(v)} r={4.5}
@@ -202,7 +226,7 @@ export function SequenceChart({
       {/* legend — always present for ≥2 series; identity never by colour alone */}
       <div className="sc-legend">
         {SEQUENCE_SEGMENTS.map((s) => {
-          const v = seq.traces[s][hf]
+          const v = displayTraces[s][hf]
           return (
             <span key={s} className="sc-key">
               <span className="swatch" style={{ background: SERIES_COLOR[s] }} />
@@ -218,7 +242,11 @@ export function SequenceChart({
           ? 'Rates shown in real time.'
           : 'Slow-motion source at an unknown factor — absolute angular velocity is unavailable. Peak order and normalised timing remain valid.'}
       </p>
-      <p className="sc-note lit">{seq.literatureNote}</p>
+      <details className="sc-details">
+        <summary>Interpretation and chart method</summary>
+        <p>{seq.literatureNote}</p>
+        <p>Curves are display-smoothed to remove frame-scale reconstruction chatter. Peak calculations and agent results retain the analysis values.</p>
+      </details>
       </>
       )}
     </div>

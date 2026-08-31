@@ -52,6 +52,8 @@ export interface Session {
     frameCount: number
     resolution: [number, number]
     attribution: string
+    /** Trimmed browser video aligned so video time 0 equals session frame 0. */
+    videoFile?: string
   }
   subject: {
     handedness: 'right' | 'left'

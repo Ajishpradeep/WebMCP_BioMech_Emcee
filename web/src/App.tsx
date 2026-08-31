@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 
 import { SequenceChart } from './components/SequenceChart'
+import { ReferenceVideo } from './components/ReferenceVideo'
 import { SidePanel } from './components/SidePanel'
 import { Timeline } from './components/Timeline'
 import { useAnalysis } from './store'
@@ -89,24 +90,28 @@ export default function App() {
       </header>
 
       <main className="stage">
-        <div className="viewer">
-          {indexState === 'loading' && <div className="center dim">Loading review sessions…</div>}
-          {sessionState === 'loading' && <div className="center dim">Loading session…</div>}
-          {sessionState === 'error' && (
-            <div className="center err">
-              <p>Could not load a session.</p>
-              <p className="small mono">{error}</p>
-            </div>
-          )}
-          {sessionState === 'idle' && indexState === 'ready' && index.length === 0 && (
-            <div className="center dim">
-              <p>No analysed sessions yet.</p>
-              <p className="small">
-                This public workspace is built around precomputed review sessions.
-              </p>
-            </div>
-          )}
-          {session && <SkeletonViewer session={session} />}
+        <div className={`review-views ${session?.source.videoFile ? 'split' : ''}`}>
+          <div className="viewer">
+            {session && <div className="view-badge"><strong>3D reconstruction</strong></div>}
+            {indexState === 'loading' && <div className="center dim">Loading review sessions…</div>}
+            {sessionState === 'loading' && <div className="center dim">Loading session…</div>}
+            {sessionState === 'error' && (
+              <div className="center err">
+                <p>Could not load a session.</p>
+                <p className="small mono">{error}</p>
+              </div>
+            )}
+            {sessionState === 'idle' && indexState === 'ready' && index.length === 0 && (
+              <div className="center dim">
+                <p>No analysed sessions yet.</p>
+                <p className="small">
+                  This public workspace is built around precomputed review sessions.
+                </p>
+              </div>
+            )}
+            {session && <SkeletonViewer session={session} />}
+          </div>
+          {session && <ReferenceVideo key={session.sessionId} session={session} />}
         </div>
 
         {session && <Timeline session={session} />}

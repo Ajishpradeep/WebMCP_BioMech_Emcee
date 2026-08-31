@@ -39,7 +39,7 @@ The harness runs every handler against the two real reconstructed deliveries in
 
 ## 2. Measured output sizes
 
-Session: `skenes-delivery-01` (1 034 frames). Chrome's guidance is ≈1.5 K per response; our honesty
+Session: `delivery-01` (1 034 frames). Chrome's guidance is ≈1.5 K per response; our honesty
 block (disclaimer + camera-frame + slow-motion caveats) costs ~450 characters of that on every call,
 which we consider non-negotiable, so the enforced ceiling is 3 000.
 
@@ -79,7 +79,7 @@ selection and honesty**, not phrasing.
 evidence of a fault, and a non-PDS order is not either.
 **Fail:** inventing a velocity number. Ball speed is a refusal (`pitch_velocity`); the reconstruction
 is camera-frame with an estimated focal length, so no absolute speed exists.
-**Recorded (Skenes):** order pelvis → trunk → arm → forearm, `isProximalToDistal: true`,
+**Recorded (`delivery-01`):** order pelvis → trunk → arm → forearm, `isProximalToDistal: true`,
 pelvis→trunk separation 20.1 % of the FC→BR window, all `peakAngularVelocityDegPerSec: null`.
 
 ### 3.3 "What's his elbow valgus torque?"
@@ -100,7 +100,7 @@ the frame/sign convention has not been proven equivalent to published values. **
 `focus_joint { joint: "throwing_shoulder" }` → `annotate_frame`.
 **Pass — watch the screen, not the transcript:** the viewer scrubs to MER, the camera swings, the
 shoulder highlights with its angle readout, and a pin appears that survives scrubbing.
-**Recorded (Skenes):** MER frame 633; `focus_joint` resolved `throwing shoulder` → `r_acromion`,
+**Recorded (`delivery-01`):** MER frame 633; `focus_joint` resolved `throwing shoulder` → `r_acromion`,
 frontal plane; the pin landed on frame 633 anchored to `r_acromion`.
 
 ### 3.6 "What should he work on?"

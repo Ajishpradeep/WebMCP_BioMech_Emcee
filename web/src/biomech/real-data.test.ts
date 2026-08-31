@@ -15,7 +15,7 @@ import { analyze } from './analyze'
 import { metricSeries } from './angles'
 
 const session: Session = JSON.parse(
-  readFileSync(join(__dirname, '../../public/sessions/scherzer-delivery-01.json'), 'utf8'),
+  readFileSync(join(__dirname, '../../public/sessions/delivery-01.json'), 'utf8'),
 )
 
 const finite = (xs: (number | null)[]) => xs.filter((v): v is number => v !== null && Number.isFinite(v))
@@ -26,8 +26,7 @@ const range = (xs: (number | null)[]) => {
 
 describe('real session integrity', () => {
   it('loads a well-formed session', () => {
-    // 357 frames: the post-freeze window of the Scherzer clip (see clips.json notes).
-    expect(session.frames.length).toBeGreaterThan(300)
+    expect(session.frames.length).toBeGreaterThan(1000)
     expect(session.joints).toHaveLength(24)
     expect(session.capture.cameraFrame).toBe(true)
     expect(session.timebase.slowMotion).toBe(true)

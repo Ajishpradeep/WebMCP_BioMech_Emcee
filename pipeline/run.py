@@ -9,7 +9,7 @@ pipeline/requirements.txt.
 
 Usage:
     .venv/bin/python pipeline/run.py                       # all clips in clips.json
-    .venv/bin/python pipeline/run.py scherzer-delivery-01   # one clip
+    .venv/bin/python pipeline/run.py delivery-02             # one clip
     .venv/bin/python pipeline/run.py --stride 4            # every 4th frame (fast preview)
 """
 
@@ -261,6 +261,7 @@ def run_clip(clip: dict, estimator, detector, device: str, stride: int,
             "frameCount": len(frames),
             "resolution": [w, h],
             "attribution": "Third-party footage, development use only. See ATTRIBUTION.md.",
+            "videoFile": clip.get("videoFile"),
         },
         "subject": {
             "handedness": clip.get("handedness", "right"),

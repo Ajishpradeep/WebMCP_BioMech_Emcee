@@ -3,7 +3,7 @@
 > **New session? Read this file first, then [`CLAUDE.md`](CLAUDE.md).** This is the live log of what
 > is done, what was learned, and what to do next. Updated at the end of every completed task.
 
-**Last updated:** 2026-08-31, after locking the Biomech Emcee identity and cross-project reframing
+**Last updated:** 2026-08-31, after the first owner application-review fixes
 **Current state:** **OWNER APP-REVIEW HOLD.** The canonical product name is Biomech Emcee and the
 participant identity is recorded as Pradeep Rajasekar (preferred name: Ajish). The next session is
 for the owner's application observations and requested fixes—not Devpost submission work. Do not
@@ -34,7 +34,7 @@ shown only when the implementation and published reference use compatible measur
 
 **Architecture in one line:** heavy GPU inference happens **offline** (Tier A, Python) and emits
 `session.json`; the **web app is a static build** (Tier B) that computes all biomechanics **in the
-browser** and registers the WebMCP tools.
+browser**, presents synchronized 2D/3D review, and registers the WebMCP tools.
 
 ---
 
@@ -67,7 +67,7 @@ cd web && npm install && npm run dev          # → http://localhost:5173
 
 # 3. Batch-analyse the manifested demo clips
 .venv/bin/python pipeline/run.py                          # all clips
-.venv/bin/python pipeline/run.py scherzer-delivery-01     # one
+.venv/bin/python pipeline/run.py delivery-02             # one
 .venv/bin/python pipeline/run.py --stride 8               # fast preview
 
 # 4. Health check for the model env
@@ -86,14 +86,14 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 |---|---|---|
 | 1 — SAM 3D Body access | ✅ | Approved. Checkpoints local (2.7 GB, git-ignored). |
 | 2 — Env + smoke test | ✅ | torch 2.6.0+cu124, RTX A6000. |
-| 3 — Demo footage | ✅ | 2 clips in `pipeline/clips.json`. ⚠️ **Rights unresolved — §6.** |
+| 3 — Demo footage | 🟡 | Two same-subject deliveries, anonymized in the UI. Synchronized 2D assets are provisional; **rights unresolved — §6.** |
 | 4 — Frame extraction + detection | ✅ | `pipeline/run.py`, torchvision Faster R-CNN. |
-| 5 — Inference runner | ✅ | **QA gate passed** — see `pipeline/out/qa_scherzer-delivery-01.mp4`. |
+| 5 — Inference runner | ✅ | **QA gate passed** for both current deliveries; see `pipeline/out/qa_delivery-02.mp4` for the newly reconstructed second view. |
 | 6 — 🔒 Freeze schema | ✅ | **Frozen.** `pipeline/joint_map.py` ↔ `web/src/types.ts`. |
 | 7 — Smoothing + export | ✅ | Savitzky–Golay. Proportions validated (§4). |
 | 11 — Web app scaffold | ✅ | React 19 + Vite 8 + r3f + Zustand. |
-| 12 — 3D viewer + timeline | ✅ | Playback, scrub, camera presets, trail, annotation pins. |
-| 8–10 — Biomechanics engine | ✅ | `web/src/biomech/`, 27 unit + real-data tests green. |
+| 12 — 2D/3D viewer + timeline | ✅ | Frame-synchronized source reference beside the 3D reconstruction; playback, scrub, camera presets, trail, and annotation pins. |
+| 8–10 — Biomechanics engine | ✅ | `web/src/biomech/`; complete suite currently 64 tests green. |
 | 12b — Metrics panel | ✅ | Readings, confidence badges, cited definitions, sequence chart. |
 | **13–15 — WebMCP tools ★** | ✅ code / 🟡 live | 13 handlers implemented; registration is one stable document surface with a visible partial/failure state; live registration is still unverified. |
 | 16 — Verification + evals | 🟡 | Headless half done ([`evals/pitch-analysis.md`](evals/pitch-analysis.md)); **DevTools + ChatGPT in-app browser still owed.** |
@@ -209,7 +209,7 @@ centres do not move (< 1e-4°), yet the engine recovers the full 90°.
    metrics. Do not remove.
 
 ### Validation status (2026-08-31)
-On the clean Skenes clip, six metrics land **within** published reference ranges that were never
+On `delivery-01`, six metrics land **within** published reference ranges that were never
 tuned to: lead knee flexion 47.9° at FC [40–49], shoulder abduction 97.7° at MER [66–100], lead knee
 37.8° [31.2–41] / elbow 37.8° [24–39] / shoulder abduction 92.3° [70–94] / trunk forward tilt 48.3°
 [30–55] at BR. Sequence is proximal→distal with 14.4% pelvis→trunk separation. That is meaningful
@@ -222,8 +222,8 @@ independent evidence the engine is right.
   Y–X–Y axial term is not the same construct as the clinical "lay-back" measure. Already graded
   `low`; needs either a convention change or an explicit note that the two are different quantities.
 - `trunk_lateral_tilt` reads ≈0 where 21–29.5° is expected.
-- Event detection on the **Scherzer** clip is poor (FC→BR only 13 frames). It is an edited coaching
-  breakdown; **Skenes is the reference session.**
+- Event detection on the short `delivery-02` window still needs human frame validation before its
+  measurements are used in judge-facing claims. `delivery-01` remains the validated reference session.
 
 ## 4c. The WebMCP tool surface — how it actually works
 
@@ -285,9 +285,9 @@ define the elbow axis — useful for forearm orientation.
 (`web/src/viewer/geometry.ts`); that is a *viewing* transform only — never read distances off it.
 
 ### ⚠️ Source clips can contain FREEZES
-The Scherzer clip freezes for **2.90 s** (frames 333–507 of the raw video). A frozen run silently
-destroys event detection and every rate metric. `pipeline/run.py` now **detects duplicate-frame runs
-and warns loudly**; `clips.json` windows are set to exclude them. Always read the pipeline warnings.
+A previously removed source clip exposed a **2.90 s freeze**. A frozen run silently destroys event
+detection and every rate metric. `pipeline/run.py` therefore **detects duplicate-frame runs and warns
+loudly**; always read the pipeline warnings when changing a clip window.
 
 ### ⚠️ `timebase` decides which timing metrics are legal
 Both demo clips are slow-motion at an **unknown** factor, so `realTimeScale: null`.
@@ -306,13 +306,14 @@ Both demo clips are slow-motion at an **unknown** factor, so `realTimeScale: nul
 
 ## 6. ⚠️ Open risk: source-footage rights
 
-`input_baseball/` holds YouTube-sourced MLB/broadcast clips. **Git-ignored**, local dev only, not
-cleared for redistribution. The architecture already helps — the app renders the **3D skeleton**, not
-the video, and only derived `session.json` ships.
+`input_baseball/` holds YouTube-sourced MLB/broadcast clips. The original files are **git-ignored**
+and not cleared for redistribution. The owner-review build now also contains two trimmed 2D reference
+videos under `web/public/sessions/` so the human can compare source and reconstruction in sync.
+Those trimmed files are provisional and inherit the same unresolved rights problem.
 
-**The demo video is where this bites.** Decide before Task 18: self-record a pitch (cleanest), ship
-3D-only with no source imagery anywhere, or re-run on a CC-licensed clip. Full table in
-[`ATTRIBUTION.md`](ATTRIBUTION.md). **Do not add a video-playback pane without resolving this.**
+**Do not deploy this owner-review build as the final submission until this is resolved.** Before
+Task 18: self-record a pitch (cleanest), remove the 2D assets and ship 3D-only, or re-run both views
+on cleared footage. Full table in [`ATTRIBUTION.md`](ATTRIBUTION.md).
 
 ---
 
@@ -359,5 +360,5 @@ evals/pitch-analysis.md           ★ tool-surface verification record + prompt 
    that act on the human's live 3D view.*
 
 ⚠️ Unresolved and blocking final submission: **source-footage rights** (§6 above). The current
-professional-player sessions may be used for provisional internal validation, but not the final
-submission assets unless rights are cleared.
+professional-footage sessions and synchronized 2D files may be used for provisional internal
+validation, but not the final deployment or submission assets unless rights are cleared.

@@ -42,15 +42,18 @@
 > ### ⚠️ Unresolved licensing — read before publishing
 >
 > The clips in `input_baseball/` are **third-party MLB/broadcast-derived videos** obtained from
-> YouTube. They are used here **only as local development input** and are **excluded from git**
-> (see `.gitignore`). They are **not** cleared for redistribution.
+> YouTube. They are **not** cleared for redistribution. The owner-review build now includes two
+> trimmed, synchronized 2D reference files under `web/public/sessions/`; those files are
+> **provisional review assets and must not be deployed or used in the final submission** until the
+> footage is replaced with cleared material or permission is confirmed.
 >
 > `.claude/steering/tech.md` §7 says "no scraped broadcast footage," and strictly these clips
 > violate that rule. The pragmatic position taken for the hackathon window:
 >
 > | Artifact | Ships publicly? | Rationale |
 > |---|---|---|
-> | Source `.mp4` files | ❌ **No** — git-ignored | Not ours to redistribute |
+> | Original source `.mp4` files | ❌ **No** — git-ignored | Not ours to redistribute |
+> | Trimmed 2D reference `.mp4` files | ⚠️ **Provisional local review only** | Requested for synchronized UI review; still uncleared |
 > | Derived `session.json` (3D joint coordinates) | ✅ Yes | Numerical measurements derived from observation, not a copy of the work |
 > | Rendered 2D overlays on source frames | ❌ No | Contains the source imagery |
 > | 3D skeleton renders (no source imagery) | ✅ Yes | Contains no copyrighted footage |
@@ -61,15 +64,16 @@
 >    or the demo video, or
 > 3. Source a Creative Commons / public-domain pitching clip and re-run the pipeline.
 >
-> Option 2 is already what the architecture does by default — the web app renders the 3D
-> reconstruction, not the video. **Do not add a video-playback pane without resolving this.**
+> The synchronized pane is useful for validating whether the reconstruction matches the source,
+> but it changes the rights posture. Do not redeploy this owner-review build until these provisional
+> files are replaced or cleared.
 
 ### Clips currently used for development
 
 | sessionId | Subject | Source file | Res / fps |
 |---|---|---|---|
-| `scherzer-delivery-01` | Max Scherzer | *Max Scherzer Ground Force Application — ROBBY ROWLAND BREAKDOWNS* | 720×720 @ 60 fps |
-| `skenes-delivery-01` | Paul Skenes | *Paul Skenes Slow Motion Pitching Mechanics …* | 1920×1080 @ 29.97 fps |
+| `delivery-01` | Anonymized in product UI | Elevated side-view delivery | 1920×1080 @ 29.97 fps |
+| `delivery-02` | Anonymized in product UI | Front-side portrait delivery | 1080×1920 @ 23.976 fps |
 
 Manifest: [`pipeline/clips.json`](pipeline/clips.json)
 
