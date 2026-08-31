@@ -1,52 +1,98 @@
 import { useAnalysis } from '../store'
-import { JOINT_NAMES, type JointName, type OverlayName, type Session } from '../types'
+import type { Session } from '../types'
 import { MetricsPanel } from './MetricsPanel'
 import { EventReview } from './EventReview'
 import { UploadPanel } from './UploadPanel'
 
-const OVERLAY_LABEL: Record<OverlayName, string> = {
-  segment_frames: 'Segment frames (triads)',
-  axial_dial: 'Axial-rotation dial',
-  angle_readouts: 'Angle readouts',
-  motion_trail: 'Motion trail',
-  event_markers: 'Event markers',
-}
-
-const PLANES = ['free', 'sagittal', 'frontal', 'transverse'] as const
-
-function SessionMeta({ session }: { session: Session }) {
+function SessionDetails({ session }: { session: Session }) {
   const tb = session.timebase
   return (
-    <div className="meta">
-      <dl>
-        <div><dt>Subject</dt><dd>{session.subject.handedness}-handed</dd></div>
-        <div><dt>View</dt><dd>{session.source.view || '—'}</dd></div>
-        <div><dt>Frames</dt><dd className="mono">{session.source.frameCount}</dd></div>
-        <div><dt>Video fps</dt><dd className="mono">{tb.videoFps.toFixed(2)}</dd></div>
-        <div><dt>Model</dt><dd className="mono">{session.capture.model}</dd></div>
-      </dl>
+    <section className="session-details-section">
+      <details className="session-details">
+        <summary>
+          <span>Session & measurement limits</span>
+          <span className="summary-flags">camera-frame · slow-mo</span>
+        </summary>
+        <div className="meta">
+          <dl>
+            <div><dt>Subject</dt><dd>{session.subject.handedness}-handed</dd></div>
+            <div><dt>View</dt><dd>{session.source.view || '—'}</dd></div>
+            <div><dt>Frames</dt><dd className="mono">{session.source.frameCount}</dd></div>
+            <div><dt>Video fps</dt><dd className="mono">{tb.videoFps.toFixed(2)}</dd></div>
+            <div><dt>Model</dt><dd className="mono">{session.capture.model}</dd></div>
+          </dl>
 
-      <div className="caveats">
-        <div className="caveat">
-          <span className="dot amber" />
-          <div>
-            <strong>Camera-frame reconstruction.</strong> Focal length is estimated
-            (<span className="mono">{session.capture.focalLengthMedian}</span>), so distances are
-            not metric. Lengths are reported as % of body height, never centimetres.
+          <div className="caveats">
+            <div className="caveat">
+              <span className="dot amber" />
+              <div>
+                <strong>Camera-frame reconstruction.</strong> Focal length is estimated
+                (<span className="mono">{session.capture.focalLengthMedian}</span>), so distances are
+                not metric. Lengths are reported as % of body height, never centimetres.
+              </div>
+            </div>
+            {tb.slowMotion && (
+              <div className="caveat">
+                <span className="dot red" />
+                <div>
+                  <strong>Slow-motion source, unknown factor.</strong> Sequence <em>order</em> and
+                  normalised timing stay valid; absolute angular velocity is{' '}
+                  <span className="mono">unavailable</span>.
+                </div>
+              </div>
+            )}
           </div>
         </div>
-        {tb.slowMotion && (
-          <div className="caveat">
-            <span className="dot red" />
-            <div>
-              <strong>Slow-motion source, unknown factor.</strong> Sequence <em>order</em> and
-              normalised timing stay valid; absolute angular velocity is{' '}
-              <span className="mono">unavailable</span>.
-            </div>
+      </details>
+    </section>
+  )
+}
+
+function AgentNotes() {
+  const annotations = useAnalysis((state) => state.annotations)
+  const clearAnnotations = useAnalysis((state) => state.clearAnnotations)
+  const setFrame = useAnalysis((state) => state.setFrame)
+  const selectJoint = useAnalysis((state) => state.selectJoint)
+
+  const openNote = (index: number) => {
+    const note = annotations[index]
+    if (!note) return
+    setFrame(note.frame)
+    if (note.joint) selectJoint(note.joint)
+  }
+
+  return (
+    <section className="agent-notes">
+      <h2>
+        <span className="workflow-step">3</span> Shared notes
+        {annotations.length > 0 && <span className="count">{annotations.length}</span>}
+      </h2>
+      {annotations.length === 0 ? (
+        <div className="empty-notes">
+          <span className="pin-glyph">◇</span>
+          <div>
+            <strong>Agent observations land on the evidence.</strong>
+            <p>An agent can use <span className="mono">annotate_frame</span> to pin a note to a moment and joint. Notes are observations—not measurements.</p>
           </div>
-        )}
-      </div>
-    </div>
+        </div>
+      ) : (
+        <>
+          <div className="ann-list">
+            {annotations.map((annotation, index) => (
+              <button key={annotation.id} className={annotation.severity} onClick={() => openNote(index)}>
+                <span className="ann-meta">
+                  <span className="tag agent">agent note</span>
+                  <span className="mono">f{annotation.frame}</span>
+                </span>
+                <strong>{annotation.label}</strong>
+                <span className="dim">{annotation.joint ? annotation.joint.replaceAll('_', ' ') : 'frame note'} · open evidence</span>
+              </button>
+            ))}
+          </div>
+          <button className="btn small" onClick={clearAnnotations}>Clear notes</button>
+        </>
+      )}
+    </section>
   )
 }
 
@@ -54,32 +100,24 @@ export function SidePanel({ session }: { session: Session | null }) {
   const analysis = useAnalysis((s) => s.analysis)
   const index = useAnalysis((s) => s.index)
   const loadSession = useAnalysis((s) => s.loadSession)
-  const selectedJoint = useAnalysis((s) => s.selectedJoint)
-  const selectJoint = useAnalysis((s) => s.selectJoint)
-  const overlays = useAnalysis((s) => s.overlays)
-  const setOverlay = useAnalysis((s) => s.setOverlay)
-  const cameraPlane = useAnalysis((s) => s.cameraPlane)
-  const setCameraPlane = useAnalysis((s) => s.setCameraPlane)
-  const annotations = useAnalysis((s) => s.annotations)
-  const clearAnnotations = useAnalysis((s) => s.clearAnnotations)
   // Uploads require a local CUDA service and are development tooling. Keeping that
   // control out of the public static deployment avoids a dead call-to-action for judges.
   const showLocalUpload = import.meta.env.DEV || import.meta.env.VITE_ENABLE_LOCAL_UPLOAD === 'true'
 
   return (
     <aside className="panel">
-      <section>
-        <h2>Sessions</h2>
+      <section className="evidence-session">
+        <h2>Evidence session</h2>
         <div className="session-list">
           {index.length === 0 && <p className="dim small">No analysed sessions yet.</p>}
-          {index.map((s) => (
+          {index.map((item) => (
             <button
-              key={s.sessionId}
-              className={`session-item ${session?.sessionId === s.sessionId ? 'on' : ''}`}
-              onClick={() => loadSession(s.sessionId)}
+              key={item.sessionId}
+              className={`session-item ${session?.sessionId === item.sessionId ? 'on' : ''}`}
+              onClick={() => loadSession(item.sessionId)}
             >
-              <span className="si-label">{s.label}</span>
-              <span className="si-meta mono">{s.frameCount} frames · {s.handedness}</span>
+              <span className="si-label">{item.label}</span>
+              <span className="si-meta mono">{item.frameCount} frames · {item.handedness}</span>
             </button>
           ))}
         </div>
@@ -89,90 +127,10 @@ export function SidePanel({ session }: { session: Session | null }) {
 
       {session && (
         <>
-          {analysis && <MetricsPanel session={session} analysis={analysis} />}
           <EventReview />
-
-          <section>
-            <h2>Capture</h2>
-            <SessionMeta session={session} />
-          </section>
-
-          <section>
-            <h2>View</h2>
-            <div className="chips">
-              {PLANES.map((p) => (
-                <button
-                  key={p}
-                  className={`chip ${cameraPlane === p ? 'on' : ''}`}
-                  onClick={() => setCameraPlane(p)}
-                >
-                  {p}
-                </button>
-              ))}
-            </div>
-
-            <div className="toggles">
-              {(Object.keys(OVERLAY_LABEL) as OverlayName[]).map((o) => (
-                <label key={o} className="toggle">
-                  <input
-                    type="checkbox"
-                    checked={overlays[o]}
-                    onChange={(e) => setOverlay(o, e.target.checked)}
-                  />
-                  <span>{OVERLAY_LABEL[o]}</span>
-
-                </label>
-              ))}
-            </div>
-          </section>
-
-          <section>
-            <h2>Focus joint</h2>
-            <div className="chips wrap">
-              <button
-                className={`chip ${selectedJoint === null ? 'on' : ''}`}
-                onClick={() => selectJoint(null)}
-              >
-                none
-              </button>
-              {JOINT_NAMES.filter((j) => !j.includes('cubital') && !j.includes('olecranon')).map(
-                (j) => (
-                  <button
-                    key={j}
-                    className={`chip ${selectedJoint === j ? 'on' : ''}`}
-                    onClick={() => selectJoint(j as JointName)}
-                  >
-                    {j}
-                  </button>
-                ),
-              )}
-            </div>
-          </section>
-
-          <section>
-            <h2>
-              Agent annotations
-              {annotations.length > 0 && <span className="count">{annotations.length}</span>}
-            </h2>
-            {annotations.length === 0 ? (
-              <p className="dim small">
-                None yet. An agent can pin notes into the 3D view with{' '}
-                <span className="mono">annotate_frame</span>; they stay here and in the viewer
-                while you scrub.
-              </p>
-            ) : (
-              <>
-                <ul className="ann-list">
-                  {annotations.map((a) => (
-                    <li key={a.id} className={a.severity}>
-                      <span className="mono dim">f{a.frame}</span> {a.label}
-                    </li>
-                  ))}
-                </ul>
-                <button className="btn small" onClick={clearAnnotations}>Clear</button>
-              </>
-            )}
-          </section>
+          {analysis && <MetricsPanel session={session} analysis={analysis} />}
+          <AgentNotes />
+          <SessionDetails session={session} />
         </>
       )}
 

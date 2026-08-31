@@ -1,22 +1,28 @@
 /**
- * Measured values against published reference ranges.
+ * Compact, evidence-first measurement inspector.
  *
- * Every row carries its confidence grade and its citation keys. That is the honesty
- * contract made visible: the same `reference.ts` entries feed this table and the
- * `get_metric_definition` WebMCP tool, so the screen and the agent can never disagree.
+ * Event values and their observed ranges come from the same reference definitions the
+ * WebMCP tools use. Live values deliberately omit range styling: they are exploratory
+ * traces at the current frame, not event-anchored comparisons.
  */
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { AnalysisResult, MetricReading } from '../biomech/analyze'
 import type { MetricName } from '../biomech/angles'
-import { CITATIONS, referenceFor } from '../biomech/reference'
+import { CITATIONS, METRIC_INFO, REFERENCES, referenceFor } from '../biomech/reference'
 import { useAnalysis } from '../store'
 import type { Confidence, EventName, Session } from '../types'
 
 const EVENT_LABEL: Record<EventName, string> = {
   foot_contact: 'Lead foot contact',
-  max_external_rotation: 'MER candidate (review)',
+  max_external_rotation: 'MER candidate',
   ball_release: 'Ball release',
+}
+
+const EVENT_SHORT: Record<EventName, string> = {
+  foot_contact: 'FC',
+  max_external_rotation: 'MER',
+  ball_release: 'BR',
 }
 
 const PRETTY: Partial<Record<MetricName, string>> = {
@@ -33,56 +39,146 @@ const PRETTY: Partial<Record<MetricName, string>> = {
   lead_foot_angle: 'Foot-to-pelvis angle proxy',
 }
 
-function ConfidenceBadge({ c }: { c: Confidence }) {
+export function ConfidenceBadge({ c }: { c: Confidence }) {
   return <span className={`conf ${c}`} title={`Measurement confidence: ${c}`}>{c}</span>
 }
 
-function Row({ r, onExplain }: { r: MetricReading; onExplain: () => void }) {
-  const ref = r.reference
-  const pct =
-    ref && r.value !== null
-      ? Math.max(0, Math.min(1, (r.value - ref.range[0]) / (ref.range[1] - ref.range[0])))
-      : null
+function statusText(reading: MetricReading) {
+  if (reading.status === 'unavailable') return 'Comparison held until this event is reviewed'
+  if (!reading.reference) return 'No published range'
+  if (reading.status === 'within') return 'Inside observed range'
+  return `${reading.status === 'above' ? 'Above' : 'Below'} observed range by ${reading.magnitude}°`
+}
+
+function MetricInfo({ metric, event }: { metric: MetricName; event?: EventName }) {
+  const exact = event ? referenceFor(metric, event) : undefined
+  const fallback = METRIC_INFO[metric] ?? REFERENCES.find((candidate) => candidate.metric === metric)
+  const info = exact ?? fallback
+  if (!info) return null
 
   return (
-    <div className={`mrow ${r.status}`}>
-      <button className="mrow-name" onClick={onExplain} title="What is this and where does the range come from?">
-        {PRETTY[r.metric] ?? r.metric}
-      </button>
-      <div className="mrow-val">
-        <span className="mono val">{r.value === null ? '—' : `${r.value}°`}</span>
-        <ConfidenceBadge c={r.confidence} />
-      </div>
-      {ref && (
-        <div className="mrow-bar" title={`reference ${ref.range[0]}–${ref.range[1]}°`}>
-          <div className="ref-band" />
-          {pct !== null && (
-            <div
-              className={`ref-mark ${r.status}`}
-              style={{ left: `${(pct * 100).toFixed(1)}%` }}
-            />
-          )}
+    <div className="metric-info" role="region" aria-label={`${PRETTY[metric] ?? metric} definition`}>
+      <p>{info.plainLanguage}</p>
+      <dl>
+        <div><dt>Computed as</dt><dd>{info.computation}</dd></div>
+        <div><dt>Use with care</dt><dd>{info.limitations}</dd></div>
+        <div>
+          <dt>Reference</dt>
+          <dd>
+            {exact
+              ? <>{exact.range[0]}–{exact.range[1]}° observed range—not a target.</>
+              : 'No reference comparison is applied in live mode.'}
+          </dd>
         </div>
+      </dl>
+      {exact && exact.citations.length > 0 && (
+        <ul className="cites">
+          {exact.citations.map((citation) => (
+            <li key={citation}>
+              {CITATIONS[citation]?.text ?? citation}
+              {CITATIONS[citation]?.doi && (
+                <>{' '}<a href={`https://doi.org/${CITATIONS[citation].doi}`} target="_blank" rel="noreferrer">source</a></>
+              )}
+            </li>
+          ))}
+        </ul>
       )}
-      <div className="mrow-meta dim">
-        {r.status === 'unavailable'
-          ? 'comparison unavailable · review event frame'
-          : ref ? `ref ${ref.range[0]}–${ref.range[1]}°` : 'no published range'}
-        {r.status === 'above' || r.status === 'below'
-          ? ` · ${r.status} by ${r.magnitude}°`
-          : r.status === 'within'
-            ? ' · within'
-            : ''}
-      </div>
     </div>
   )
 }
 
+function EventMetricTile({
+  reading,
+  expanded,
+  onToggle,
+}: {
+  reading: MetricReading
+  expanded: boolean
+  onToggle: () => void
+}) {
+  const ref = reading.reference
+  // Give the observed band breathing room so values outside it visibly sit outside,
+  // rather than being clamped onto an apparently full-width reference bar.
+  const marker = ref && reading.value !== null
+    ? Math.max(0, Math.min(100, 25 + ((reading.value - ref.range[0]) / (ref.range[1] - ref.range[0])) * 50))
+    : null
+
+  return (
+    <article className={`metric-tile ${reading.status} ${expanded ? 'expanded' : ''}`}>
+      <div className="metric-tile-head">
+        <div>
+          <span className="metric-name">{PRETTY[reading.metric] ?? reading.metric}</span>
+          <ConfidenceBadge c={reading.confidence} />
+        </div>
+        <div className="metric-value-wrap">
+          <strong className="metric-value mono">{reading.value === null ? '—' : `${reading.value}°`}</strong>
+          <button
+            className="info-button"
+            onClick={onToggle}
+            aria-expanded={expanded}
+            aria-label={`Explain ${PRETTY[reading.metric] ?? reading.metric}`}
+            title="Definition, method, limits and source"
+          >i</button>
+        </div>
+      </div>
+
+      {ref && (
+        <div className="range-wrap">
+          <div className="range-bar" aria-label={`Observed reference range ${ref.range[0]} to ${ref.range[1]} degrees`}>
+            <div className="range-band" />
+            {marker !== null && <div className={`range-marker ${reading.status}`} style={{ left: `${marker}%` }} />}
+          </div>
+          <div className="range-labels">
+            <span>{statusText(reading)}</span>
+            <span className="mono">ref {ref.range[0]}–{ref.range[1]}°</span>
+          </div>
+        </div>
+      )}
+
+      {expanded && <MetricInfo metric={reading.metric} event={reading.event} />}
+    </article>
+  )
+}
+
+function LiveMetricTile({
+  metric,
+  value,
+  expanded,
+  onToggle,
+}: {
+  metric: MetricName
+  value: number | null
+  expanded: boolean
+  onToggle: () => void
+}) {
+  return (
+    <article className={`metric-tile live-tile ${expanded ? 'expanded' : ''}`}>
+      <div className="metric-tile-head">
+        <span className="metric-name">{PRETTY[metric] ?? metric}</span>
+        <div className="metric-value-wrap">
+          <strong className="metric-value mono">{value === null ? '—' : `${value}°`}</strong>
+          <button
+            className="info-button"
+            onClick={onToggle}
+            aria-expanded={expanded}
+            aria-label={`Explain ${PRETTY[metric] ?? metric}`}
+            title="Definition, method and limits"
+          >i</button>
+        </div>
+      </div>
+      {expanded && <MetricInfo metric={metric} />}
+    </article>
+  )
+}
+
 export function MetricsPanel({ session, analysis }: { session: Session; analysis: AnalysisResult }) {
-  const currentFrame = useAnalysis((s) => s.currentFrame)
-  const setFrame = useAnalysis((s) => s.setFrame)
-  const [explain, setExplain] = useState<{ metric: MetricName; event: EventName } | null>(null)
+  const currentFrame = useAnalysis((state) => state.currentFrame)
+  const setFrame = useAnalysis((state) => state.setFrame)
   const [mode, setMode] = useState<'events' | 'live'>('events')
+  const [selectedEvent, setSelectedEvent] = useState<EventName>(
+    analysis.events[0]?.name ?? 'foot_contact',
+  )
+  const [expanded, setExpanded] = useState<string | null>(null)
 
   const live = useMemo(
     () => Object.fromEntries(
@@ -95,98 +191,107 @@ export function MetricsPanel({ session, analysis }: { session: Session; analysis
   )
 
   const byEvent = useMemo(() => {
-    const g = new Map<EventName, MetricReading[]>()
-    for (const r of analysis.readings) {
-      const arr = g.get(r.event) ?? []
-      arr.push(r)
-      g.set(r.event, arr)
+    const grouped = new Map<EventName, MetricReading[]>()
+    for (const reading of analysis.readings) {
+      const rows = grouped.get(reading.event) ?? []
+      rows.push(reading)
+      grouped.set(reading.event, rows)
     }
-    return g
+    return grouped
   }, [analysis])
 
-  const def = explain ? referenceFor(explain.metric, explain.event) : undefined
+  // Agent and timeline navigation remain legible in the inspector: seeking to an exact
+  // event selects the same event here without introducing a second state path.
+  useEffect(() => {
+    const event = analysis.events.find((candidate) => candidate.frame === currentFrame)
+    if (event) setSelectedEvent(event.name)
+  }, [analysis.events, currentFrame])
+
+  useEffect(() => setExpanded(null), [mode, selectedEvent])
+
+  const activeEvent = analysis.events.find((event) => event.name === selectedEvent)
+  const eventRows = byEvent.get(selectedEvent) ?? []
+
+  const chooseEvent = (event: EventName, frame: number) => {
+    setSelectedEvent(event)
+    setFrame(frame)
+  }
+
+  const toggleInfo = (key: string) => setExpanded((current) => current === key ? null : key)
 
   return (
     <section className="metrics">
       <h2>
-        Measurements
-        <span className="seg-toggle">
-          <button className={mode === 'events' ? 'on' : ''} onClick={() => setMode('events')}>at events</button>
-          <button className={mode === 'live' ? 'on' : ''} onClick={() => setMode('live')}>live</button>
+        <span className="workflow-step">2</span> Inspect measurements
+        <span className="seg-toggle" aria-label="Measurement mode">
+          <button className={mode === 'events' ? 'on' : ''} onClick={() => setMode('events')}>At events</button>
+          <button className={mode === 'live' ? 'on' : ''} onClick={() => setMode('live')}>Live</button>
         </span>
       </h2>
 
       {mode === 'events' ? (
-        analysis.events.map((ev) => {
-          const rows = byEvent.get(ev.name) ?? []
-          return (
-            <div key={ev.name} className="mgroup">
-              <button className="mgroup-head" onClick={() => setFrame(ev.frame)}>
-                <span>{EVENT_LABEL[ev.name]}</span>
-                <span className="mono dim">f{ev.frame}</span>
-                <ConfidenceBadge c={ev.confidence} />
+        <>
+          <div className="event-tabs" role="tablist" aria-label="Pitching events">
+            {analysis.events.map((event) => (
+              <button
+                key={event.name}
+                className={selectedEvent === event.name ? 'on' : ''}
+                onClick={() => chooseEvent(event.name, event.frame)}
+                role="tab"
+                aria-selected={selectedEvent === event.name}
+                title={EVENT_LABEL[event.name]}
+              >
+                <span>{EVENT_SHORT[event.name]}</span>
+                <span className="mono">f{event.frame}</span>
+                <i className={`confidence-dot ${event.confidence}`} aria-label={`${event.confidence} confidence`} />
               </button>
-              {rows.length === 0 && <p className="dim small">No referenced metrics at this event.</p>}
-              {rows.map((r) => (
-                <Row
-                  key={`${r.event}:${r.metric}`}
-                  r={r}
-                  onExplain={() => setExplain({ metric: r.metric, event: r.event })}
-                />
-              ))}
-            </div>
-          )
-        })
-      ) : (
-        <div className="mgroup">
-          <div className="mgroup-head static">
-            <span>Frame {currentFrame}</span>
-            <span className="mono dim">{session.frames[currentFrame]?.t.toFixed(2)}s</span>
-          </div>
-          {(Object.keys(live) as MetricName[]).map((k) => (
-            <div key={k} className="mrow live">
-              <span className="mrow-name static">{PRETTY[k] ?? k}</span>
-              <div className="mrow-val">
-                <span className="mono val">{live[k] === null ? '—' : `${live[k]}°`}</span>
-              </div>
-            </div>
-          ))}
-          <p className="dim small">
-            Live values are exploratory traces. Only the event view applies vetted,
-            construct-compatible reference comparisons.
-          </p>
-        </div>
-      )}
-
-      {def && (
-        <div className="explain" role="dialog">
-          <div className="explain-head">
-            <strong>{PRETTY[def.metric] ?? def.metric}</strong>
-            <button className="btn tiny" onClick={() => setExplain(null)}>close</button>
-          </div>
-          <p>{def.plainLanguage}</p>
-          <p className="dim"><strong>How it is computed.</strong> {def.computation}</p>
-          <p className="dim"><strong>Limitations.</strong> {def.limitations}</p>
-          <p className="dim">
-            <strong>Reference.</strong> {def.range[0]}–{def.range[1]}°
-            {def.typical !== undefined ? ` (typical ${def.typical}°${def.sd ? ` ± ${def.sd}` : ''})` : ''}
-          </p>
-          <ul className="cites">
-            {def.citations.map((c) => (
-              <li key={c}>
-                {CITATIONS[c]?.text ?? c}
-                {CITATIONS[c]?.doi && (
-                  <>
-                    {' '}
-                    <a href={`https://doi.org/${CITATIONS[c].doi}`} target="_blank" rel="noreferrer">
-                      doi:{CITATIONS[c].doi}
-                    </a>
-                  </>
-                )}
-              </li>
             ))}
-          </ul>
-        </div>
+          </div>
+
+          <div className="measurement-context">
+            <div>
+              <strong>{EVENT_LABEL[selectedEvent]}</strong>
+              {selectedEvent === 'max_external_rotation' && <span className="tag warn">review candidate</span>}
+            </div>
+            {activeEvent && <ConfidenceBadge c={activeEvent.confidence} />}
+          </div>
+
+          <div className="metric-grid event-metric-grid">
+            {eventRows.length === 0 && <p className="dim small">No construct-compatible reference measurements at this event.</p>}
+            {eventRows.map((reading) => {
+              const key = `${reading.event}:${reading.metric}`
+              return (
+                <EventMetricTile
+                  key={key}
+                  reading={reading}
+                  expanded={expanded === key}
+                  onToggle={() => toggleInfo(key)}
+                />
+              )
+            })}
+          </div>
+          <p className="measurement-footnote">Observed pitching-population ranges are context, not targets or diagnoses.</p>
+        </>
+      ) : (
+        <>
+          <div className="live-context">
+            <span>Frame <strong className="mono">{currentFrame}</strong></span>
+            <span className="mono dim">{session.frames[currentFrame]?.t.toFixed(2)} video-s</span>
+            <span className="tag exploratory">exploratory</span>
+          </div>
+          <div className="metric-grid live-metric-grid">
+            {(Object.keys(live) as MetricName[]).map((metric) => (
+              <LiveMetricTile
+                key={metric}
+                metric={metric}
+                value={live[metric]}
+                expanded={expanded === `live:${metric}`}
+                onToggle={() => toggleInfo(`live:${metric}`)}
+              />
+            ))}
+          </div>
+          <p className="measurement-footnote">Live values move with the workspace. Reference comparisons are applied only at reviewed event anchors.</p>
+        </>
       )}
     </section>
   )

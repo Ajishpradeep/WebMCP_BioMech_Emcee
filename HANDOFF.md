@@ -3,7 +3,7 @@
 > **New session? Read this file first, then [`CLAUDE.md`](CLAUDE.md).** This is the live log of what
 > is done, what was learned, and what to do next. Updated at the end of every completed task.
 
-**Last updated:** 2026-08-31, after removing the owner's rejected 38-frame second delivery
+**Last updated:** 2026-09-01, after the owner-review evidence-inspector convergence milestone
 **Current state:** **OWNER APP-REVIEW HOLD.** The canonical product name is Biomech Emcee and the
 participant identity is recorded as Pradeep Rajasekar (preferred name: Ajish). The next session is
 for the owner's application observations and requested fixes—not Devpost submission work. Do not
@@ -92,13 +92,14 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 | 6 — 🔒 Freeze schema | ✅ | **Frozen.** `pipeline/joint_map.py` ↔ `web/src/types.ts`. |
 | 7 — Smoothing + export | ✅ | Savitzky–Golay. Proportions validated (§4). |
 | 11 — Web app scaffold | ✅ | React 19 + Vite 8 + r3f + Zustand. |
-| 12 — 2D/3D viewer + timeline | ✅ | Frame-synchronized source reference beside the 3D reconstruction; playback, scrub, camera presets, trail, and annotation pins. |
+| 12 — 2D/3D viewer + timeline | ✅ | Frame-synchronized source reference beside the 3D reconstruction; playback, scrub, annotation pins, and a persistent shared-view dock for camera, focus, and evidence layers. |
 | 8–10 — Biomechanics engine | ✅ | `web/src/biomech/`; complete suite currently 79 tests green, including the retained real-session numerical audit and synthetic short-clip refusal. |
-| 12b — Metrics panel | ✅ | Readings, confidence badges, cited definitions, sequence chart. |
+| 12b — Metrics panel | ✅ | Compact event/live tiles, confidence/status color, full-width observed-range bars, and inline cited definitions. |
 | **13–15 — WebMCP tools ★** | ✅ code / 🟡 live | 13 handlers implemented; registration is one stable document surface with a visible partial/failure state; live registration is still unverified. |
 | 16 — Verification + evals | 🟡 | Headless half done ([`evals/pitch-analysis.md`](evals/pitch-analysis.md)); **DevTools + ChatGPT in-app browser still owed.** |
 | 16b — Scientific truth gate | 🟡 phase 2 | Incompatible comparisons removed; branch flips fixed; short-clip event/KSA gates implemented. Human MER review and external validation remain. |
 | P1 — Human event correction | ✅ | Reviewers can apply the current frame to FC/MER/BR; analysis and WebMCP reads update together. |
+| P1 — Owner-review UX hierarchy | ✅ | Right inspector now reads as event anchors → measurements → shared notes; all four write-tool effects have prominent visible surfaces. |
 | 17 — GCP deploy | ✅ | Public Cloud Run origin verified; see [`docs/deployment.md`](docs/deployment.md). |
 | 18 — Submission package | 🟡 | README, license, and Devpost draft complete; cleared footage, live-host verification, screenshots, video, and final form answers remain. |
 
@@ -276,6 +277,27 @@ professional footage.
 **Still owed on Task 16:** DevTools registration + "Run tool" for all 13, write tools visibly moving
 the screen, and end-to-end in ChatGPT's in-app browser. Those need the deployed HTTPS origin.
 
+## 4d. Owner-review UX convergence (2026-09-01)
+
+The right inspector is now an explicit evidence-review sequence rather than a flat stack:
+**1 Review event anchors → 2 Inspect measurements → 3 Shared notes.** Event cards navigate to
+their evidence, show frame/confidence, and only enable correction when the inspected frame preserves
+FC → MER → BR order. Human corrections still recompute the same `AnalysisStore` read by WebMCP.
+
+At-event measurements now show one selected event at a time. Each reading is a full-width tile with
+status-colored value text, confidence, an observed-range bar, and an accessible `i` disclosure for
+definition, computation, limitation, range, and citation. Live mode uses the same compact tile
+language but deliberately omits comparison styling and labels the values exploratory.
+
+KSA remains in the left evidence area. Camera plane, focused joint, and overlays moved out of the
+scrolling panel into a persistent **Shared view** dock beside it. This makes `focus_joint` and
+`set_overlay` actions immediately legible. `seek_to_event` also selects the matching measurement
+event, while `annotate_frame` produces a clickable shared note that returns the human to its frame
+and joint. No WebMCP schema, tool behavior, biomechanics, or scientific boundary changed.
+
+**Verified:** local production render at 1600×1000 and 1200×900; 79 tests; typecheck; production
+build. The existing bundle-size warning remains a deferred P2 concern.
+
 ## 5. The `session.json` contract (FROZEN)
 
 `pipeline/joint_map.py` `JOINT_NAMES` ↔ `web/src/types.ts` `JOINT_NAMES` must match **exactly, in
@@ -372,5 +394,5 @@ evals/pitch-analysis.md           ★ tool-surface verification record + prompt 
    that act on the human's live 3D view.*
 
 ⚠️ Unresolved and blocking final submission: **source-footage rights** (§6 above). The current
-professional-footage sessions and synchronized 2D files may be used for provisional internal
+professional-footage session and synchronized 2D file may be used for provisional internal
 validation, but not the final deployment or submission assets unless rights are cleared.

@@ -148,6 +148,16 @@ export const REFUSALS: Record<string, { reason: string; insteadUse: string[] }> 
 export const METRIC_INFO: Partial<
   Record<MetricName, { plainLanguage: string; computation: string; limitations: string }>
 > = {
+  elbow_flexion: {
+    plainLanguage: 'How bent the throwing elbow is at the inspected frame.',
+    computation: 'Angle between the humerus and forearm long axes, from joint centres alone.',
+    limitations: 'Robust to measure from shoulder, elbow and wrist positions. A population comparison is meaningful only at the matching pitching event.',
+  },
+  lead_knee_flexion: {
+    plainLanguage: 'How bent the front knee is at the inspected frame.',
+    computation: 'Angle between the lead thigh and shank long axes.',
+    limitations: 'Robust to measure, though the flexion axis is ill-conditioned near full extension. A population comparison is meaningful only at the matching pitching event.',
+  },
   shoulder_abduction: {
     plainLanguage: 'How far the throwing arm is raised away from the trunk.',
     computation: 'Elevation term of the ISB Y–X–Y decomposition of the humerus relative to the thorax frame.',

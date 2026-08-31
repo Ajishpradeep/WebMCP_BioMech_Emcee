@@ -77,7 +77,8 @@ using [`docs/devpost-resume.md`](docs/devpost-resume.md).
 ### P1 after the stable submission baseline
 
 - Add draggable or explicit “set current frame as event” controls and recompute the live analysis.
-- Add a visible agent activity/evidence rail for tool calls and pinned observations.
+- 🟡 Pinned observations and shared viewer state now have prominent persistent surfaces. A
+  chronological tool-call activity log remains deferred unless owner review proves it necessary.
 - Add runtime session-schema validation and cancellation for stale fetches.
 
 ### P2 / post-submission
