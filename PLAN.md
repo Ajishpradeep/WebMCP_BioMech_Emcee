@@ -41,7 +41,7 @@ biomechanics evidence workspace**, not an autonomous coach or a motion-capture r
 | F | P0 | Judge-facing UX | No dead production upload CTA; first-paint loader; narrow layout usable | ✅ local production visual check |
 | G | P0 | WebMCP runtime hardening | Exactly 13 tools or visible failure; success/error contract tests | 🟡 code complete; live host verification remains |
 | H | P1 | Human event correction loop | Human changes FC/MER/BR; dependent analysis and agent reads update | ✅ store + tool regression test |
-| I | P0 | Submission package | README and license complete; clean footage decision, live eval, <3 min demo, Devpost draft remain | 🟡 |
+| I | P0 | Submission package | README, license, and Devpost draft complete; cleared footage, live eval, screenshots, and <3 min demo remain | 🟡 |
 
 ### P0 acceptance decisions
 

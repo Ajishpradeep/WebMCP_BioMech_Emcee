@@ -3,11 +3,13 @@
 > **New session? Read this file first, then [`CLAUDE.md`](CLAUDE.md).** This is the live log of what
 > is done, what was learned, and what to do next. Updated at the end of every completed task.
 
-**Last updated:** 2026-08-31, after public Cloud Run deployment
-**Next task:** scientific truth gate, then finish Task 16 against the public HTTPS origin. The
-public workspace is <https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app>; deployment details and
-reproduction steps are in [`docs/deployment.md`](docs/deployment.md). Recovery sequence and commit
-gates: [`PLAN.md`](PLAN.md).
+**Last updated:** 2026-08-31, after initializing the official Devpost workflow and drafting the
+submission package
+**Next task:** finish Task 16 against the public HTTPS origin, then replace the provisional
+professional-player sessions with cleared footage before recording the final demo. The public
+workspace is <https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app>; the requirements-backed submission
+draft is [`devpost-submission.md`](devpost-submission.md), and deployment details are in
+[`docs/deployment.md`](docs/deployment.md). Recovery sequence and commit gates: [`PLAN.md`](PLAN.md).
 
 ---
 
@@ -93,7 +95,7 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 | 16b — Scientific truth gate | 🟡 phase 1 | Incompatible comparisons removed and four-segment sequence labeled; manual event-frame validation remains. |
 | P1 — Human event correction | ✅ | Reviewers can apply the current frame to FC/MER/BR; analysis and WebMCP reads update together. |
 | 17 — GCP deploy | ✅ | Public Cloud Run origin verified; see [`docs/deployment.md`](docs/deployment.md). |
-| 18 — Submission package | ⏭️ | README, license, clean footage, video, description, final Devpost checks. |
+| 18 — Submission package | 🟡 | README, license, and Devpost draft complete; cleared footage, live-host verification, screenshots, video, and final form answers remain. |
 
 The public UI intentionally shows only precomputed review sessions. The local CUDA upload panel is
 available in development but hidden in the deployed static build, so judges do not encounter a
@@ -338,11 +340,15 @@ evals/pitch-analysis.md           ★ tool-surface verification record + prompt 
 1. **Task 16, browser half.** Work the unticked boxes in `evals/pitch-analysis.md` §1. The one that
    can silently invalidate the rest is the **return-shape convention** — confirm against a live
    agent before recording the demo, and if it needs the envelope, change `toolResult()` only.
-2. **Task 17 — deploy.** Static build, HTTPS, and `curl -I` the deployed URL: an
-   `Origin-Agent-Cluster: ?0` header disables WebMCP with no error at all.
-3. **Task 18 — submission.** Demo structure is in PLAN.md. **Lead with `annotate_frame`** — the
+2. **Task 18 — submission assets.** The public Cloud Run deployment, README, license, and initial
+   Devpost draft are complete. Replace the provisional professional-player sessions with cleared
+   footage, capture final screenshots, and record the public narrated demo under three minutes.
+3. **Task 18 — final form.** Use [`devpost-submission.md`](devpost-submission.md) as the controlled
+   draft. **Lead with `annotate_frame`** — the
    agent's reasoning becoming a persistent pin in the human's workspace is the strongest single
    argument in the submission. The line for the Devpost description: *4 of 13 tools are write tools
    that act on the human's live 3D view.*
 
-⚠️ Unresolved and blocking Task 18: **source-footage rights** (§6 above). Decide before recording.
+⚠️ Unresolved and blocking final submission: **source-footage rights** (§6 above). The current
+professional-player sessions may be used for provisional internal validation, but not the final
+submission assets unless rights are cleared.

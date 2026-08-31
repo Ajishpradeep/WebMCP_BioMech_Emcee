@@ -37,3 +37,5 @@ web/dist/
 # Uploaded clips (scratch, local backend only)
 pipeline/data/uploads/
 web/tsconfig.tsbuildinfo
+# Local Devpost workflow progress (not project source or submission content)
+.devpost-hackathon-state.json
