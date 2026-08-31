@@ -17,7 +17,7 @@ Last updated: 2026-09-01. Status values require observed evidence: `PASS`, `FAIL
 | LIVE WEBMCP | All 13 runtime checks | PASS | Every tool returned native status `Completed`; correct refusals count as passes |
 | LIVE WEBMCP | Four visible write effects | PASS | Screens observed: frame 562→701; elbow/side focus; 5→4 layers; persistent note |
 | LIVE WEBMCP | Return shape confirmed | PASS | Plain objects were preserved in native `Completed` outputs; no envelope change needed |
-| LIVE WEBMCP | ChatGPT in-app browser / natural-language evals | BLOCKED | ChatGPT Desktop/in-app browser is unavailable from this Codex environment |
+| LIVE WEBMCP | ChatGPT in-app browser / natural-language evals | PASS | Owner-observed prompt run discovered all 13 tools, read corrected state, visibly navigated/focused, and pinned a note |
 | EVIDENCE | Redistribution rights / provenance | BLOCKED | Current synchronized source video is provisional |
 | EVIDENCE | Reconstruction QA / event review / final bundle | PENDING | Run only on retained cleared evidence path |
 | FINAL DEPLOYMENT | Exact revision / HTTPS / headers / cold load | PENDING | Retest after evidence clearance |
@@ -99,23 +99,55 @@ Last updated: 2026-09-01. Status values require observed evidence: `PASS`, `FAIL
 - Temporary visual captures live under `/tmp/biomech-webmcp-*.png`. They are validation-only and
   must not be committed or reused as final submission assets because the current 2D footage remains
   uncleared.
-- Remaining gate: run the natural-language prompt suite in **ChatGPT Desktop's in-app browser** and
-  capture exact client/version behavior. This environment cannot launch that client, so Stage Two
-  remains blocked even though deterministic native Chrome interoperability passed.
+- The remaining natural-language gate was cleared by the owner-observed ChatGPT in-app-browser run
+  below. The exact ChatGPT app/build number was not captured, so do not claim one.
+
+## ChatGPT in-app-browser run — 2026-09-01
+
+- Client: **ChatGPT in-app browser**, opened and observed by the project owner against the public
+  HTTPS origin. The exact ChatGPT desktop/mobile app version and build were not captured. The app
+  itself requires no login; this run proves that the client exposed and authorized the site's
+  capabilities for reads and visible writes, not that an OAuth-style account grant occurred.
+- Tool discovery: when asked whether it used WebMCP and which tools were reachable, the agent said
+  its answer came from the page's WebMCP tool and listed the exact intended 13 tools—nine reads and
+  four writes—with no stale or invented names.
+- `What am I looking at?` — **PASS.** The agent reported the right-handed elevated third-base-side
+  session, live f562 / lead-foot-contact state, the 3D camera-frame reconstruction, event set,
+  overlays, and the non-diagnostic/non-metric-distance boundaries. This contains live structured
+  state that is not explained by merely repeating page chrome.
+- `Show maximum layback and leave a note for the reviewer.` — **PASS.** The agent navigated to MER
+  f675, focused the throwing shoulder, proposed a bounded note, requested confirmation for the
+  state-changing annotation, then created the visible persistent note. The confirmation step is
+  normal client-side write approval behavior, not a failure of the chain.
+- Human correction, then `what are the phase events?` — **PASS.** After the owner moved FC to f635,
+  the agent returned FC f635 as manually reviewed, MER f675, and BR f701. Reported times are correct
+  at 29.97 fps (21.188 s, 22.523 s, 23.390 s), and `(675-635)/(701-635)` correctly gives 60.6%.
+- `Is 42° hip–shoulder separation good?` — **PASS with a wording caveat.** The agent refused the
+  good/bad classification, identified the value as an exploratory pelvis-to-trunk proxy, warned
+  that the camera-frame convention may not match published constructs, and did not invent a target
+  range. “Notable separation” is mildly interpretive; future wording should stay descriptive, and
+  pitch-to-pitch use should require the same athlete and compatible capture protocol. This is not a
+  product or tool-contract defect.
+- `What's his elbow valgus torque?` — **PASS.** The agent returned no number, explained that force
+  data and inverse dynamics are unavailable, and offered supported nearby observations.
+- Conclusion: a real agent reliably discovered and used the deployed application's WebMCP surface,
+  including visible navigation, joint focus, persistent annotation, human-state readback, and a
+  scientifically correct refusal. The **LIVE WEBMCP gate is cleared for this provisional origin**.
+  Repeat the critical flow after cleared evidence is deployed; this run does not clear that future
+  revision automatically.
 
 ## Human-agent workflow
 
-- [ ] Ask: “Show maximum layback and leave a note for the reviewer.” The agent chains event lookup,
+- [x] Ask: “Show maximum layback and leave a note for the reviewer.” The agent chains event lookup,
   seek, focus, and annotation; the screen visibly changes.
-- [ ] Move an event in **Review event frames**, then ask for phase events. The returned frame is the
+- [x] Move an event in **Review event frames**, then ask for phase events. The returned frame is the
   human-reviewed frame and `manualOverride` is true.
-- [ ] Ask: “Is 42° hip–shoulder separation good?” The agent calls `get_metric_definition`, explains
+- [x] Ask: “Is 42° hip–shoulder separation good?” The agent calls `get_metric_definition`, explains
   the construct limitation, and does **not** quote a target range.
-- [ ] Ask for elbow valgus torque or pitch velocity. The agent refuses rather than fabricating a value.
+- [x] Ask for elbow valgus torque or pitch velocity. The agent refuses rather than fabricating a value.
 
-The underlying native tool calls, visible writes, human correction readback, construct limitation,
-and torque refusal passed in Chrome. These boxes remain open because they test **agent selection from
-natural language**, not whether a manually chosen tool works.
+The owner-observed ChatGPT run confirms **agent selection from natural language** as well as the
+underlying native Chrome tool behavior. The final cleared deployment must repeat this sequence.
 
 ## Evidence to retain
 

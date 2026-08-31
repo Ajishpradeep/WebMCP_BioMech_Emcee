@@ -95,7 +95,7 @@ offline; session review and WebMCP execution are browser-local.
 
 1. Open <https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app> in ChatGPT's in-app browser or Chrome
    149+ with `chrome://flags/#enable-webmcp-testing` enabled.
-2. Confirm both precomputed sessions appear and the header reports all 13 WebMCP tools. No login is
+2. Confirm the single precomputed review session appears and the header reports all 13 WebMCP tools. No login is
    required.
 3. Ask: “What am I looking at?” The agent should call `get_session_overview` and mention the
    camera-frame and slow-motion limitations.
@@ -174,8 +174,8 @@ Suggested outline:
 
 - Replace final demo data with self-recorded or clearly licensed footage and remove professional
   player names if the cleared dataset does not support them.
-- Complete the live WebMCP checklist in `evals/webmcp-live-checklist.md` using ChatGPT's in-app
-  browser or Chrome 149+.
+- Repeat the critical WebMCP flow in ChatGPT's in-app browser and Chrome after the cleared-evidence
+  revision is deployed; the provisional-origin run is recorded in `evals/webmcp-live-checklist.md`.
 - Capture 3–5 final screenshots from the cleared-data build.
 - Record and publish the narrated under-three-minute YouTube demo.
 - Confirm the official form answers listed below.
@@ -195,7 +195,9 @@ Suggested outline:
   sequence.
 - Event detection is heuristic. Humans can correct events, but a manually labelled accuracy
   benchmark for the final dataset remains required.
-- Live WebMCP registration and tool selection have not yet been recorded in a supported host.
+- The provisional origin passed native Chrome 154 registration/execution and owner-observed ChatGPT
+  in-app-browser tool selection. The exact ChatGPT build was not captured, and the final
+  cleared-evidence revision still requires the same post-deployment retest.
 - Baseball pitching is the only implemented domain workflow. The WebMCP interaction pattern is
   designed for reuse, but no other sport is represented as implemented or validated.
 
@@ -214,7 +216,7 @@ personal answers.
 | Live URL | https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app |
 | Testing instructions / credentials | Use the Testing Instructions above; no credentials required |
 | Public code repository | https://github.com/Ajishpradeep/biomech-emcee |
-| Agents/clients used to test WebMCP | **TODO after live test:** state the exact ChatGPT in-app browser and/or Chrome version actually tested |
+| Agents/clients used to test WebMCP | ChatGPT in-app browser (owner-tested 2026-09-01; exact app/build not captured) and Google Chrome for Testing 154.0.8035.0 with native WebMCP enabled |
 | AI tools leveraged | OpenAI Codex; Meta SAM 3D Body; **TODO add any others actually used** |
 | Learning level | **TODO choose:** None / Moderate / Significant |
 | AI value useful in career | **TODO choose:** Yes / No |

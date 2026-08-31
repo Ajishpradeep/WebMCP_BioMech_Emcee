@@ -50,6 +50,9 @@ unresolved; this deployment is not cleared as the final submission asset. See
 On 2026-09-01, the same revision passed native WebMCP discovery and all 13 direct tool invocations
 in a fresh **Google Chrome for Testing 154.0.8035.0** profile with WebMCP enabled. All four writes
 visibly changed the rendered application before returning, and the current plain-object return shape
-was accepted by the host. This reduces the interoperability risk but does not make the deployment
-submission-final: ChatGPT in-app-browser natural-language testing and cleared evidence are still
-blocking. Full observations and client caveats are in the live checklist.
+was accepted by the host. An owner-observed **ChatGPT in-app-browser** run also passed exact tool
+discovery, natural-language navigation/focus/annotation, human-corrected event readback, construct
+limits, and an unsupported-torque refusal. The exact ChatGPT app/build number was not captured.
+This clears live WebMCP for the provisional origin but does not make it submission-final: cleared
+evidence and a post-deployment repeat are still blocking. Full observations and client caveats are
+in the live checklist.

@@ -3,13 +3,14 @@
 > **New session? Read this file first, then [`CLAUDE.md`](CLAUDE.md).** This is the live log of what
 > is done, what was learned, and what to do next. Updated at the end of every completed task.
 
-**Last updated:** 2026-09-01, at the start of post-owner-review submission convergence
-**Current state:** **LIVE WEBMCP VALIDATION (Task 16).** The owner application review is complete;
+**Last updated:** 2026-09-01, after provisional-origin WebMCP validation
+**Current state:** **CLEARED EVIDENCE GATE.** The owner application review is complete;
 its product, UX, and scientific decisions remain preserved below. Tasks 16–18 now advance through
 the ordered release gates in [`docs/devpost-resume.md`](docs/devpost-resume.md): live WebMCP proof,
 cleared evidence, final deployment reconciliation, then judge-experience validation. The current
-Cloud Run build is a provisional validation origin, not submission-final, because live supported-host
-checks and source-video rights remain unresolved. Do not capture final assets or claim client
+Cloud Run build is a provisional validation origin, not submission-final. Native Chrome 154 and an
+owner-observed ChatGPT in-app-browser run have now cleared live supported-host validation on this
+revision; source-video rights remain unresolved. Do not capture final assets or claim final-build client
 compatibility until the corresponding ledger items in
 [`evals/webmcp-live-checklist.md`](evals/webmcp-live-checklist.md) are backed by observed evidence.
 
@@ -96,8 +97,8 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 | 12 — 2D/3D viewer + timeline | ✅ | Frame-synchronized source reference beside the 3D reconstruction; playback, scrub, annotation pins, and camera/focus/evidence controls integrated into one transport toolbar. |
 | 8–10 — Biomechanics engine | ✅ | `web/src/biomech/`; complete suite currently 79 tests green, including the retained real-session numerical audit and synthetic short-clip refusal. |
 | 12b — Metrics panel | ✅ | Stable event/live tile grids, confidence/status color, and `i` disclosures for ranges, methods, limitations, and citations. |
-| **13–15 — WebMCP tools ★** | ✅ code / 🟡 live | Chrome 154 native validation passed all 13 handlers, visible writes, schemas/annotations, reload lifecycle, and plain-object returns; ChatGPT remains untested. |
-| 16 — Verification + evals | 🟡 | Native Chrome half passed ([`evals/webmcp-live-checklist.md`](evals/webmcp-live-checklist.md)); **ChatGPT in-app browser natural-language selection still blocks completion.** |
+| **13–15 — WebMCP tools ★** | ✅ code / ✅ provisional live | Chrome 154 passed all 13 handlers and visible writes; ChatGPT natural-language discovery, navigation, focus, annotation, correction readback, and refusal also passed. |
+| 16 — Verification + evals | ✅ provisional origin / 🟡 final retest | Supported-client evidence is recorded in [`evals/webmcp-live-checklist.md`](evals/webmcp-live-checklist.md). Repeat the critical flow after cleared evidence is deployed. |
 | 16b — Scientific truth gate | 🟡 phase 2 | Incompatible comparisons removed; branch flips fixed; short-clip event/KSA gates implemented. Human MER review and external validation remain. |
 | P1 — Human event correction | ✅ | Reviewers can apply the current frame to FC/MER/BR; analysis and WebMCP reads update together. |
 | P1 — Owner-review UX hierarchy | ✅ | Right inspector now reads as event anchors → measurements → shared notes; all four write-tool effects have prominent visible surfaces. |
@@ -275,8 +276,11 @@ professional footage.
 - **`reference_ghost` does not exist** (PLAN cut list #2). `set_overlay` returns a retryable error
   naming the five real overlays rather than accepting a no-op. Full deviation list in the eval doc §4.
 
-**Still owed on Task 16:** DevTools registration + "Run tool" for all 13, write tools visibly moving
-the screen, and end-to-end in ChatGPT's in-app browser. Those need the deployed HTTPS origin.
+**Task 16 provisional-origin result:** Chrome 154 natively registered and ran all 13 tools; all four
+writes visibly changed the screen. The owner-observed ChatGPT in-app-browser run then passed exact
+tool discovery, natural-language navigation/focus/annotation, human correction readback, construct
+limits, and torque refusal. The exact ChatGPT app/build number was not captured. The final cleared
+deployment must repeat the critical flow; a prior revision's pass is not transferable.
 
 ## 4d. Owner-review UX convergence (2026-09-01)
 
@@ -394,11 +398,11 @@ evals/pitch-analysis.md           ★ tool-surface verification record + prompt 
 The owner review is complete. Preserve the owner-review history and decisions in §4d; do not reopen
 product strategy or perform another redesign pass.
 
-1. **Task 16 — live WebMCP validation.** Complete the deployed-origin, Chrome/DevTools, all-tool,
-   visible-write, return-shape, and ChatGPT in-app-browser checks in
-   [`evals/webmcp-live-checklist.md`](evals/webmcp-live-checklist.md). Any critical interoperability
-   failure blocks all later gates until fixed and retested.
-2. **Cleared evidence, then Task 17 final deployment.** Replace or remove the provisional source
+1. **Task 16 — provisional-origin live WebMCP validation: complete.** Chrome 154 and ChatGPT's
+   in-app browser passed the observed checks in
+   [`evals/webmcp-live-checklist.md`](evals/webmcp-live-checklist.md). Preserve this evidence and
+   repeat the critical path on the final revision.
+2. **Current gate: cleared evidence, then Task 17 final deployment.** Replace or remove the provisional source
    video, validate the retained evidence path, deploy the exact intended revision, and repeat the
    critical live WebMCP flow after deployment.
 3. **Task 18 — submission assets.** The current Cloud Run deployment, README, license, and initial
