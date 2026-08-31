@@ -41,7 +41,7 @@ function Row({ r, onExplain }: { r: MetricReading; onExplain: () => void }) {
   const ref = r.reference
   const pct =
     ref && r.value !== null
-      ? Math.max(0, Math.min(1, (Math.abs(r.value) - ref.range[0]) / (ref.range[1] - ref.range[0])))
+      ? Math.max(0, Math.min(1, (r.value - ref.range[0]) / (ref.range[1] - ref.range[0])))
       : null
 
   return (

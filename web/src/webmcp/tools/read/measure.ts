@@ -135,7 +135,7 @@ export const getKinematicsAtEvent: PitchTool = {
         [...citations],
         [
           'Reference ranges describe pitching populations; they are not targets and not diagnostic thresholds.',
-          'Values compared on magnitude — several of these angles are signed and the published ranges are not.',
+          'Only construct-compatible direct two-segment flexion angles are compared. Signed or frame-dependent measurements are reported separately without a range.',
         ],
       ),
     }
