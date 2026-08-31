@@ -44,10 +44,10 @@ export function ConfidenceBadge({ c }: { c: Confidence }) {
 }
 
 function statusText(reading: MetricReading) {
-  if (reading.status === 'unavailable') return 'Comparison held until this event is reviewed'
-  if (!reading.reference) return 'No published range'
-  if (reading.status === 'within') return 'Inside observed range'
-  return `${reading.status === 'above' ? 'Above' : 'Below'} observed range by ${reading.magnitude}°`
+  if (reading.status === 'unavailable') return 'Review required'
+  if (!reading.reference) return 'No reference range'
+  if (reading.status === 'within') return 'Within range'
+  return `${reading.magnitude}° ${reading.status} range`
 }
 
 function MetricInfo({ metric, event }: { metric: MetricName; event?: EventName }) {
@@ -96,44 +96,27 @@ function EventMetricTile({
   expanded: boolean
   onToggle: () => void
 }) {
-  const ref = reading.reference
-  // Give the observed band breathing room so values outside it visibly sit outside,
-  // rather than being clamped onto an apparently full-width reference bar.
-  const marker = ref && reading.value !== null
-    ? Math.max(0, Math.min(100, 25 + ((reading.value - ref.range[0]) / (ref.range[1] - ref.range[0])) * 50))
-    : null
-
   return (
     <article className={`metric-tile ${reading.status} ${expanded ? 'expanded' : ''}`}>
-      <div className="metric-tile-head">
-        <div>
-          <span className="metric-name">{PRETTY[reading.metric] ?? reading.metric}</span>
-          <ConfidenceBadge c={reading.confidence} />
-        </div>
-        <div className="metric-value-wrap">
-          <strong className="metric-value mono">{reading.value === null ? '—' : `${reading.value}°`}</strong>
-          <button
-            className="info-button"
-            onClick={onToggle}
-            aria-expanded={expanded}
-            aria-label={`Explain ${PRETTY[reading.metric] ?? reading.metric}`}
-            title="Definition, method, limits and source"
-          >i</button>
-        </div>
+      <div className="metric-tile-kicker">
+        <span className="metric-event">
+          <strong>{EVENT_SHORT[reading.event]}</strong>
+          <span>{EVENT_LABEL[reading.event]}</span>
+        </span>
+        <button
+          className="info-button"
+          onClick={onToggle}
+          aria-expanded={expanded}
+          aria-label={`Explain ${PRETTY[reading.metric] ?? reading.metric} at ${EVENT_LABEL[reading.event]}`}
+          title="Definition, observed range, method, limits and source"
+        >i</button>
       </div>
-
-      {ref && (
-        <div className="range-wrap">
-          <div className="range-bar" aria-label={`Observed reference range ${ref.range[0]} to ${ref.range[1]} degrees`}>
-            <div className="range-band" />
-            {marker !== null && <div className={`range-marker ${reading.status}`} style={{ left: `${marker}%` }} />}
-          </div>
-          <div className="range-labels">
-            <span>{statusText(reading)}</span>
-            <span className="mono">ref {ref.range[0]}–{ref.range[1]}°</span>
-          </div>
-        </div>
-      )}
+      <span className="metric-name">{PRETTY[reading.metric] ?? reading.metric}</span>
+      <strong className="metric-value mono">{reading.value === null ? '—' : `${reading.value}°`}</strong>
+      <div className="metric-tile-status">
+        <span>{statusText(reading)}</span>
+        <ConfidenceBadge c={reading.confidence} />
+      </div>
 
       {expanded && <MetricInfo metric={reading.metric} event={reading.event} />}
     </article>
@@ -153,19 +136,18 @@ function LiveMetricTile({
 }) {
   return (
     <article className={`metric-tile live-tile ${expanded ? 'expanded' : ''}`}>
-      <div className="metric-tile-head">
-        <span className="metric-name">{PRETTY[metric] ?? metric}</span>
-        <div className="metric-value-wrap">
-          <strong className="metric-value mono">{value === null ? '—' : `${value}°`}</strong>
-          <button
-            className="info-button"
-            onClick={onToggle}
-            aria-expanded={expanded}
-            aria-label={`Explain ${PRETTY[metric] ?? metric}`}
-            title="Definition, method and limits"
-          >i</button>
-        </div>
+      <div className="metric-tile-kicker">
+        <span className="metric-event"><strong>LIVE</strong><span>current frame</span></span>
+        <button
+          className="info-button"
+          onClick={onToggle}
+          aria-expanded={expanded}
+          aria-label={`Explain ${PRETTY[metric] ?? metric}`}
+          title="Definition, method and limits"
+        >i</button>
       </div>
+      <span className="metric-name">{PRETTY[metric] ?? metric}</span>
+      <strong className="metric-value mono">{value === null ? '—' : `${value}°`}</strong>
       {expanded && <MetricInfo metric={metric} />}
     </article>
   )
@@ -173,11 +155,7 @@ function LiveMetricTile({
 
 export function MetricsPanel({ session, analysis }: { session: Session; analysis: AnalysisResult }) {
   const currentFrame = useAnalysis((state) => state.currentFrame)
-  const setFrame = useAnalysis((state) => state.setFrame)
   const [mode, setMode] = useState<'events' | 'live'>('events')
-  const [selectedEvent, setSelectedEvent] = useState<EventName>(
-    analysis.events[0]?.name ?? 'foot_contact',
-  )
   const [expanded, setExpanded] = useState<string | null>(null)
 
   const live = useMemo(
@@ -190,32 +168,7 @@ export function MetricsPanel({ session, analysis }: { session: Session; analysis
     [analysis, currentFrame],
   )
 
-  const byEvent = useMemo(() => {
-    const grouped = new Map<EventName, MetricReading[]>()
-    for (const reading of analysis.readings) {
-      const rows = grouped.get(reading.event) ?? []
-      rows.push(reading)
-      grouped.set(reading.event, rows)
-    }
-    return grouped
-  }, [analysis])
-
-  // Agent and timeline navigation remain legible in the inspector: seeking to an exact
-  // event selects the same event here without introducing a second state path.
-  useEffect(() => {
-    const event = analysis.events.find((candidate) => candidate.frame === currentFrame)
-    if (event) setSelectedEvent(event.name)
-  }, [analysis.events, currentFrame])
-
-  useEffect(() => setExpanded(null), [mode, selectedEvent])
-
-  const activeEvent = analysis.events.find((event) => event.name === selectedEvent)
-  const eventRows = byEvent.get(selectedEvent) ?? []
-
-  const chooseEvent = (event: EventName, frame: number) => {
-    setSelectedEvent(event)
-    setFrame(frame)
-  }
+  useEffect(() => setExpanded(null), [mode, analysis.sessionId])
 
   const toggleInfo = (key: string) => setExpanded((current) => current === key ? null : key)
 
@@ -231,34 +184,13 @@ export function MetricsPanel({ session, analysis }: { session: Session; analysis
 
       {mode === 'events' ? (
         <>
-          <div className="event-tabs" role="tablist" aria-label="Pitching events">
-            {analysis.events.map((event) => (
-              <button
-                key={event.name}
-                className={selectedEvent === event.name ? 'on' : ''}
-                onClick={() => chooseEvent(event.name, event.frame)}
-                role="tab"
-                aria-selected={selectedEvent === event.name}
-                title={EVENT_LABEL[event.name]}
-              >
-                <span>{EVENT_SHORT[event.name]}</span>
-                <span className="mono">f{event.frame}</span>
-                <i className={`confidence-dot ${event.confidence}`} aria-label={`${event.confidence} confidence`} />
-              </button>
-            ))}
+          <div className="measurement-summary">
+            <span>{analysis.readings.length} event-anchored readings</span>
+            <span>Definitions and ranges behind <b>i</b></span>
           </div>
-
-          <div className="measurement-context">
-            <div>
-              <strong>{EVENT_LABEL[selectedEvent]}</strong>
-              {selectedEvent === 'max_external_rotation' && <span className="tag warn">review candidate</span>}
-            </div>
-            {activeEvent && <ConfidenceBadge c={activeEvent.confidence} />}
-          </div>
-
           <div className="metric-grid event-metric-grid">
-            {eventRows.length === 0 && <p className="dim small">No construct-compatible reference measurements at this event.</p>}
-            {eventRows.map((reading) => {
+            {analysis.readings.length === 0 && <p className="dim small">No construct-compatible event measurements are available.</p>}
+            {analysis.readings.map((reading) => {
               const key = `${reading.event}:${reading.metric}`
               return (
                 <EventMetricTile

@@ -94,7 +94,7 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 | 11 — Web app scaffold | ✅ | React 19 + Vite 8 + r3f + Zustand. |
 | 12 — 2D/3D viewer + timeline | ✅ | Frame-synchronized source reference beside the 3D reconstruction; playback, scrub, annotation pins, and a persistent shared-view dock for camera, focus, and evidence layers. |
 | 8–10 — Biomechanics engine | ✅ | `web/src/biomech/`; complete suite currently 79 tests green, including the retained real-session numerical audit and synthetic short-clip refusal. |
-| 12b — Metrics panel | ✅ | Compact event/live tiles, confidence/status color, full-width observed-range bars, and inline cited definitions. |
+| 12b — Metrics panel | ✅ | Stable event/live tile grids, confidence/status color, and `i` disclosures for ranges, methods, limitations, and citations. |
 | **13–15 — WebMCP tools ★** | ✅ code / 🟡 live | 13 handlers implemented; registration is one stable document surface with a visible partial/failure state; live registration is still unverified. |
 | 16 — Verification + evals | 🟡 | Headless half done ([`evals/pitch-analysis.md`](evals/pitch-analysis.md)); **DevTools + ChatGPT in-app browser still owed.** |
 | 16b — Scientific truth gate | 🟡 phase 2 | Incompatible comparisons removed; branch flips fixed; short-clip event/KSA gates implemented. Human MER review and external validation remain. |
@@ -284,16 +284,21 @@ The right inspector is now an explicit evidence-review sequence rather than a fl
 their evidence, show frame/confidence, and only enable correction when the inspected frame preserves
 FC → MER → BR order. Human corrections still recompute the same `AnalysisStore` read by WebMCP.
 
-At-event measurements now show one selected event at a time. Each reading is a full-width tile with
-status-colored value text, confidence, an observed-range bar, and an accessible `i` disclosure for
-definition, computation, limitation, range, and citation. Live mode uses the same compact tile
-language but deliberately omits comparison styling and labels the values exploratory.
+At-event measurements now keep every available event-anchored reading visible in one stable,
+two-column tile grid. There are no event tabs and no current-frame-driven switching. Each tile leads
+with its event, metric, large status-colored value, concise range relationship, and confidence; an
+accessible `i` disclosure holds the definition, computation, limitation, exact observed range, and
+citation. Live mode uses the same tile language, follows the inspected frame, and deliberately
+omits event-reference comparison styling.
 
-KSA remains in the left evidence area. Camera plane, focused joint, and overlays moved out of the
-scrolling panel into a persistent **Shared view** dock beside it. This makes `focus_joint` and
-`set_overlay` actions immediately legible. `seek_to_event` also selects the matching measurement
-event, while `annotate_frame` produces a clickable shared note that returns the human to its frame
-and joint. No WebMCP schema, tool behavior, biomechanics, or scientific boundary changed.
+Kinematic Sequence remains on the left of the bottom evidence area, with the persistent **Shared
+view** workspace on the right at wide widths; the two stack before their text or controls become
+cramped. Shared View now uses a readable two-column control layout instead of a narrow vertical
+strip, keeping camera plane, focused joint, active state, and evidence layers visible. This makes
+`focus_joint` and `set_overlay` actions immediately legible, while `annotate_frame` produces a
+clickable shared note that returns the human to its frame and joint. The right inspector is wider,
+and event-review instructions and labels are no longer set at miniature sizes. No WebMCP schema,
+tool behavior, biomechanics, or scientific boundary changed.
 
 **Verified:** local production render at 1600×1000 and 1200×900; 79 tests; typecheck; production
 build. The existing bundle-size warning remains a deferred P2 concern.

@@ -54,18 +54,19 @@ export function WorkspaceControls({ session }: { session: Session }) {
 
   return (
     <section className="workspace-controls" aria-label="Shared viewer controls">
-      <div className="workspace-head">
-        <div>
-          <h3>Shared view</h3>
-          <p>Human and agent control the same workspace.</p>
+      <div className="workspace-intro">
+        <div className="workspace-head">
+          <div>
+            <h3>Shared view</h3>
+            <p>Human and agent control the same workspace.</p>
+          </div>
+          <span className="tag shared">live state</span>
         </div>
-        <span className="tag shared">live state</span>
-      </div>
-
-      <div className="shared-state" aria-live="polite">
-        <span>{PLANE_LABEL[cameraPlane]} view</span>
-        <span>{focusLabel}</span>
-        <span>{activeOverlays.length} layers</span>
+        <div className="shared-state" aria-live="polite">
+          <span>{PLANE_LABEL[cameraPlane]} view</span>
+          <span>{focusLabel}</span>
+          <span>{activeOverlays.length} layers</span>
+        </div>
       </div>
 
       <div className="control-block">
