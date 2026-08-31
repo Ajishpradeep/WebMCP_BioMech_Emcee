@@ -19,6 +19,20 @@ export default function App() {
 
   // Registers the 13 WebMCP tools against this document. No-ops in a browser without WebMCP.
   const webmcp = useWebMCP()
+  const webmcpLabel =
+    webmcp.state === 'ready' ? `WebMCP · ${webmcp.registered} tools` :
+      webmcp.state === 'registering' ? 'WebMCP · registering…' :
+        webmcp.state === 'partial' ? `WebMCP · ${webmcp.registered}/13 tools` :
+          webmcp.state === 'error' ? 'WebMCP · registration failed' :
+            'WebMCP · not in this browser'
+  const webmcpTitle =
+    webmcp.state === 'ready'
+      ? `Registered tools: ${webmcp.toolNames.join(', ')}`
+      : webmcp.state === 'partial'
+        ? `Failed registrations: ${webmcp.failures.join(', ') || 'unknown'}`
+        : webmcp.state === 'error'
+          ? 'Registration failed. Reload in a WebMCP-capable HTTPS browser and inspect the console.'
+          : 'document.modelContext is unavailable here — needs a WebMCP-capable browser over HTTPS. The app works fully without it.'
 
   // Load the session index, then auto-open the first session.
   useEffect(() => { loadIndex() }, [loadIndex])
@@ -66,14 +80,10 @@ export default function App() {
         <div className="topbar-right">
           {session && <span className="session-name">{session.source.label}</span>}
           <span
-            className={`tag webmcp ${webmcp.supported ? 'ok' : ''}`}
-            title={
-              webmcp.supported
-                ? `Registered tools: ${webmcp.toolNames.join(', ')}`
-                : 'document.modelContext is unavailable here — needs a WebMCP-capable browser over HTTPS. The app works fully without it.'
-            }
+            className={`tag webmcp ${webmcp.state === 'ready' ? 'ok' : webmcp.state === 'partial' || webmcp.state === 'error' ? 'warn' : ''}`}
+            title={webmcpTitle}
           >
-            {webmcp.supported ? `WebMCP · ${webmcp.registered} tools` : 'WebMCP · not in this browser'}
+            {webmcpLabel}
           </span>
         </div>
       </header>

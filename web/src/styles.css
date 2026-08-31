@@ -171,6 +171,8 @@ body {
 }
 .tag.slowmo { color: var(--amber); border-color: rgba(251, 191, 36, 0.4); margin-left: 8px; }
 .tag.webmcp { color: var(--fg-faint); }
+.tag.webmcp.ok { color: var(--accent-2); border-color: rgba(94, 234, 212, 0.45); }
+.tag.webmcp.warn { color: var(--amber); border-color: rgba(251, 191, 36, 0.45); }
 .tag.soon { margin-left: auto; color: var(--fg-faint); font-size: 9px; }
 .tag.backend { margin-left: auto; }
 .tag.backend.online { color: var(--accent-2); border-color: rgba(94, 234, 212, 0.4); }

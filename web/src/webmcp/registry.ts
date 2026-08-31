@@ -9,9 +9,9 @@
  *     `toolResult()` HERE and nowhere else.
  *  2. **Error discipline.** A thrown stack trace tells a model nothing. Every failure
  *     comes back as a structured, retryable message naming the values that would work.
- *  3. **Lifecycle.** Registration is scoped to an `AbortSignal` tied to the active
- *     session, so loading a new pitch unregisters and re-registers — which fires
- *     `toolchange` and refreshes the descriptions that name the loaded session.
+ *  3. **Lifecycle.** The surface is registered once for this document. Tools resolve
+ *     the current Zustand state at execution time, so changing sessions never leaves a
+ *     host with stale tool definitions or creates duplicate registrations.
  */
 
 import { buildMeta, DISCLAIMER, type MetaBlock } from '../biomech/confidence'
@@ -161,15 +161,22 @@ export function isWebMCPSupported(): boolean {
   return typeof document !== 'undefined' && typeof document.modelContext?.registerTool === 'function'
 }
 
+export interface RegistrationReport {
+  registered: number
+  failed: string[]
+}
+
 /**
  * Register every tool against the live `document.modelContext`. No-ops silently where
  * WebMCP is absent — the app must stay fully usable in a browser without it.
- * Returns the number of tools actually registered.
+ * Returns both the registered count and any failed names. A partial surface must be
+ * visible to the human; silently presenting it as fully agent-enabled is a demo risk.
  */
-export async function registerTools(tools: PitchTool[], signal: AbortSignal): Promise<number> {
-  if (!isWebMCPSupported()) return 0
+export async function registerTools(tools: PitchTool[], signal: AbortSignal): Promise<RegistrationReport> {
+  if (!isWebMCPSupported()) return { registered: 0, failed: [] }
   const ctx = document.modelContext!
   let registered = 0
+  const failed: string[] = []
 
   const define = (tool: PitchTool): ModelContextToolDef => ({
     name: tool.name,
@@ -196,8 +203,9 @@ export async function registerTools(tools: PitchTool[], signal: AbortSignal): Pr
         registered++
       } catch (retryErr) {
         console.warn(`[webmcp] could not register ${tool.name}`, retryErr ?? err)
+        failed.push(tool.name)
       }
     }
   }
-  return registered
+  return { registered, failed }
 }

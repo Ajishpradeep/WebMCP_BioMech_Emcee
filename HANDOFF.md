@@ -88,7 +88,7 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 | 12 — 3D viewer + timeline | ✅ | Playback, scrub, camera presets, trail, annotation pins. |
 | 8–10 — Biomechanics engine | ✅ | `web/src/biomech/`, 27 unit + real-data tests green. |
 | 12b — Metrics panel | ✅ | Readings, confidence badges, cited definitions, sequence chart. |
-| **13–15 — WebMCP tools ★** | ✅ code / 🟡 live | 13 handlers implemented; 35 harness assertions green. Live registration is still unverified. |
+| **13–15 — WebMCP tools ★** | ✅ code / 🟡 live | 13 handlers implemented; registration is one stable document surface with a visible partial/failure state; live registration is still unverified. |
 | 16 — Verification + evals | 🟡 | Headless half done ([`evals/pitch-analysis.md`](evals/pitch-analysis.md)); **DevTools + ChatGPT in-app browser still owed.** |
 | 16b — Scientific truth gate | 🟡 phase 1 | Incompatible comparisons removed and four-segment sequence labeled; manual event-frame validation remains. |
 | 17 — GCP deploy | ✅ | Public Cloud Run origin verified; see [`docs/deployment.md`](docs/deployment.md). |

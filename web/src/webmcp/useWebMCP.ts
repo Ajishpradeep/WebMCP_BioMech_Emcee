@@ -1,46 +1,60 @@
 /**
  * Registration lifecycle.
  *
- * The surface is scoped to an `AbortController` tied to the loaded pitch: switching
- * sessions aborts, which unregisters and fires `toolchange`, then re-registers. That is a
- * justified use of dynamic registration rather than a gratuitous one — the tools' answers
- * are about the pitch on screen, so an agent holding a stale registry is holding stale
- * context. Where WebMCP is absent the hook reports it and does nothing else; the app must
- * stay completely usable without it.
+ * Tools resolve the live Zustand state when executed, so the fixed 13-tool surface is
+ * registered once per document rather than churned on every session change. Where WebMCP
+ * is absent the hook reports it and does nothing else; the app stays usable without it.
  */
 
 import { useEffect, useState } from 'react'
 
-import { useAnalysis } from '../store'
 import { isWebMCPSupported, registerTools } from './registry'
 import { ALL_TOOLS } from './tools'
 
 export interface WebMCPStatus {
   supported: boolean
+  state: 'unsupported' | 'registering' | 'ready' | 'partial' | 'error'
   registered: number
+  failures: string[]
   toolNames: string[]
 }
 
 export function useWebMCP(): WebMCPStatus {
-  const sessionId = useAnalysis((s) => s.session?.sessionId ?? null)
-  const indexState = useAnalysis((s) => s.indexState)
   const [registered, setRegistered] = useState(0)
+  const [failures, setFailures] = useState<string[]>([])
+  const [state, setState] = useState<WebMCPStatus['state']>('unsupported')
   const supported = isWebMCPSupported()
 
   useEffect(() => {
-    if (!supported) return
+    if (!supported) {
+      setState('unsupported')
+      return
+    }
     const controller = new AbortController()
     let live = true
-
-    registerTools(ALL_TOOLS, controller.signal).then((n) => {
-      if (live) setRegistered(n)
-    })
+    // In React Strict Mode, delaying one task lets the intentional development-only
+    // setup/cleanup rehearsal cancel before it ever touches the host registry.
+    const timer = window.setTimeout(() => {
+      setState('registering')
+      registerTools(ALL_TOOLS, controller.signal)
+        .then((report) => {
+          if (!live) return
+          setRegistered(report.registered)
+          setFailures(report.failed)
+          setState(report.registered === ALL_TOOLS.length ? 'ready' : 'partial')
+        })
+        .catch((err) => {
+          console.error('[webmcp] registration failed', err)
+          if (live) setState('error')
+        })
+    }, 0)
 
     return () => {
       live = false
+      window.clearTimeout(timer)
       controller.abort()
     }
-  }, [supported, sessionId, indexState])
+  }, [supported])
 
-  return { supported, registered, toolNames: ALL_TOOLS.map((t) => t.name) }
+  return { supported, state, registered, failures, toolNames: ALL_TOOLS.map((t) => t.name) }
 }
