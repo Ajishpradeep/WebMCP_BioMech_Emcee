@@ -35,7 +35,7 @@ biomechanics evidence workspace**, not an autonomous coach or a motion-capture r
 |---|---|---|---|---|
 | A | P0 | Preserve and publish the current WebMCP implementation | 62 tests, typecheck, build, public GitHub repo | ✅ `eb6526a` |
 | B | P0 | Reframe product documents and replace stale execution assumptions | Cross-doc terminology/claim audit | ✅ |
-| C | P0 | Add minimal reproducible GCP static deployment | Local container serves app and session assets | ⏭️ |
+| C | P0 | Add minimal reproducible GCP static deployment | Container image builds from a clean dependency install | ✅ |
 | D | P0 | Deploy public HTTPS origin | Cold-load assets; no `Origin-Agent-Cluster: ?0`; service public | ⏭️ |
 | E | P0 | Scientific truth gate | No incompatible construct is ranked or compared; partial sequence labeled | ⏭️ |
 | F | P0 | Judge-facing UX | No dead production upload CTA; first-paint loader; narrow layout usable | ⏭️ |
