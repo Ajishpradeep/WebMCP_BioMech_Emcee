@@ -3,14 +3,15 @@
 > **New session? Read this file first, then [`CLAUDE.md`](CLAUDE.md).** This is the live log of what
 > is done, what was learned, and what to do next. Updated at the end of every completed task.
 
-**Last updated:** 2026-09-01, after the owner-review evidence-inspector convergence milestone
+**Last updated:** 2026-09-01, after owner-review convergence and Cloud Run revision `00007-tkw`
 **Current state:** **OWNER APP-REVIEW HOLD.** The canonical product name is Biomech Emcee and the
 participant identity is recorded as Pradeep Rajasekar (preferred name: Ajish). The next session is
 for the owner's application observations and requested fixes—not Devpost submission work. Do not
 redeploy, capture final assets, or advance the Devpost workflow during that review unless explicitly
 requested. After the app review is declared complete, use [`docs/devpost-resume.md`](docs/devpost-resume.md)
 to reconcile the entire final product before resuming compliance, testing, and validation. The
-currently deployed build predates this rename.
+current Biomech Emcee owner-review build is live, but it is not submission-final because its source
+video rights and live WebMCP host checks remain unresolved.
 
 ---
 
@@ -357,9 +358,10 @@ and not cleared for redistribution. The owner-review build contains one trimmed 
 under `web/public/sessions/` so the human can compare source and reconstruction in sync. That file
 is provisional and inherits the same unresolved rights problem.
 
-**Do not deploy this owner-review build as the final submission until this is resolved.** Before
-Task 18: self-record a pitch (cleanest), remove the 2D asset and ship 3D-only, or re-run the review
-on cleared footage. Full table in [`ATTRIBUTION.md`](ATTRIBUTION.md).
+The current public review deployment includes this provisional asset and is **not cleared as the
+final submission deployment**. Before Task 18: self-record a pitch (cleanest), remove the 2D asset
+and ship 3D-only, or re-run the review on cleared footage. Full table in
+[`ATTRIBUTION.md`](ATTRIBUTION.md).
 
 ---
 

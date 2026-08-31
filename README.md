@@ -8,8 +8,7 @@ controls a live 3D reconstruction while WebMCP gives the agent structured access
 session, evidence definitions, limitations, and visible viewer actions such as seeking, focusing,
 overlays, and annotations.
 
-**Live app:** <https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app> — this deployed revision predates the
-Biomech Emcee rename and will be reconciled after the owner application review.
+**Live app:** <https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app>
 
 Built for [The WebMCP Challenge](https://webmcp.devpost.com/). The product thesis is simple: an
 agent should help a reviewer navigate and document movement evidence, not impersonate a coach or
@@ -24,7 +23,7 @@ direction, not a current feature.
 
 - Interactive in-browser 3D skeleton review, timeline scrubbing, camera presets, overlays, and
   persistent annotations.
-- Two committed, precomputed demo sessions that cold-load without a GPU or backend.
+- One committed, precomputed review session that cold-loads without a GPU or backend.
 - Thirteen WebMCP tools: nine read tools for session, measurement, and evidence context; four write
   tools that visibly navigate and annotate the shared review surface.
 - Published-range comparisons only for construct-compatible direct two-segment elbow and lead-knee
@@ -91,9 +90,10 @@ the public demo reproducible and makes WebMCP appropriate for the live, human-vi
 
 Biomech Emcee is not a marker-based motion-capture replacement, diagnostic system, injury-risk
 predictor, medical device, or autonomous pitching coach. It uses camera-frame reconstruction and
-some synchronized demo source footage has unresolved broadcast rights; see [ATTRIBUTION.md](ATTRIBUTION.md).
-Do not deploy uncleared footage or use this demo data for clinical decisions. The project’s claim
-boundary and technical decisions are in [SPEC.md](SPEC.md) and [HANDOFF.md](HANDOFF.md).
+the synchronized demo source footage has unresolved broadcast rights; see [ATTRIBUTION.md](ATTRIBUTION.md).
+The footage must be replaced or removed before the final submission, and the demo data must not be
+used for clinical decisions. The project’s claim boundary and technical decisions are in
+[SPEC.md](SPEC.md) and [HANDOFF.md](HANDOFF.md).
 
 ## Repository map
 

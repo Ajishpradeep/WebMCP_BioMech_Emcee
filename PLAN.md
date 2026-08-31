@@ -45,7 +45,7 @@ using [`docs/devpost-resume.md`](docs/devpost-resume.md).
 | A | P0 | Preserve and publish the current WebMCP implementation | 62 tests, typecheck, build, public GitHub repo | ✅ `eb6526a` |
 | B | P0 | Reframe product documents and replace stale execution assumptions | Cross-doc terminology/claim audit | ✅ |
 | C | P0 | Add minimal reproducible GCP static deployment | Container image builds from a clean dependency install | ✅ |
-| D | P0 | Deploy public HTTPS origin | Cold-load assets; no `Origin-Agent-Cluster: ?0`; service public | ✅ `pitchlab-webmcp-00001-2bm` |
+| D | P0 | Deploy public HTTPS origin | Cold-load assets; no `Origin-Agent-Cluster: ?0`; service public | ✅ `pitchlab-webmcp-00007-tkw` |
 | E | P0 | Scientific truth gate | Incompatible comparisons removed and partial sequence labeled; manual event-frame validation remains | 🟡 `truth gate, phase 1` |
 | F | P0 | Judge-facing UX | No dead production upload CTA; first-paint loader; narrow layout usable | ✅ local production visual check |
 | G | P0 | WebMCP runtime hardening | Exactly 13 tools or visible failure; success/error contract tests | 🟡 code complete; live host verification remains |

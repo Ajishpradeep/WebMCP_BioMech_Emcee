@@ -42,10 +42,10 @@
 > ### ⚠️ Unresolved licensing — read before publishing
 >
 > The clips in `input_baseball/` are **third-party MLB/broadcast-derived videos** obtained from
-> YouTube. They are **not** cleared for redistribution. The owner-review build now includes two
-> trimmed, synchronized 2D reference files under `web/public/sessions/`; those files are
-> **provisional review assets and must not be deployed or used in the final submission** until the
-> footage is replaced with cleared material or permission is confirmed.
+> YouTube. They are **not** cleared for redistribution. The owner-review build includes one
+> trimmed, synchronized 2D reference file under `web/public/sessions/`. It is a **provisional review
+> asset** in the current public deployment and must be replaced or removed before final submission
+> unless permission is confirmed.
 >
 > `.claude/steering/tech.md` §7 says "no scraped broadcast footage," and strictly these clips
 > violate that rule. The pragmatic position taken for the hackathon window:
@@ -53,7 +53,7 @@
 > | Artifact | Ships publicly? | Rationale |
 > |---|---|---|
 > | Original source `.mp4` files | ❌ **No** — git-ignored | Not ours to redistribute |
-> | Trimmed 2D reference `.mp4` files | ⚠️ **Provisional local review only** | Requested for synchronized UI review; still uncleared |
+> | Trimmed 2D reference `.mp4` file | ⚠️ **Temporary public review deployment** | Useful for synchronized review, but still uncleared and not submission-final |
 > | Derived `session.json` (3D joint coordinates) | ✅ Yes | Numerical measurements derived from observation, not a copy of the work |
 > | Rendered 2D overlays on source frames | ❌ No | Contains the source imagery |
 > | 3D skeleton renders (no source imagery) | ✅ Yes | Contains no copyrighted footage |
@@ -65,8 +65,8 @@
 > 3. Source a Creative Commons / public-domain pitching clip and re-run the pipeline.
 >
 > The synchronized pane is useful for validating whether the reconstruction matches the source,
-> but it changes the rights posture. Do not redeploy this owner-review build until these provisional
-> files are replaced or cleared.
+> but it changes the rights posture. Do not treat the current deployment as final until the
+> provisional file is replaced, removed, or cleared.
 
 ### Clips currently used for development
 

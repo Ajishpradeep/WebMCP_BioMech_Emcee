@@ -6,10 +6,8 @@ The current public review workspace is a public, unauthenticated Cloud Run servi
 (`us-central1`). It serves the static Vite build; all session analysis runs in the browser, so this
 production origin has no upload or GPU-inference backend.
 
-> **Rename hold (2026-08-31):** the live revision and its `pitchlab-webmcp` service identifier
-> predate the Biomech Emcee rename and broader movement-review framing. The source is renamed, but
-> the live application has not been redeployed with that identity. Resume only after the owner app
-> review and the reconciliation in [`devpost-resume.md`](devpost-resume.md).
+The stable legacy service identifier remains `pitchlab-webmcp`; the application served from it is
+the current Biomech Emcee owner-review build.
 
 ## Reproduce a deployment
 
@@ -35,9 +33,14 @@ review Cloud Run billing and access settings before using this configuration for
 
 ## Verification record
 
-On 2026-08-31, revision `pitchlab-webmcp-00001-2bm` received 100% traffic. A cold HTTP check
-returned `200` for the application shell and both committed review sessions (`scherzer-delivery-01`
-and `skenes-delivery-01`). The response headers did not include `Origin-Agent-Cluster: ?0`.
+On 2026-09-01, revision `pitchlab-webmcp-00007-tkw` received 100% traffic. Checks against the stable
+URL returned `200` for the application shell and the retained `delivery-01` session; the removed
+`delivery-02` returned `404`. The page title is Biomech Emcee, the deployed bundle contains all 13
+expected WebMCP tool names, and the response headers do not include `Origin-Agent-Cluster: ?0`.
+A headless cold render loaded the synchronized 2D/3D review workspace successfully.
 
 This proves public static delivery, not live WebMCP host compatibility. The remaining manual
 verification is recorded in [`evals/webmcp-live-checklist.md`](../evals/webmcp-live-checklist.md).
+The retained synchronized source video remains provisional because its redistribution rights are
+unresolved; this deployment is not cleared as the final submission asset. See
+[`ATTRIBUTION.md`](../ATTRIBUTION.md).

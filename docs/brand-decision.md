@@ -1,7 +1,7 @@
 # Identity and naming decision
 
 **Decision date:** 2026-08-31
-**Workflow state:** owner review hold; do not redeploy or advance Devpost yet
+**Workflow state:** owner review hold; current source is live, but do not advance Devpost yet
 
 ## Participant identity
 
@@ -91,11 +91,9 @@ The durable pitch is:
 - [ ] Manually correct the Devpost profile name if formal-name consistency is required.
 - [ ] Review any GitHub profile display-name preference separately; it is account-wide and was not
       changed as part of this repository decision.
-- [ ] Decide whether the Cloud Run service should be recreated with a `biomech-emcee` identifier or
-      kept at its stable legacy URL. The live deployment has **not** been updated in this milestone.
+- [x] Keep the stable legacy Cloud Run URL; it now serves the current Biomech Emcee build.
 - [ ] Replace or clear the provisional professional-player footage before final screenshots/video.
 - [ ] Run the live WebMCP host checklist only after the desired manual application changes are made.
 
 When the owner declares the app review complete, follow [`devpost-resume.md`](devpost-resume.md).
-Until then, the source rename is complete but deployment and final compliance are intentionally
-pending.
+The source rename and owner-requested deployment are complete; final compliance remains pending.
