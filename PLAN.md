@@ -68,8 +68,9 @@ using [`docs/devpost-resume.md`](docs/devpost-resume.md).
   reviewed event. A manually labelled benchmark for the committed clips is still required before
   claiming event-detection accuracy.
 - The public build presents precomputed review sessions; local CUDA upload is development tooling.
-- Demo comparison data should be the same athlete and camera setup, using self-recorded or clearly
-  licensed footage. Until replaced, cross-view demo comparisons remain explicitly unreliable.
+- Future demo comparison data should be the same athlete and camera setup, using self-recorded or
+  clearly licensed footage. The short cross-view second session was removed during owner review;
+  the bundled product currently contains one review session.
 - **Completed 2026-08-31:** `compare_pitches` now labels every result `descriptive_only` and refuses
   to imply improvement/regression without independently established athlete identity and protocol.
 

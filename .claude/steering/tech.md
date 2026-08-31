@@ -133,7 +133,7 @@ construction.
 
 ### 3.2b ⚠️ Slow motion breaks absolute timing
 
-**Both demo clips are slow-motion recordings at an unknown slowdown factor** (verified 2026-08-30;
+**The bundled demo clip is a slow-motion recording at an unknown slowdown factor** (verified 2026-08-30;
 see `pipeline/clips.json`). Frame timestamps are therefore in *video* seconds, not real seconds.
 
 | Quantity | Valid under unknown slow motion? |
@@ -211,7 +211,7 @@ Frozen in **Task 6**. Both tiers depend on it; changing it later is expensive.
     "focalLengthEstimated": true,
     "smoothing": { "method": "savgol", "window": 9, "polyorder": 3 }
   },
-  // ── TIMEBASE ── both demo clips are slow-motion at an unknown factor.
+  // ── TIMEBASE ── the bundled demo clip is slow-motion at an unknown factor.
   // See §3.2b. This block decides which timing metrics are legal.
   "timebase": {
     "videoFps": 60.0,

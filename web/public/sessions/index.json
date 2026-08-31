@@ -2,19 +2,11 @@
   "sessions": [
     {
       "sessionId": "delivery-01",
-      "label": "Pitch A \u2014 elevated side view",
+      "label": "Pitch \u2014 elevated side view",
       "handedness": "right",
       "view": "elevated third-base side",
       "frameCount": 1034,
       "file": "delivery-01.json"
-    },
-    {
-      "sessionId": "delivery-02",
-      "label": "Pitch B \u2014 front-side view",
-      "handedness": "right",
-      "view": "front-side portrait view",
-      "frameCount": 38,
-      "file": "delivery-02.json"
     }
   ]
 }

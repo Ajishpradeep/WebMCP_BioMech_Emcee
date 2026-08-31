@@ -1,7 +1,7 @@
 /**
  * Kinematic sequence — the order in which segments reach peak angular speed.
  *
- * ⚠️ Timebase: both demo clips are slow-motion at an unknown factor, so angular speed
+ * ⚠️ Timebase: the bundled demo clip is slow-motion at an unknown factor, so angular speed
  * in real deg/s is NOT derivable (tech.md §3.2b). What survives any monotonic time warp
  * is (a) the ORDER of the peaks and (b) their timing normalised to the foot-contact →
  * ball-release window. Those are what we report. This app observes only four segments;

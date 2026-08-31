@@ -3,7 +3,7 @@
 > **New session? Read this file first, then [`CLAUDE.md`](CLAUDE.md).** This is the live log of what
 > is done, what was learned, and what to do next. Updated at the end of every completed task.
 
-**Last updated:** 2026-08-31, after the numerical truth audit and owner application-review fixes
+**Last updated:** 2026-08-31, after removing the owner's rejected 38-frame second delivery
 **Current state:** **OWNER APP-REVIEW HOLD.** The canonical product name is Biomech Emcee and the
 participant identity is recorded as Pradeep Rajasekar (preferred name: Ajish). The next session is
 for the owner's application observations and requested fixes—not Devpost submission work. Do not
@@ -67,7 +67,7 @@ cd web && npm install && npm run dev          # → http://localhost:5173
 
 # 3. Batch-analyse the manifested demo clips
 .venv/bin/python pipeline/run.py                          # all clips
-.venv/bin/python pipeline/run.py delivery-02             # one
+.venv/bin/python pipeline/run.py delivery-01             # one
 .venv/bin/python pipeline/run.py --stride 8               # fast preview
 
 # 4. Health check for the model env
@@ -86,14 +86,14 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 |---|---|---|
 | 1 — SAM 3D Body access | ✅ | Approved. Checkpoints local (2.7 GB, git-ignored). |
 | 2 — Env + smoke test | ✅ | torch 2.6.0+cu124, RTX A6000. |
-| 3 — Demo footage | 🟡 | Two same-subject deliveries, anonymized in the UI. Synchronized 2D assets are provisional; **rights unresolved — §6.** |
+| 3 — Demo footage | 🟡 | One professional delivery, anonymized in the UI. Its synchronized 2D asset is provisional; **rights unresolved — §6.** |
 | 4 — Frame extraction + detection | ✅ | `pipeline/run.py`, torchvision Faster R-CNN. |
-| 5 — Inference runner | ✅ | **QA gate passed** for both current deliveries; see `pipeline/out/qa_delivery-02.mp4` for the newly reconstructed second view. |
+| 5 — Inference runner | ✅ | **QA gate passed** for the retained delivery. The rejected 38-frame second view and its QA output were removed during owner review. |
 | 6 — 🔒 Freeze schema | ✅ | **Frozen.** `pipeline/joint_map.py` ↔ `web/src/types.ts`. |
 | 7 — Smoothing + export | ✅ | Savitzky–Golay. Proportions validated (§4). |
 | 11 — Web app scaffold | ✅ | React 19 + Vite 8 + r3f + Zustand. |
 | 12 — 2D/3D viewer + timeline | ✅ | Frame-synchronized source reference beside the 3D reconstruction; playback, scrub, camera presets, trail, and annotation pins. |
-| 8–10 — Biomechanics engine | ✅ | `web/src/biomech/`; complete suite currently 78 tests green, including both real-session numerical audits. |
+| 8–10 — Biomechanics engine | ✅ | `web/src/biomech/`; complete suite currently 79 tests green, including the retained real-session numerical audit and synthetic short-clip refusal. |
 | 12b — Metrics panel | ✅ | Readings, confidence badges, cited definitions, sequence chart. |
 | **13–15 — WebMCP tools ★** | ✅ code / 🟡 live | 13 handlers implemented; registration is one stable document surface with a visible partial/failure state; live registration is still unverified. |
 | 16 — Verification + evals | 🟡 | Headless half done ([`evals/pitch-analysis.md`](evals/pitch-analysis.md)); **DevTools + ChatGPT in-app browser still owed.** |
@@ -222,10 +222,9 @@ deg/s remains unavailable because the slow-motion factor is unknown.
 
 The previous 180° segment-frame branch jump is fixed by feeding `metricSeries()` the same
 continuity-corrected frames used by KSA. `delivery-01` now has no adjacent metric step ≥25°. The
-38-frame `delivery-02` ends at its release candidate and has only five FC→BR frames, so its values
-remain inspectable at low confidence while reference comparisons and KSA order/peaks/intervals are
-explicitly `unavailable` rather
-than four artificial peaks on the same frame.
+owner removed the 38-frame `delivery-02` because it was too short to support a useful review. The
+short-clip boundary refusal remains covered with an in-memory test fixture rather than shipped
+professional footage.
 
 **Known open items** (honest state, not hidden):
 - The automatic MER event is a peak in an unvalidated upper-arm axial-rotation proxy, not a clinical
@@ -233,8 +232,8 @@ than four artificial peaks on the same frame.
 - Hip–shoulder separation, trunk tilts, shoulder rotation/plane values, and foot angle remain visible
   as low-confidence observational proxies. Their absolute values are never compared to clinical
   ranges until this landmark protocol and coordinate convention are externally validated.
-- `delivery-02` needs a longer uncropped source and human event review before it can support KSA or
-  judge-facing biomechanical claims. `delivery-01` is the only current sequence-capable session.
+- `delivery-01` is the only bundled and sequence-capable session. A future second session must be
+  long enough for event review and use cleared footage before it supports judge-facing comparison.
 
 ## 4c. The WebMCP tool surface — how it actually works
 
@@ -264,8 +263,10 @@ than four artificial peaks on the same frame.
   fires (hidden tab, Node under test).
 - **Output budget is enforced by test**, hard ceiling 3 000 chars. Three tools were over and were
   trimmed; see `evals/pitch-analysis.md` §2 before adding a field to any response.
-- **`compare_pitches` analyses the second pitch off-screen** via `store.analysisFor()`, which caches
-  into `store.cache`. It never yanks the human's view to the other session.
+- **`compare_pitches` analyses a second pitch off-screen when one is available** via
+  `store.analysisFor()`, which caches into `store.cache`. It never yanks the human's view to the
+  other session. With the current single-session bundle it returns a structured, retryable
+  explanation that no second analysis is available.
 - **`angle_readouts` now does something.** It was a dead toggle; `focus_joint` turns it on and
   `SkeletonViewer` renders the focused joint's angles in 3D. Without that, two write tools would
   have had no visible effect — which would have undermined the whole submission claim.
@@ -301,7 +302,7 @@ detection and every rate metric. `pipeline/run.py` therefore **detects duplicate
 loudly**; always read the pipeline warnings when changing a clip window.
 
 ### ⚠️ `timebase` decides which timing metrics are legal
-Both demo clips are slow-motion at an **unknown** factor, so `realTimeScale: null`.
+The bundled demo clip is slow-motion at an **unknown** factor, so `realTimeScale: null`.
 
 | Quantity | Legal? |
 |---|---|
@@ -318,12 +319,12 @@ Both demo clips are slow-motion at an **unknown** factor, so `realTimeScale: nul
 ## 6. ⚠️ Open risk: source-footage rights
 
 `input_baseball/` holds YouTube-sourced MLB/broadcast clips. The original files are **git-ignored**
-and not cleared for redistribution. The owner-review build now also contains two trimmed 2D reference
-videos under `web/public/sessions/` so the human can compare source and reconstruction in sync.
-Those trimmed files are provisional and inherit the same unresolved rights problem.
+and not cleared for redistribution. The owner-review build contains one trimmed 2D reference video
+under `web/public/sessions/` so the human can compare source and reconstruction in sync. That file
+is provisional and inherits the same unresolved rights problem.
 
 **Do not deploy this owner-review build as the final submission until this is resolved.** Before
-Task 18: self-record a pitch (cleanest), remove the 2D assets and ship 3D-only, or re-run both views
+Task 18: self-record a pitch (cleanest), remove the 2D asset and ship 3D-only, or re-run the review
 on cleared footage. Full table in [`ATTRIBUTION.md`](ATTRIBUTION.md).
 
 ---
@@ -362,7 +363,7 @@ evals/pitch-analysis.md           ★ tool-surface verification record + prompt 
    check that can silently invalidate the rest is the **return-shape convention** against a live
    agent.
 3. **Task 18 — submission assets.** The current Cloud Run deployment, README, license, and initial
-   Devpost draft are complete. Replace the provisional professional-player sessions with cleared
+   Devpost draft are complete. Replace the provisional professional-player session with cleared
    footage, capture final screenshots, and record the public narrated demo under three minutes.
 4. **Task 18 — final form.** Reconcile [`devpost-submission.md`](devpost-submission.md) against the
    final app and live official form. **Lead with `annotate_frame`** — the

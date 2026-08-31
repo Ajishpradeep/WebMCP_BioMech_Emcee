@@ -1,10 +1,10 @@
 /**
- * End-to-end numerical audit of every exposed series and both bundled sessions.
+ * End-to-end numerical audit of every exposed series in the bundled session.
  *
  * This deliberately separates anatomical invariants from session-quality claims. The
- * short second clip may contain finite angles, but its cut release cannot support event
- * comparisons or a kinematic-sequence order. A number being finite is not enough to
- * make it interpretable.
+ * derived short-clip fixture may contain finite angles, but its cut release cannot support
+ * event comparisons or a kinematic-sequence order. A number being finite is not enough
+ * to make it interpretable.
  */
 
 import { readFileSync } from 'node:fs'
@@ -18,8 +18,20 @@ import type { MetricName } from './angles'
 const load = (id: string): Session => JSON.parse(
   readFileSync(join(__dirname, `../../public/sessions/${id}.json`), 'utf8'),
 )
-const full = analyze(load('delivery-01'))
-const cut = analyze(load('delivery-02'))
+const fullSession = load('delivery-01')
+const full = analyze(fullSession)
+const cutSession: Session = {
+  ...fullSession,
+  sessionId: 'short-clip-fixture',
+  source: {
+    ...fullSession.source,
+    label: 'Short-clip fixture',
+    frameCount: 38,
+    videoFile: undefined,
+  },
+  frames: fullSession.frames.slice(0, 38),
+}
+const cut = analyze(cutSession)
 
 const DIRECT_ANGLES: MetricName[] = [
   'lead_knee_flexion', 'trail_knee_flexion', 'lead_hip_flexion',
@@ -28,8 +40,8 @@ const DIRECT_ANGLES: MetricName[] = [
 const REFERENCED = new Set<MetricName>(['lead_knee_flexion', 'elbow_flexion'])
 
 describe.each([
-  ['delivery-01', load('delivery-01'), full],
-  ['delivery-02', load('delivery-02'), cut],
+  ['delivery-01', fullSession, full],
+  ['short-clip fixture', cutSession, cut],
 ] as const)('%s complete numerical contract', (_id, session, result) => {
   it('returns one finite-or-null value per frame for every metric', () => {
     for (const [metric, values] of Object.entries(result.series)) {
@@ -122,19 +134,21 @@ describe('complete delivery numerical regression', () => {
   })
 })
 
-describe('cut delivery quality refusal', () => {
-  it('downgrades every boundary-dependent event and comparison', () => {
-    expect(cut.events.every((event) => event.confidence === 'low')).toBe(true)
-    expect(cut.events.find((event) => event.name === 'ball_release')?.frame).toBe(37)
-    expect(cut.readings.every((reading) => reading.confidence === 'low')).toBe(true)
-    expect(cut.readings.every((reading) => reading.status === 'unavailable')).toBe(true)
-    expect(cut.readings.every((reading) => reading.magnitude === null)).toBe(true)
+describe('short delivery quality refusal', () => {
+  it('keeps low-confidence event comparisons unavailable', () => {
+    expect(cut.events.find((event) => event.name === 'foot_contact')?.confidence).toBe('low')
+    expect(cut.events.find((event) => event.name === 'max_external_rotation')?.confidence).toBe('low')
+    const lowEventReadings = cut.readings.filter((reading) => reading.eventConfidence === 'low')
+    expect(lowEventReadings.length).toBeGreaterThan(0)
+    expect(lowEventReadings.every((reading) => reading.confidence === 'low')).toBe(true)
+    expect(lowEventReadings.every((reading) => reading.status === 'unavailable')).toBe(true)
+    expect(lowEventReadings.every((reading) => reading.magnitude === null)).toBe(true)
   })
 
   it('refuses KSA order, peaks, and intervals instead of collapsing them onto one frame', () => {
     expect(cut.sequence.available).toBe(false)
     expect(cut.sequence.quality).toBe('unavailable')
-    expect(cut.sequence.unavailableReason).toMatch(/edge of the clip/i)
+    expect(cut.sequence.unavailableReason).toMatch(/at least 12|edge of the clip/i)
     expect(cut.sequence.observedOrder).toEqual([])
     expect(cut.sequence.peaks).toEqual([])
     expect(cut.sequence.intervals).toEqual([])

@@ -9,7 +9,7 @@ pipeline/requirements.txt.
 
 Usage:
     .venv/bin/python pipeline/run.py                       # all clips in clips.json
-    .venv/bin/python pipeline/run.py delivery-02             # one clip
+    .venv/bin/python pipeline/run.py delivery-01             # one clip
     .venv/bin/python pipeline/run.py --stride 4            # every 4th frame (fast preview)
 """
 

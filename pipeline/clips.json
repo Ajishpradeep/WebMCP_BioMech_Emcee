@@ -3,7 +3,7 @@
   "clips": [
     {
       "sessionId": "delivery-01",
-      "label": "Pitch A \u2014 elevated side view",
+      "label": "Pitch \u2014 elevated side view",
       "source": "input_baseball/Paul Skenes Slow Motion Pitching Mechanics Throwing Motion Pitcher Video Instruc.mp4",
       "startSec": 6.0,
       "endSec": 40.5,
@@ -15,21 +15,6 @@
       "realTimeScale": null,
       "notes": "Subject is small in frame (~1/3 of height) - cropping to the person box matters more here. Clean single-subject background.",
       "primary": true
-    },
-    {
-      "sessionId": "delivery-02",
-      "label": "Pitch B \u2014 front-side view",
-      "source": "input_baseball/Paul Skenes #2.mp4",
-      "startSec": 8.8,
-      "endSec": 10.4,
-      "videoFps": 23.976,
-      "videoFile": "delivery-02.mp4",
-      "handedness": "right",
-      "view": "front-side portrait view",
-      "slowMotion": true,
-      "realTimeScale": null,
-      "notes": "Second delivery. The window ends before the source cuts away to ball flight.",
-      "primary": false
     }
   ]
 }

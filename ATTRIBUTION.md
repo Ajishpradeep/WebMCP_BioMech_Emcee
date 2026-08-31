@@ -73,11 +73,10 @@
 | sessionId | Subject | Source file | Res / fps |
 |---|---|---|---|
 | `delivery-01` | Anonymized in product UI | Elevated side-view delivery | 1920×1080 @ 29.97 fps |
-| `delivery-02` | Anonymized in product UI | Front-side portrait delivery | 1080×1920 @ 23.976 fps |
 
 Manifest: [`pipeline/clips.json`](pipeline/clips.json)
 
-> **Both clips are slow-motion recordings at an unknown slowdown factor.** This is recorded as
+> **The bundled clip is a slow-motion recording at an unknown slowdown factor.** This is recorded as
 > `slowMotion: true` / `realTimeScale: null` in the manifest and carried into `session.json`.
 > Consequence: kinematic-sequence **order** and **normalized timing** remain valid, but **absolute
 > angular velocities in °/s are not derivable** and are reported as `unavailable`. See

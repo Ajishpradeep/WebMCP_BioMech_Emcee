@@ -11,8 +11,9 @@ Two layers of verification, because they catch different failures:
 | **Headless harness** — `web/src/webmcp/tools.test.ts` | wrong values, missing `meta`, output-budget creep, unhelpful errors, write tools that don't write | `cd web && npx vitest run src/webmcp/tools.test.ts` |
 | **Live agent** — DevTools, then ChatGPT's in-app browser | registration, return-shape convention, tool *selection* | a deployed HTTPS origin (Task 17) |
 
-The harness runs every handler against the two real reconstructed deliveries in
-`web/public/sessions/`, so the numbers below are measured output, not illustration.
+The harness runs every handler against the retained real reconstruction plus explicit in-memory
+comparison and short-clip fixtures. The `delivery-01` numbers below are measured output, not
+illustration; the fixtures verify behavior without shipping the owner's rejected second clip.
 
 ---
 

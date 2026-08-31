@@ -256,7 +256,13 @@ export const comparePitches: PitchTool = {
     let idB = typeof input.sessionIdB === 'string' ? input.sessionIdB.trim() : ''
     if (!idB) {
       const others = st.index.map((s) => s.sessionId).filter((id) => id !== A.session.sessionId)
-      if (others.length !== 1) {
+      if (others.length === 0) {
+        throw new ToolInputError(
+          'No second pitch analysis is available to compare. Call list_pitch_sessions to confirm what is loaded.',
+          { sessionIdB: [] },
+        )
+      }
+      if (others.length > 1) {
         throw new ToolInputError(
           'sessionIdB is required when more than one other pitch is available. Call list_pitch_sessions for the ids.',
           { sessionIdB: others },

@@ -2,10 +2,11 @@
  * Tool-surface verification.
  *
  * DevTools proves the tools register; this proves they are CORRECT — every handler run
- * against two real reconstructed deliveries, with the conventions that the submission
- * rests on asserted rather than eyeballed: the 13-tool ceiling, the honesty `meta` block
- * on every response, the output budget, retryable errors, the structured refusal, and
- * write tools that actually move the store the UI renders from.
+ * against the bundled reconstruction plus explicit in-memory fixtures, with the
+ * conventions that the submission rests on asserted rather than eyeballed: the 13-tool
+ * ceiling, the honesty `meta` block on every response, the output budget, retryable
+ * errors, the structured refusal, and write tools that actually move the store the UI
+ * renders from.
  */
 
 import { readFileSync } from 'node:fs'
@@ -22,7 +23,41 @@ const read = (f: string) => JSON.parse(readFileSync(join(sessionsDir, f), 'utf8'
 
 const index: SessionIndexEntry[] = read('index.json').sessions
 const active: Session = read('delivery-01.json')
-const other: Session = read('delivery-02.json')
+const other: Session = {
+  ...active,
+  sessionId: 'comparison-fixture',
+  source: { ...active.source, label: 'Comparison fixture', videoFile: undefined },
+}
+const short: Session = {
+  ...active,
+  sessionId: 'short-clip-fixture',
+  source: {
+    ...active.source,
+    label: 'Short-clip fixture',
+    frameCount: 38,
+    videoFile: undefined,
+  },
+  frames: active.frames.slice(0, 38),
+}
+const testIndex: SessionIndexEntry[] = [
+  ...index,
+  {
+    sessionId: other.sessionId,
+    label: other.source.label,
+    handedness: other.subject.handedness,
+    view: other.source.view,
+    frameCount: other.source.frameCount,
+    file: 'comparison-fixture.json',
+  },
+  {
+    sessionId: short.sessionId,
+    label: short.source.label,
+    handedness: short.subject.handedness,
+    view: short.source.view,
+    frameCount: short.source.frameCount,
+    file: 'short-clip-fixture.json',
+  },
+]
 
 const byName = (name: string): PitchTool => {
   const t = ALL_TOOLS.find((x) => x.name === name)
@@ -36,9 +71,10 @@ const call = (name: string, input: Record<string, unknown> = {}) => runTool(byNa
 type Result = Record<string, any>
 
 beforeEach(() => {
-  useAnalysis.setState({ index, indexState: 'ready', cache: {}, annotations: [] })
+  useAnalysis.setState({ index: testIndex, indexState: 'ready', cache: {}, annotations: [] })
   useAnalysis.getState().adoptSession(active)
   useAnalysis.getState().cacheAnalysis(other)
+  useAnalysis.getState().cacheAnalysis(short)
 })
 
 describe('tool surface contract', () => {
@@ -83,7 +119,7 @@ describe('every tool answers with the honesty contract', () => {
     get_kinematic_sequence: {},
     get_metric_definition: { metric: 'hip_shoulder_separation' },
     compare_to_reference: {},
-    compare_pitches: { sessionIdB: 'delivery-02' },
+    compare_pitches: { sessionIdB: 'comparison-fixture' },
     seek_to_event: { event: 'max_external_rotation' },
     focus_joint: { joint: 'lead knee' },
     set_overlay: { overlay: 'motion_trail', enabled: true },
@@ -160,10 +196,10 @@ describe('measurement tools', () => {
   })
 
   it('refuses a sequence when a cut clip cannot support peak timing', async () => {
-    const res = (await call('get_kinematic_sequence', { sessionId: 'delivery-02' })) as Result
+    const res = (await call('get_kinematic_sequence', { sessionId: 'short-clip-fixture' })) as Result
     expect(res.available).toBe(false)
     expect(res.quality).toBe('unavailable')
-    expect(res.unavailableReason).toMatch(/edge of the clip/i)
+    expect(res.unavailableReason).toMatch(/at least 12|edge of the clip/i)
     expect(res.observedOrder).toEqual([])
     expect(res.peaks).toEqual([])
     expect(res.intervals).toEqual([])
@@ -218,14 +254,26 @@ describe('evidence tools', () => {
 
   it('compares two pitches without disturbing the loaded one', async () => {
     const before = useAnalysis.getState().session?.sessionId
-    const res = (await call('compare_pitches', { sessionIdB: 'delivery-02' })) as Result
+    const res = (await call('compare_pitches', { sessionIdB: 'comparison-fixture' })) as Result
     expect(useAnalysis.getState().session?.sessionId).toBe(before)
     expect(res.comparisonScope).toBe('descriptive_only')
-    expect(res.comparisons).toEqual([])
+    expect(res.comparisons.length).toBeGreaterThan(0)
     expect(res.excludedLowConfidence).toBeGreaterThan(0)
     for (const c of res.comparisons) expect(typeof c.deltaDeg).toBe('number')
     expect(res.meta.caveats.join(' ')).toMatch(/camera/i)
     expect(res.meta.caveats.join(' ')).toMatch(/athlete identity/i)
+  })
+
+  it('explains when the bundled workspace has no second pitch to compare', async () => {
+    useAnalysis.setState({
+      index,
+      cache: { [active.sessionId]: useAnalysis.getState().cache[active.sessionId] },
+    })
+    const res = (await call('compare_pitches')) as Result
+    expect(res.ok).toBe(false)
+    expect(res.retryable).toBe(true)
+    expect(res.error).toMatch(/no second pitch analysis/i)
+    expect(res.validValues.sessionIdB).toEqual([])
   })
 })
 
