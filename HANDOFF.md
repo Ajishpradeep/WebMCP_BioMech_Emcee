@@ -3,9 +3,11 @@
 > **New session? Read this file first, then [`CLAUDE.md`](CLAUDE.md).** This is the live log of what
 > is done, what was learned, and what to do next. Updated at the end of every completed task.
 
-**Last updated:** 2026-08-31, after the ground-up pre-submission review
-**Next task:** deploy the static review workspace to GCP, then finish Task 16 against the public
-HTTPS origin. Recovery sequence and commit gates: [`PLAN.md`](PLAN.md).
+**Last updated:** 2026-08-31, after public Cloud Run deployment
+**Next task:** scientific truth gate, then finish Task 16 against the public HTTPS origin. The
+public workspace is <https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app>; deployment details and
+reproduction steps are in [`docs/deployment.md`](docs/deployment.md). Recovery sequence and commit
+gates: [`PLAN.md`](PLAN.md).
 
 ---
 
@@ -42,6 +44,7 @@ browser** and registers the WebMCP tools.
 | **The 13 WebMCP tools — the graded artifact** | [`.claude/steering/webmcp-tools.md`](.claude/steering/webmcp-tools.md) |
 | Verified WebMCP API facts (don't re-derive) | [`docs/webmcp-technical-reference.md`](docs/webmcp-technical-reference.md) |
 | Contest rules, judging, submission bar | [`docs/webmcp-challenge-brief.md`](docs/webmcp-challenge-brief.md) |
+| Public URL, GCP service, and reproducible deployment | [`docs/deployment.md`](docs/deployment.md) |
 | Model/footage licensing + the video-rights problem | [`ATTRIBUTION.md`](ATTRIBUTION.md) |
 
 ---
@@ -88,7 +91,7 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 | **13–15 — WebMCP tools ★** | ✅ code / 🟡 live | 13 handlers implemented; 35 harness assertions green. Live registration is still unverified. |
 | 16 — Verification + evals | 🟡 | Headless half done ([`evals/pitch-analysis.md`](evals/pitch-analysis.md)); **DevTools + ChatGPT in-app browser still owed.** |
 | 16b — Scientific truth gate | ⏭️ | Remove incompatible comparisons; label the sequence as partial; validate event frames. |
-| 17 — GCP deploy | 🔄 **IN PROGRESS** | Minimal public Cloud Run static deployment. |
+| 17 — GCP deploy | ✅ | Public Cloud Run origin verified; see [`docs/deployment.md`](docs/deployment.md). |
 | 18 — Submission package | ⏭️ | README, license, clean footage, video, description, final Devpost checks. |
 
 **Reordered vs PLAN.md**: 4–7 and 11–12 were done together because inference turned out to be
