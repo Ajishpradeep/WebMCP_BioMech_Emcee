@@ -1,13 +1,78 @@
-# PLAN — empty repo → submitted POC
+# PLAN — PitchLab Review → verified WebMCP submission
 
-Ordered, dependency-respecting task breakdown. **One task per Claude Code session** where practical.
-Each task states its goal, the files it touches, and a **verification** step you can actually run —
-if you can't verify it, it isn't done.
+This file is the durable execution plan. Work in atomic, verifiable milestones and create a normal
+Git commit after each solid checkpoint. Commit messages must not contain AI-agent signatures,
+co-author trailers, or generated-by notices.
 
 Read first: [`SPEC.md`](SPEC.md) · [`.claude/steering/tech.md`](.claude/steering/tech.md) ·
 [`.claude/steering/webmcp-tools.md`](.claude/steering/webmcp-tools.md)
 
 ---
+
+## 2026-08-31 pre-submission recovery plan — current source of truth
+
+The ground-up review found a strong WebMCP-native foundation but two blocking risks: the submission
+package and live integration were incomplete, and several scientific comparisons exceeded what the
+implementation validates. The final product is therefore framed as **PitchLab Review, a shared
+biomechanics evidence workspace**, not an autonomous coach or a motion-capture replacement.
+
+### Execution rules
+
+1. **Viability before expansion.** Public repo, license, README, HTTPS deployment, live WebMCP test,
+   video, and submission materials outrank new features.
+2. **WebMCP collaboration is the product.** Preserve live state reads, visible viewer actions, and
+   persistent evidence notes.
+3. **Truth before confidence.** A low-confidence badge does not make an incompatible reference
+   comparison valid.
+4. **One commit per verified milestone.** Typecheck, tests, build, and milestone-specific checks must
+   pass before each commit.
+5. **No hidden demo dependency.** The public app must work from precomputed sessions without a GPU or
+   local backend.
+
+### Ordered commit gates
+
+| Gate | Priority | Deliverable | Verification | Status |
+|---|---|---|---|---|
+| A | P0 | Preserve and publish the current WebMCP implementation | 62 tests, typecheck, build, public GitHub repo | ✅ `eb6526a` |
+| B | P0 | Reframe product documents and replace stale execution assumptions | Cross-doc terminology/claim audit | ✅ |
+| C | P0 | Add minimal reproducible GCP static deployment | Local container serves app and session assets | ⏭️ |
+| D | P0 | Deploy public HTTPS origin | Cold-load assets; no `Origin-Agent-Cluster: ?0`; service public | ⏭️ |
+| E | P0 | Scientific truth gate | No incompatible construct is ranked or compared; partial sequence labeled | ⏭️ |
+| F | P0 | Judge-facing UX | No dead production upload CTA; first-paint loader; narrow layout usable | ⏭️ |
+| G | P0 | WebMCP runtime hardening | Exactly 13 tools or visible failure; success/error contract tests | ⏭️ |
+| H | P1 | Human event correction loop | Human changes FC/MER/BR; dependent analysis and agent reads update | ⏭️ |
+| I | P0 | Submission package | README, license, clean footage decision, live eval, <3 min demo, Devpost draft | ⏭️ |
+
+### P0 acceptance decisions
+
+- `shoulder_external_rotation` must not be compared with the 166–182° clinical lay-back range until
+  both quantities use the same construct and convention.
+- Hip–shoulder separation and trunk-tilt signs/conventions must be audited before they can be ranked.
+- Kinematic sequence is a **partial four-segment order**, not the published five-segment sequence.
+- Event tests must compare against manually reviewed frames, not only assert ordering.
+- The public build presents precomputed review sessions; local CUDA upload is development tooling.
+- Demo comparison data should be the same athlete and camera setup, using self-recorded or clearly
+  licensed footage. Until replaced, cross-view demo comparisons remain explicitly unreliable.
+
+### P1 after the stable submission baseline
+
+- Add draggable or explicit “set current frame as event” controls and recompute the live analysis.
+- Add a visible agent activity/evidence rail for tool calls and pinned observations.
+- Add runtime session-schema validation and cancellation for stale fetches.
+
+### P2 / post-submission
+
+- Cache derived frame/metric series; harden the offline pipeline against freezes and missing poses.
+- Improve accessibility, annotation spatial semantics, anatomical camera presets, and bundle splitting.
+- Add a backend MCP only for longitudinal athlete history; keep WebMCP responsible for the live
+  visual review session.
+
+---
+
+## Historical build plan
+
+The sections below record how the prototype was built. Where they conflict with the recovery plan
+above, the recovery plan is authoritative.
 
 ## Clock
 

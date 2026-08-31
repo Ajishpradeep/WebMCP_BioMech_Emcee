@@ -1,6 +1,6 @@
-# SPEC — PitchLab: Agent-Native Biomechanics
+# SPEC — PitchLab Review: A Shared Biomechanics Evidence Workspace
 
-> **Working name:** PitchLab. The POC is baseball-only; the platform layer underneath is
+> **Working name:** PitchLab Review. The POC is baseball-only; the interaction pattern underneath is
 > sport-agnostic. Rename freely before submission.
 >
 > **Target:** [The WebMCP Challenge](https://webmcp.devpost.com/) · deadline **Sep 3, 2026 @ 1:00 PM PDT**
@@ -12,48 +12,47 @@
 
 ## 1. Problem statement
 
-3D biomechanical analysis of athletic movement is locked behind marker-based motion-capture labs:
-expensive, appointment-only, and the output is a static PDF a coach reads once. Meanwhile, the
-consumer alternative — phone-video apps — reports a handful of scalar numbers with no 3D
-reconstruction, no traceability to literature, and no way to ask a follow-up question.
+Biomechanical analysis is difficult to review collaboratively. Laboratory systems are expensive and
+specialized, while consumer video tools often reduce a movement to unexplained scalar scores. In
+both cases the evidence is trapped in a fixed interface: a coach cannot ask a question, inspect the
+supporting frame, and leave a visual note in the same workspace.
 
-Both failure modes share a root cause: **the analysis is trapped in whatever screens the vendor
-decided to build.** A pitching coach with a specific question — *"is his separation timing the reason
-the velocity dropped, or is it the front knee?"* — has no way to ask it. There is no screen for that
-question, and there never will be, because the space of useful questions about a pitch is unbounded.
+PitchLab Review addresses the review problem rather than claiming to replace a motion-capture lab.
+It gives a coach and an agent shared access to the same 3D reconstruction, timeline, measurements,
+definitions, uncertainty, and annotations.
 
 ## 2. The core insight
 
-Biomechanical analysis produces a **small, dense, highly structured dataset** (joint angles over
-time) that is **useless without expert interpretation**. That is precisely the shape of problem a
-general-purpose reasoning agent is good at — and precisely the shape of data a fixed UI is bad at
-exposing.
+Biomechanical analysis produces a **small, dense, highly structured dataset** that is difficult to
+interrogate through a fixed UI. A general-purpose agent is useful for translating intent into a
+sequence of evidence lookups and viewer actions; the human remains responsible for judging whether
+the reconstructed pose and event frame are credible.
 
-So: **stop trying to be the brain.** Be the instrument.
+So: **stop trying to be the coach. Be the shared instrument.**
 
-PitchLab runs the specialist model (SAM 3D Body → 3D human mesh per frame), derives rigorous
-biomechanics from it, renders it in an interactive 3D viewer for the human — and exposes the whole
-analysis as **WebMCP tools** so that whatever agent the user already trusts can read it, reason over
-it, cross-reference it, and *drive the viewer* while the human watches.
+PitchLab runs the specialist model (SAM 3D Body → 3D human pose per frame), derives a bounded set of
+kinematic observations, renders them in an interactive 3D viewer, and exposes the live review state
+as **WebMCP tools**. An agent can read the session, navigate to evidence, explain definitions and
+limits, and *drive the viewer* while the human watches.
 
-The specialist model handles perception. The general agent handles interpretation. The human stays
-in the loop because they are looking at the same 3D reconstruction the agent is reading.
+The specialist model handles perception. The general agent handles intent and orchestration. The
+human validates the visual evidence and owns the conclusion.
 
 ## 3. Why WebMCP specifically — and not a backend MCP server
 
 This is the question a judge will ask first, so it is the question the product must answer by
-construction. **Three things here are only possible because the agent is inside the page:**
+construction. **Three things are materially better because the agent is inside the page:**
 
 1. **The analysis state is client-side and has no server representation.** Joint angles, event
    detection, reference comparison, and confidence scoring are all computed **in the browser** from a
    raw joint-trajectory file. Which pitch is loaded, which frame is scrubbed to, which smoothing
    window is active, which reference cohort is selected — none of it exists on any server. An agent
-   asking *"what am I looking at right now?"* can only be answered from inside the page.
-   A backend MCP server structurally cannot serve this.
+   asking *"what am I looking at right now?"* is answered against the exact browser state rather
+   than a separate server-side copy.
 
 2. **The agent can write back into the human's view.** Tools like `seek_to_event`, `focus_joint`,
    and `annotate_frame` let the agent *move the 3D viewer and pin annotations into it*. When the
-   agent says "the problem is at maximum external rotation," the viewer scrubs there, the shoulder
+   agent identifies an observation at maximum external rotation, the viewer scrubs there, the shoulder
    highlights, and a labeled pin appears. The agent's reasoning becomes a visible artifact in the
    human's workspace. This is the "cooperative interplay between a user, a web page, and an agent
    with shared context" the WebMCP explainer names as its goal — and it is the single hardest thing
@@ -72,8 +71,8 @@ a site can.
 
 | User | What they get |
 |---|---|
-| **Pitching coach / P&C coach** (primary) | Ask open-ended questions of a pitch in natural language and see the answer materialize in the 3D view. No new software to learn — they bring their own agent. |
-| **Athlete** | A plain-language read on their own mechanics, with the ability to ask "why" and get a cited answer rather than a score. |
+| **Pitching coach / P&C coach** (primary) | Ask open-ended review questions and see the supporting event, joint, definition, and note materialize in the 3D workspace. |
+| **Athlete** | Review a coach-approved evidence trail with plain-language definitions and explicit limits rather than an unexplained score. |
 | **Sports-science / PT student** | A traceable instrument: every metric links to its definition, computation, literature source, and measurement uncertainty. |
 | **Agent developers** (meta-audience) | A reference implementation of a WebMCP tool surface over a specialist ML model — the pattern generalizes far past baseball. |
 
@@ -90,12 +89,12 @@ capture — which keeps per-frame inference cheap.
 - Offline pipeline: pitch video → per-frame SAM 3D Body inference → smoothed 3D joint trajectories
 - Automatic detection of the canonical pitching events: **lead foot contact**, **maximum external
   rotation (MER)**, **ball release**
-- Derived kinematics at each event: shoulder abduction / external rotation, elbow flexion, lead knee
-  flexion, trunk forward and lateral tilt, hip–shoulder (pelvis–thorax) separation, stride length as
-  % of height
-- **Kinematic sequence analysis**: peak angular velocity ordering across pelvis → trunk → arm →
-  forearm → hand, plus pelvis-to-trunk separation time
-- Comparison against **published reference ranges**, each carrying its literature citation
+- Selected kinematics at each event, limited to constructs whose definitions and conventions are
+  compatible with the implementation
+- **Partial four-segment kinematic sequence analysis** across pelvis → thorax → upper arm → forearm;
+  it is not presented as the five-segment sequence used by the cited study
+- Comparison against **published reference ranges** only where the measurement construct matches,
+  with a citation and limitations attached
 - **Per-metric confidence grading** and explicit refusal to report quantities monocular video cannot
   support (see §6)
 - Interactive 3D viewer: skeleton/mesh playback, timeline scrub, event markers, joint highlighting
@@ -106,21 +105,24 @@ capture — which keeps per-frame inference cheap.
 
 ## 6. The honesty contract (a product feature, not a disclaimer)
 
-This is a differentiator, and it is enforced in code — not just written in a footer.
+This is a differentiator, and it is enforced in code — not just written in a footer. The current
+grades describe expected conditioning and known derivability limits; they are **not empirical error
+bounds for SAM 3D Body on baseball pitching**.
 
 **Every metric carries a confidence grade:**
 
 | Grade | Applies to | Basis |
 |---|---|---|
-| `high` | Sagittal/frontal-plane joint angles (knee flexion, elbow flexion, trunk tilt) | Markerless-vs-marker-based agreement is best here |
+| `high` | Better-conditioned sagittal/frontal-plane joint angles | Geometrically better conditioned; still not system-validated on these clips |
 | `medium` | Transverse-plane segment separation (hip–shoulder separation), event timing | Derived from segment vectors; sensitive to reconstruction noise |
 | `low` | Internal/external rotation | Literature consistently reports weakest markerless agreement on IR/ER |
 | `unavailable` | **All kinetics** — elbow valgus/varus torque, joint forces, loading rates | Not derivable from monocular video without force data and a musculoskeletal model |
 
-Reported markerless-vs-marker-based RMSD in sports settings is **6.3°–23.0°**; agreement is weakest
-in internal/external rotation. Absolute distances in metric units are treated as **unreliable** —
-SAM 3D Body returns camera-frame coordinates with an *estimated* focal length, so PitchLab reports
-**stride length normalized to body height**, never in centimetres.
+A small markerless-versus-marker study in boxing reported RMSD of **6.3°–23.0°**, with the weakest
+agreement in internal/external rotation. That study provides context, not validation of this model,
+sport, or implementation. Absolute distances in metric units are treated as **unreliable** — SAM 3D
+Body returns camera-frame coordinates with an *estimated* focal length, so PitchLab reports
+height-normalized quantities rather than centimetres.
 
 **PitchLab will refuse to answer some questions, on purpose.** Ask it for elbow valgus torque and the
 tool returns a structured refusal explaining why monocular video cannot support the number, and
@@ -143,7 +145,8 @@ supporting rationale is in [`.claude/steering/tech.md`](.claude/steering/tech.md
 - ❌ **Running gait.** Deferred. Many headline running metrics need metric scale or force plates.
 - ❌ **Live in-browser pose inference.** SAM 3D Body is 631M–840M params and Linux+CUDA only.
   Inference stays offline. See [`tech.md`](.claude/steering/tech.md) §3.
-- ❌ **Real-time / streaming analysis.** Upload-and-analyze only.
+- ❌ **Real-time / streaming analysis.** Demo sessions are precomputed; optional local analysis is
+  offline preprocessing rather than part of the public request path.
 - ❌ **Multi-person tracking.** One pitcher per clip.
 - ❌ **User accounts, databases, persistence across devices.** Static app + local session state.
 - ❌ **Hand/finger detail, grip, or pitch-type classification.** SAM 3D Body's hand decoder exists but

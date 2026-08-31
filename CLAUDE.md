@@ -1,6 +1,6 @@
 # CLAUDE.md — PitchLab
 
-Agent-native biomechanics for baseball pitching. Built for
+A shared biomechanics evidence workspace for baseball pitching. Built for
 [The WebMCP Challenge](https://webmcp.devpost.com/) — **deadline Thu Sep 3, 2026, 1:00 PM PDT**;
 the live URL must stay up through **Sep 21**.
 
@@ -9,7 +9,7 @@ the live URL must stay up through **Sep 21**.
 | File | What it's for |
 |---|---|
 | [`SPEC.md`](SPEC.md) | Product spec, scope, non-goals, self-score |
-| [`PLAN.md`](PLAN.md) | Numbered task breakdown — **work one task per session** |
+| [`PLAN.md`](PLAN.md) | Current recovery plan, commit gates, and historical build record |
 | [`.claude/steering/tech.md`](.claude/steering/tech.md) | Architecture, pipeline, data contract, metrics + citations |
 | [`.claude/steering/webmcp-tools.md`](.claude/steering/webmcp-tools.md) | The 13-tool surface — the graded artifact |
 | [`docs/webmcp-technical-reference.md`](docs/webmcp-technical-reference.md) | Verified WebMCP API facts — **don't re-derive** |
@@ -17,9 +17,9 @@ the live URL must stay up through **Sep 21**.
 
 ## The one-line thesis
 
-The specialist model perceives (SAM 3D Body → 3D pose). The general agent interprets. The human stays
-in the loop because **agent and human are looking at the same 3D reconstruction** — and the agent can
-move it.
+The specialist model perceives (SAM 3D Body → 3D pose). The general agent navigates and explains.
+The human validates the evidence because **agent and human are looking at the same 3D reconstruction**
+— and the agent can move it and pin review notes.
 
 ## Settled decisions — do not re-litigate
 
@@ -30,8 +30,8 @@ move it.
   upload → analyse flow for development and the demo video. The **deployed** build has no backend and
   serves pre-computed sessions from `web/public/sessions/`; the upload panel degrades to an
   explanatory state. Never make the deployed app depend on the backend.
-- **Biomechanics are computed in the browser.** This is *what makes WebMCP the right choice* over a
-  backend MCP server — it's architectural, not incidental. **Never move metric computation server-side.**
+- **Biomechanics are computed in the browser.** WebMCP is valuable because the agent reads and writes
+  the exact live review state. A backend MCP remains appropriate for future history or team data.
 - **Imperative WebMCP API only.** The declarative form API is unsupported in ChatGPT's in-app browser,
   which is our primary judging surface. Top-level page, **no iframes**.
 - **React + Vite + react-three-fiber + Zustand.** WebMCP tools read/write the same `AnalysisStore` the
@@ -53,6 +53,10 @@ SAM 3D Body returns **camera-frame** coordinates with an **estimated** focal len
 Every metric carries a confidence grade (`high`/`medium`/`low`/`unavailable`), and every tool response
 carries a `meta` block with confidence, citations, and the disclaimer. **This honesty layer is a
 product feature — never strip it to save output budget.**
+
+**A confidence label cannot repair a construct mismatch.** Do not compare a computed quantity to a
+published range unless the anatomical definition, sign, event, and convention are compatible. When
+they are not, report the quantity as experimental or unavailable for reference comparison.
 
 ## Conventions
 

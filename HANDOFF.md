@@ -3,23 +3,27 @@
 > **New session? Read this file first, then [`CLAUDE.md`](CLAUDE.md).** This is the live log of what
 > is done, what was learned, and what to do next. Updated at the end of every completed task.
 
-**Last updated:** 2026-08-31, end of the WebMCP tool surface
-**Next task:** finish Task 16 in a real browser (DevTools + ChatGPT in-app), then
-[Task 17 — deploy](PLAN.md). Checklist state: [`evals/pitch-analysis.md`](evals/pitch-analysis.md).
+**Last updated:** 2026-08-31, after the ground-up pre-submission review
+**Next task:** deploy the static review workspace to GCP, then finish Task 16 against the public
+HTTPS origin. Recovery sequence and commit gates: [`PLAN.md`](PLAN.md).
 
 ---
 
 ## 0. What is this project? (30-second orientation)
 
-**PitchLab** — a baseball-pitching biomechanics web app built for
+**PitchLab Review** — a shared baseball-pitching biomechanics evidence workspace built for
 [The WebMCP Challenge](https://webmcp.devpost.com/) (**deadline Thu Sep 3, 2026, 1:00 PM PDT**;
 the live URL must stay up through **Sep 21**).
 
-The pitch: *stop trying to be the brain; be the instrument.* A specialist vision model
-(Meta's SAM 3D Body) reconstructs a pitcher in 3D from ordinary video. We derive rigorous
-biomechanics from that, render it in an interactive 3D viewer — and expose the whole analysis as
-**WebMCP tools**, so any agent can read the measurements *and drive the viewer* while the human
-watches the same reconstruction.
+The pitch: *stop trying to be the coach; be the shared instrument.* A specialist vision model
+(Meta's SAM 3D Body) reconstructs a pitcher in 3D from video. The browser turns that reconstruction
+into a deliberately bounded set of kinematic observations and renders them in an interactive 3D
+workspace. **WebMCP tools** let an agent inspect the live session, navigate to evidence, explain
+limitations, and pin review notes while the human judges the same reconstruction.
+
+**Claim boundary:** this is a review and evidence-navigation tool, not a validated replacement for
+marker-based motion capture, a diagnostic system, or an autonomous pitching coach. Comparisons are
+shown only when the implementation and published reference use compatible measurement constructs.
 
 **Architecture in one line:** heavy GPU inference happens **offline** (Tier A, Python) and emits
 `session.json`; the **web app is a static build** (Tier B) that computes all biomechanics **in the
@@ -81,9 +85,11 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 | 12 — 3D viewer + timeline | ✅ | Playback, scrub, camera presets, trail, annotation pins. |
 | 8–10 — Biomechanics engine | ✅ | `web/src/biomech/`, 27 unit + real-data tests green. |
 | 12b — Metrics panel | ✅ | Readings, confidence badges, cited definitions, sequence chart. |
-| **13–15 — WebMCP tools ★** | ✅ | **All 13 registered.** `web/src/webmcp/`, 35 harness tests green. |
+| **13–15 — WebMCP tools ★** | ✅ code / 🟡 live | 13 handlers implemented; 35 harness assertions green. Live registration is still unverified. |
 | 16 — Verification + evals | 🟡 | Headless half done ([`evals/pitch-analysis.md`](evals/pitch-analysis.md)); **DevTools + ChatGPT in-app browser still owed.** |
-| 17–18 — Deploy + submit | ⏭️ **NEXT** | |
+| 16b — Scientific truth gate | ⏭️ | Remove incompatible comparisons; label the sequence as partial; validate event frames. |
+| 17 — GCP deploy | 🔄 **IN PROGRESS** | Minimal public Cloud Run static deployment. |
+| 18 — Submission package | ⏭️ | README, license, clean footage, video, description, final Devpost checks. |
 
 **Reordered vs PLAN.md**: 4–7 and 11–12 were done together because inference turned out to be
 ~5 min of compute, and a viewer can't be verified without real data. See the callout in `PLAN.md`.
