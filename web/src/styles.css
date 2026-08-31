@@ -1,4 +1,4 @@
-/* PitchLab — dark instrument UI.
+/* PitchLab Review — dark instrument UI.
    One accent (cyan) for structure, amber for attention, red for hard limits. */
 
 :root {
@@ -458,3 +458,34 @@ body {
 .stage { grid-template-rows: minmax(280px, 1fr) auto auto; }
 .seqchart { max-height: 42vh; overflow-y: auto; }
 .sc-actions { display: flex; gap: 5px; flex: none; }
+
+/* At narrow widths, preserve a usable viewer and make the review controls a normal
+   scrollable section instead of squeezing the instrument panel into 340px. */
+@media (max-width: 960px) {
+  html, body, #root { height: auto; min-height: 100%; }
+  body { overflow-y: auto; overflow-x: hidden; }
+  .app {
+    min-height: 100vh;
+    height: auto;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas: "top" "stage" "panel";
+  }
+  .topbar { min-height: 56px; padding: 8px 14px; gap: 10px; flex-wrap: wrap; }
+  .topbar-right { margin-left: auto; gap: 8px; min-width: 0; }
+  .session-name { display: none; }
+  .stage { min-height: min(72vh, 680px); }
+  .viewer { min-height: 420px; }
+  .panel { border-left: 0; border-top: 1px solid var(--line); overflow: visible; }
+  .seqchart { max-height: none; min-width: 0; overflow-x: hidden; }
+  .sc-head, .sc-svg, .sc-legend, .sc-note { max-width: 100%; }
+}
+
+@media (max-width: 520px) {
+  .brand p { display: none; }
+  .topbar-right { margin-left: 0; max-width: 180px; overflow: hidden; }
+  .webmcp { font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .viewer { min-height: 340px; }
+  .seqchart { padding-left: 10px; padding-right: 10px; }
+  .sc-table { font-size: 10px; }
+}

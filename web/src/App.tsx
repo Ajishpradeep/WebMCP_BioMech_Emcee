@@ -17,8 +17,7 @@ export default function App() {
   const loadIndex = useAnalysis((s) => s.loadIndex)
   const loadSession = useAnalysis((s) => s.loadSession)
 
-  // Registers the 13 WebMCP tools against this document, re-registering when the loaded
-  // pitch changes. No-ops in a browser without WebMCP.
+  // Registers the 13 WebMCP tools against this document. No-ops in a browser without WebMCP.
   const webmcp = useWebMCP()
 
   // Load the session index, then auto-open the first session.
@@ -60,8 +59,8 @@ export default function App() {
         <div className="brand">
           <span className="logo">◈</span>
           <div>
-            <h1>PitchLab</h1>
-            <p>agent-native biomechanics</p>
+            <h1>PitchLab Review</h1>
+            <p>shared biomechanics evidence workspace</p>
           </div>
         </div>
         <div className="topbar-right">
@@ -81,6 +80,7 @@ export default function App() {
 
       <main className="stage">
         <div className="viewer">
+          {indexState === 'loading' && <div className="center dim">Loading review sessions…</div>}
           {sessionState === 'loading' && <div className="center dim">Loading session…</div>}
           {sessionState === 'error' && (
             <div className="center err">
@@ -92,7 +92,7 @@ export default function App() {
             <div className="center dim">
               <p>No analysed sessions yet.</p>
               <p className="small">
-                Run <span className="mono">.venv/bin/python pipeline/run.py</span> to produce one.
+                This public workspace is built around precomputed review sessions.
               </p>
             </div>
           )}

@@ -94,6 +94,10 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 | 17 — GCP deploy | ✅ | Public Cloud Run origin verified; see [`docs/deployment.md`](docs/deployment.md). |
 | 18 — Submission package | ⏭️ | README, license, clean footage, video, description, final Devpost checks. |
 
+The public UI intentionally shows only precomputed review sessions. The local CUDA upload panel is
+available in development but hidden in the deployed static build, so judges do not encounter a
+non-functional upload path.
+
 **Reordered vs PLAN.md**: 4–7 and 11–12 were done together because inference turned out to be
 ~5 min of compute, and a viewer can't be verified without real data. See the callout in `PLAN.md`.
 

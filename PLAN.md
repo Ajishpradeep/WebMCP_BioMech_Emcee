@@ -38,7 +38,7 @@ biomechanics evidence workspace**, not an autonomous coach or a motion-capture r
 | C | P0 | Add minimal reproducible GCP static deployment | Container image builds from a clean dependency install | ✅ |
 | D | P0 | Deploy public HTTPS origin | Cold-load assets; no `Origin-Agent-Cluster: ?0`; service public | ✅ `pitchlab-webmcp-00001-2bm` |
 | E | P0 | Scientific truth gate | Incompatible comparisons removed and partial sequence labeled; manual event-frame validation remains | 🟡 `truth gate, phase 1` |
-| F | P0 | Judge-facing UX | No dead production upload CTA; first-paint loader; narrow layout usable | ⏭️ |
+| F | P0 | Judge-facing UX | No dead production upload CTA; first-paint loader; narrow layout usable | ✅ local production visual check |
 | G | P0 | WebMCP runtime hardening | Exactly 13 tools or visible failure; success/error contract tests | ⏭️ |
 | H | P1 | Human event correction loop | Human changes FC/MER/BR; dependent analysis and agent reads update | ⏭️ |
 | I | P0 | Submission package | README, license, clean footage decision, live eval, <3 min demo, Devpost draft | ⏭️ |

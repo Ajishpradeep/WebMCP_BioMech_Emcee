@@ -61,6 +61,9 @@ export function SidePanel({ session }: { session: Session | null }) {
   const setCameraPlane = useAnalysis((s) => s.setCameraPlane)
   const annotations = useAnalysis((s) => s.annotations)
   const clearAnnotations = useAnalysis((s) => s.clearAnnotations)
+  // Uploads require a local CUDA service and are development tooling. Keeping that
+  // control out of the public static deployment avoids a dead call-to-action for judges.
+  const showLocalUpload = import.meta.env.DEV || import.meta.env.VITE_ENABLE_LOCAL_UPLOAD === 'true'
 
   return (
     <aside className="panel">
@@ -81,7 +84,7 @@ export function SidePanel({ session }: { session: Session | null }) {
         </div>
       </section>
 
-      <UploadPanel />
+      {showLocalUpload && <UploadPanel />}
 
       {session && (
         <>
