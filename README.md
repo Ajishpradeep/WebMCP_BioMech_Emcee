@@ -29,7 +29,10 @@ direction, not a current feature.
   tools that visibly navigate and annotate the shared review surface.
 - Published-range comparisons only for construct-compatible direct two-segment elbow and lead-knee
   flexion measurements. Other angles remain exploratory measurements, not rankings.
-- A partial four-segment peak-order view, explicitly not a full published five-segment sequence.
+- A partial four-segment peak-order view with normalized intervals and clip-quality refusal,
+  explicitly not a full published five-segment sequence or a quality score.
+- Plain-English review routing: “what stands out?” / “where did I mess up?” returns bounded
+  observations and suggested seek/focus/annotation calls using the existing WebMCP tools.
 
 ## Why WebMCP
 
@@ -88,8 +91,8 @@ the public demo reproducible and makes WebMCP appropriate for the live, human-vi
 
 Biomech Emcee is not a marker-based motion-capture replacement, diagnostic system, injury-risk
 predictor, medical device, or autonomous pitching coach. It uses camera-frame reconstruction and
-some demo source footage has unresolved broadcast rights; see [ATTRIBUTION.md](ATTRIBUTION.md).
-Do not add a source-video player or use this demo data for clinical decisions. The project’s claim
+some synchronized demo source footage has unresolved broadcast rights; see [ATTRIBUTION.md](ATTRIBUTION.md).
+Do not deploy uncleared footage or use this demo data for clinical decisions. The project’s claim
 boundary and technical decisions are in [SPEC.md](SPEC.md) and [HANDOFF.md](HANDOFF.md).
 
 ## Repository map

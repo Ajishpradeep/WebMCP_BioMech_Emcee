@@ -38,11 +38,29 @@ export interface SegmentPeak {
   peakAngularVelocity: number | null
 }
 
+export interface PeakInterval {
+  from: SequenceSegment
+  to: SequenceSegment
+  frames: number
+  /** Signed percentage-point gap in the FC→BR window. Negative means reversed order. */
+  normalizedPctPoints: number
+  /** Video seconds, not real seconds for slow-motion footage. */
+  videoSeconds: number
+  /** Real seconds when the time scale is known; otherwise null. */
+  realSeconds: number | null
+}
+
 export interface KinematicSequence {
+  available: boolean
+  quality: 'medium' | 'low' | 'unavailable'
+  unavailableReason: string | null
+  deliveryWindow: { fromFrame: number; toFrame: number; frames: number } | null
   observedOrder: SequenceSegment[]
   peaks: SegmentPeak[]
   /** Whether the four observed segments occur in the expected order; not a quality score. */
-  isProximalToDistal: boolean
+  isProximalToDistal: boolean | null
+  /** Signed gaps along pelvis→thorax→upper arm→forearm, not normative targets. */
+  intervals: PeakInterval[]
   /** Pelvis→thorax peak separation, as a percentage of the FC→BR window. */
   pelvisToTrunkSeparationPct: number | null
   /** Per-frame angular speed traces, for the sequence chart. */
@@ -112,6 +130,40 @@ export function kinematicSequence(session: Session, events: PhaseEvent[]): Kinem
   const lo = Math.max(1, fc)
   const hi = Math.min(n - 2, br)
 
+  // A seven-frame derivative smoother cannot support four independent peak claims in a
+  // five-frame event window. Likewise, a release at the clip boundary is commonly the
+  // result of a source cut rather than an observed speed peak. Keep the traces visible,
+  // but refuse to manufacture an order or intervals from that evidence.
+  const deliveryFrames = br - fc
+  const eventOrderValid = br > fc
+  const releaseObserved = br > 1 && br < n - 2
+  const windowSupported = deliveryFrames >= 12
+  const available = eventOrderValid && releaseObserved && windowSupported
+  const unavailableReason = available
+    ? null
+    : !eventOrderValid
+      ? 'Foot contact and release do not define a valid delivery window.'
+      : !releaseObserved
+        ? 'Release falls at the edge of the clip, so the hand-speed peak and downstream sequence peaks are not observable.'
+        : `Only ${deliveryFrames} frames separate foot contact and release; at least 12 are required for the derivative and smoothing window.`
+
+  if (!available) {
+    return {
+      available: false,
+      quality: 'unavailable',
+      unavailableReason,
+      deliveryWindow: eventOrderValid ? { fromFrame: fc, toFrame: br, frames: deliveryFrames } : null,
+      observedOrder: [],
+      peaks: [],
+      isProximalToDistal: null,
+      intervals: [],
+      pelvisToTrunkSeparationPct: null,
+      traces,
+      rateUnitsAvailable: false,
+      literatureNote: LITERATURE_NOTE,
+    }
+  }
+
   const peaks: SegmentPeak[] = SEQUENCE_SEGMENTS.map((s) => {
     let bf = lo
     let bv = -Infinity
@@ -135,6 +187,23 @@ export function kinematicSequence(session: Session, events: PhaseEvent[]): Kinem
   const observedOrder = [...peaks].sort((a, b) => a.frame - b.frame).map((p) => p.segment)
   const isProximalToDistal = observedOrder.every((s, i) => s === PROXIMAL_TO_DISTAL[i])
 
+  const peakBySegment = new Map(peaks.map((peak) => [peak.segment, peak]))
+  const intervals: PeakInterval[] = PROXIMAL_TO_DISTAL.slice(0, -1).map((from, index) => {
+    const to = PROXIMAL_TO_DISTAL[index + 1]
+    const a = peakBySegment.get(from)!
+    const b = peakBySegment.get(to)!
+    const frameGap = b.frame - a.frame
+    const videoSeconds = b.tVideo - a.tVideo
+    return {
+      from,
+      to,
+      frames: frameGap,
+      normalizedPctPoints: Math.round(((b.tNormPct ?? 0) - (a.tNormPct ?? 0)) * 10) / 10,
+      videoSeconds: Math.round(videoSeconds * 1000) / 1000,
+      realSeconds: scale === null ? null : Math.round(videoSeconds * scale * 1000) / 1000,
+    }
+  })
+
   const pPelvis = peaks.find((p) => p.segment === 'pelvis')
   const pThorax = peaks.find((p) => p.segment === 'thorax')
   const sep =
@@ -143,9 +212,14 @@ export function kinematicSequence(session: Session, events: PhaseEvent[]): Kinem
       : null
 
   return {
+    available: true,
+    quality: 'medium',
+    unavailableReason: null,
+    deliveryWindow: { fromFrame: fc, toFrame: br, frames: deliveryFrames },
     observedOrder,
     peaks,
     isProximalToDistal,
+    intervals,
     pelvisToTrunkSeparationPct: sep,
     traces,
     rateUnitsAvailable: scale !== null,

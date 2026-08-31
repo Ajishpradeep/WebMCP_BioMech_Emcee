@@ -23,15 +23,15 @@ const PLANE_GRADE: Record<MetricName, Confidence> = {
   // Best conditioned planes are still unvalidated markerless measurements here.
   lead_knee_flexion: 'medium',
   trail_knee_flexion: 'medium',
-  lead_hip_flexion: 'medium',
+  lead_hip_flexion: 'low',
   elbow_flexion: 'medium',
-  shoulder_abduction: 'medium',
-  trunk_forward_tilt: 'medium',
-  trunk_lateral_tilt: 'medium',
+  shoulder_abduction: 'low',
+  trunk_forward_tilt: 'low',
+  trunk_lateral_tilt: 'low',
   // transverse — derived from segment vectors, noisier
-  hip_shoulder_separation: 'medium',
-  lead_foot_angle: 'medium',
-  shoulder_horizontal_abduction: 'medium',
+  hip_shoulder_separation: 'low',
+  lead_foot_angle: 'low',
+  shoulder_horizontal_abduction: 'low',
   // axial rotation — weakest agreement in the literature
   shoulder_external_rotation: 'low',
 }

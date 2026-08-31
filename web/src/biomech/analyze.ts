@@ -7,8 +7,8 @@
  */
 
 import type { Confidence, EventName, PhaseEvent, Session } from '../types'
-import { metricSeries, metricsFor, poseAt, type MetricName } from './angles'
-import { gradeMetric, gradeRate } from './confidence'
+import { metricSeries, type MetricName } from './angles'
+import { gradeMetric, gradeRate, worst } from './confidence'
 import { detectEvents, normalisedPct } from './events'
 import { kinematicSequence, type KinematicSequence } from './sequence'
 import { referenceFor, type ReferenceRange } from './reference'
@@ -25,6 +25,7 @@ export interface MetricReading {
   /** How far outside the range, in degrees. 0 when within. */
   magnitude: number | null
   confidence: Confidence
+  eventConfidence: Confidence
   citations: string[]
 }
 
@@ -45,22 +46,23 @@ function readingFor(
   metric: MetricName,
   event: EventName,
   value: number | null,
+  eventConfidence: Confidence,
 ): MetricReading {
   const ref: ReferenceRange | undefined = referenceFor(metric, event)
-  const confidence = ref ? ref.confidence : gradeMetric(metric)
+  const confidence = worst(ref ? ref.confidence : gradeMetric(metric), eventConfidence)
 
   if (value === null) {
     return {
       metric, event, value: null, unit: 'deg',
       reference: ref ? { range: ref.range, typical: ref.typical, sd: ref.sd } : undefined,
-      status: 'unavailable', magnitude: null, confidence,
+      status: 'unavailable', magnitude: null, confidence, eventConfidence,
       citations: ref?.citations ?? [],
     }
   }
   if (!ref) {
     return {
       metric, event, value, unit: 'deg', status: 'no_reference',
-      magnitude: null, confidence, citations: [],
+      magnitude: null, confidence, eventConfidence, citations: [],
     }
   }
 
@@ -75,7 +77,7 @@ function readingFor(
     metric, event, value, unit: 'deg',
     reference: { range: ref.range, typical: ref.typical, sd: ref.sd },
     status, magnitude: Math.round(magnitude * 10) / 10,
-    confidence, citations: ref.citations,
+    confidence, eventConfidence, citations: ref.citations,
   }
 }
 
@@ -88,10 +90,9 @@ export function analyze(session: Session, reviewedEvents?: PhaseEvent[]): Analys
   // invent comparisons for numbers nobody has published a range for.
   const readings: MetricReading[] = []
   for (const ev of events) {
-    const m = metricsFor(poseAt(session, ev.frame))
-    for (const metric of Object.keys(m) as MetricName[]) {
+    for (const metric of Object.keys(series) as MetricName[]) {
       if (!referenceFor(metric, ev.name)) continue
-      readings.push(readingFor(metric, ev.name, m[metric]))
+      readings.push(readingFor(metric, ev.name, series[metric][ev.frame] ?? null, ev.confidence))
     }
   }
 

@@ -8,14 +8,14 @@
 
 import { useMemo, useState } from 'react'
 import type { AnalysisResult, MetricReading } from '../biomech/analyze'
-import { metricsFor, poseAt, type MetricName } from '../biomech/angles'
+import type { MetricName } from '../biomech/angles'
 import { CITATIONS, referenceFor } from '../biomech/reference'
 import { useAnalysis } from '../store'
 import type { Confidence, EventName, Session } from '../types'
 
 const EVENT_LABEL: Record<EventName, string> = {
   foot_contact: 'Lead foot contact',
-  max_external_rotation: 'Max external rotation',
+  max_external_rotation: 'MER candidate (review)',
   ball_release: 'Ball release',
 }
 
@@ -25,12 +25,12 @@ const PRETTY: Partial<Record<MetricName, string>> = {
   lead_hip_flexion: 'Lead hip flexion',
   elbow_flexion: 'Elbow flexion',
   shoulder_abduction: 'Shoulder abduction',
-  shoulder_external_rotation: 'Shoulder external rotation',
+  shoulder_external_rotation: 'Shoulder axial-rotation proxy',
   shoulder_horizontal_abduction: 'Shoulder horizontal abduction',
-  trunk_forward_tilt: 'Trunk forward tilt',
-  trunk_lateral_tilt: 'Trunk lateral tilt',
-  hip_shoulder_separation: 'Hip–shoulder separation',
-  lead_foot_angle: 'Lead foot angle',
+  trunk_forward_tilt: 'Camera-frame forward trunk-tilt proxy',
+  trunk_lateral_tilt: 'Camera-frame lateral trunk-tilt proxy',
+  hip_shoulder_separation: 'Pelvis-to-trunk rotation proxy',
+  lead_foot_angle: 'Foot-to-pelvis angle proxy',
 }
 
 function ConfidenceBadge({ c }: { c: Confidence }) {
@@ -82,7 +82,15 @@ export function MetricsPanel({ session, analysis }: { session: Session; analysis
   const [explain, setExplain] = useState<{ metric: MetricName; event: EventName } | null>(null)
   const [mode, setMode] = useState<'events' | 'live'>('events')
 
-  const live = useMemo(() => metricsFor(poseAt(session, currentFrame)), [session, currentFrame])
+  const live = useMemo(
+    () => Object.fromEntries(
+      (Object.keys(analysis.series) as MetricName[]).map((metric) => [
+        metric,
+        analysis.series[metric][currentFrame] ?? null,
+      ]),
+    ) as Record<MetricName, number | null>,
+    [analysis, currentFrame],
+  )
 
   const byEvent = useMemo(() => {
     const g = new Map<EventName, MetricReading[]>()
@@ -141,6 +149,10 @@ export function MetricsPanel({ session, analysis }: { session: Session; analysis
               </div>
             </div>
           ))}
+          <p className="dim small">
+            Live values are exploratory traces. Only the event view applies vetted,
+            construct-compatible reference comparisons.
+          </p>
         </div>
       )}
 

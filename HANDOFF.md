@@ -3,7 +3,7 @@
 > **New session? Read this file first, then [`CLAUDE.md`](CLAUDE.md).** This is the live log of what
 > is done, what was learned, and what to do next. Updated at the end of every completed task.
 
-**Last updated:** 2026-08-31, after the first owner application-review fixes
+**Last updated:** 2026-08-31, after the numerical truth audit and owner application-review fixes
 **Current state:** **OWNER APP-REVIEW HOLD.** The canonical product name is Biomech Emcee and the
 participant identity is recorded as Pradeep Rajasekar (preferred name: Ajish). The next session is
 for the owner's application observations and requested fixes—not Devpost submission work. Do not
@@ -93,11 +93,11 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 | 7 — Smoothing + export | ✅ | Savitzky–Golay. Proportions validated (§4). |
 | 11 — Web app scaffold | ✅ | React 19 + Vite 8 + r3f + Zustand. |
 | 12 — 2D/3D viewer + timeline | ✅ | Frame-synchronized source reference beside the 3D reconstruction; playback, scrub, camera presets, trail, and annotation pins. |
-| 8–10 — Biomechanics engine | ✅ | `web/src/biomech/`; complete suite currently 64 tests green. |
+| 8–10 — Biomechanics engine | ✅ | `web/src/biomech/`; complete suite currently 78 tests green, including both real-session numerical audits. |
 | 12b — Metrics panel | ✅ | Readings, confidence badges, cited definitions, sequence chart. |
 | **13–15 — WebMCP tools ★** | ✅ code / 🟡 live | 13 handlers implemented; registration is one stable document surface with a visible partial/failure state; live registration is still unverified. |
 | 16 — Verification + evals | 🟡 | Headless half done ([`evals/pitch-analysis.md`](evals/pitch-analysis.md)); **DevTools + ChatGPT in-app browser still owed.** |
-| 16b — Scientific truth gate | 🟡 phase 1 | Incompatible comparisons removed and four-segment sequence labeled; manual event-frame validation remains. |
+| 16b — Scientific truth gate | 🟡 phase 2 | Incompatible comparisons removed; branch flips fixed; short-clip event/KSA gates implemented. Human MER review and external validation remain. |
 | P1 — Human event correction | ✅ | Reviewers can apply the current frame to FC/MER/BR; analysis and WebMCP reads update together. |
 | 17 — GCP deploy | ✅ | Public Cloud Run origin verified; see [`docs/deployment.md`](docs/deployment.md). |
 | 18 — Submission package | 🟡 | README, license, and Devpost draft complete; cleared footage, live-host verification, screenshots, video, and final form answers remain. |
@@ -208,22 +208,32 @@ centres do not move (< 1e-4°), yet the engine recovers the full 90°.
 2. **Branch-cut wrap.** atan2-derived angles jump ±360°. `metricSeries()` unwraps the six affected
    metrics. Do not remove.
 
-### Validation status (2026-08-31)
-On `delivery-01`, six metrics land **within** published reference ranges that were never
-tuned to: lead knee flexion 47.9° at FC [40–49], shoulder abduction 97.7° at MER [66–100], lead knee
-37.8° [31.2–41] / elbow 37.8° [24–39] / shoulder abduction 92.3° [70–94] / trunk forward tilt 48.3°
-[30–55] at BR. Sequence is proximal→distal with 14.4% pelvis→trunk separation. That is meaningful
-independent evidence the engine is right.
+### Numerical truth-audit status (2026-08-31)
+`delivery-01` has three construct-compatible event readings inside the cited population ranges:
+lead-knee flexion 47.9° at FC [40–49], and lead-knee 37.8° [31.2–41] plus elbow flexion 37.8°
+[24–39] at release. Elbow flexion at FC is 39.8° [74–90], an observation below that range. The
+automatically nominated MER frame is intentionally `low` confidence, so its elbow comparison must
+be reviewed by a human before use.
+
+The usable four-segment KSA for `delivery-01` peaks at pelvis f639 (55.4%), thorax f667 (75.5%),
+upper arm f672 (79.1%), and forearm f685 (88.5%) of FC→BR. Consecutive gaps are 28 / 5 / 13 frames,
+or 20.1 / 3.6 / 9.4 percentage points. These are descriptive intervals, not ideal targets; absolute
+deg/s remains unavailable because the slow-motion factor is unknown.
+
+The previous 180° segment-frame branch jump is fixed by feeding `metricSeries()` the same
+continuity-corrected frames used by KSA. `delivery-01` now has no adjacent metric step ≥25°. The
+38-frame `delivery-02` ends at its release candidate and has only five FC→BR frames, so all event
+comparisons are low confidence and KSA order/peaks/intervals are explicitly `unavailable` rather
+than four artificial peaks on the same frame.
 
 **Known open items** (honest state, not hidden):
-- `hip_shoulder_separation` reads small and negative at FC (−7°) where literature expects +30–60°.
-  Sign convention and/or reference-frame definition needs review.
-- `shoulder_external_rotation` reads ~85° where the clinical convention reports 166–182°. The ISB
-  Y–X–Y axial term is not the same construct as the clinical "lay-back" measure. Already graded
-  `low`; needs either a convention change or an explicit note that the two are different quantities.
-- `trunk_lateral_tilt` reads ≈0 where 21–29.5° is expected.
-- Event detection on the short `delivery-02` window still needs human frame validation before its
-  measurements are used in judge-facing claims. `delivery-01` remains the validated reference session.
+- The automatic MER event is a peak in an unvalidated upper-arm axial-rotation proxy, not a clinical
+  shoulder-external-rotation measurement. It is always low confidence until a human reviews it.
+- Hip–shoulder separation, trunk tilts, shoulder rotation/plane values, and foot angle remain visible
+  as low-confidence observational proxies. Their absolute values are never compared to clinical
+  ranges until this landmark protocol and coordinate convention are externally validated.
+- `delivery-02` needs a longer uncropped source and human event review before it can support KSA or
+  judge-facing biomechanical claims. `delivery-01` is the only current sequence-capable session.
 
 ## 4c. The WebMCP tool surface — how it actually works
 
@@ -238,7 +248,7 @@ independent evidence the engine is right.
 | `tools/read/measure.ts` | B · `get_phase_events` · `get_kinematics_at_event` · `get_joint_angle_series` · `get_kinematic_sequence` |
 | `tools/read/evidence.ts` | C · `get_metric_definition` (+ the structured refusals) · `compare_to_reference` · `compare_pitches` |
 | `tools/write/viewer.ts` | D ★ · `seek_to_event` · `focus_joint` · `set_overlay` · `annotate_frame` |
-| `tools.test.ts` | 35 assertions running every handler against both real sessions |
+| `tools.test.ts` | Every handler, retry path, output budget, plain-English review plan, and short-clip KSA refusal |
 
 **Things worth knowing before you change any of it:**
 

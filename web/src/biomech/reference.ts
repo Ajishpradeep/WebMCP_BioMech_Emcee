@@ -37,7 +37,14 @@ export const CITATIONS: Record<string, Citation> = {
   kinematicSeq2020: {
     key: 'kinematicSeq2020',
     text: 'Kinematic sequence patterns in the overhead baseball pitch. Sports Biomechanics. 2020;19(5). PMID 30213227.',
-    short: 'Kinematic sequence patterns, Sports Biomech 2020;19(5), PMID 30213227',
+    doi: '10.1080/14763141.2018.1503321',
+    short: 'Scarborough 2020, Sports Biomech, doi:10.1080/14763141.2018.1503321',
+  },
+  dobos2022: {
+    key: 'dobos2022',
+    text: 'Dobos TJ, Bench RWG, McKinnon CD, et al. Validation of pitchAI markerless motion capture using marker-based 3D motion capture. Sports Biomech. 2025;24(3):587–607.',
+    doi: '10.1080/14763141.2022.2137425',
+    short: 'Dobos et al., single-camera markerless validation, doi:10.1080/14763141.2022.2137425',
   },
 }
 
@@ -147,9 +154,9 @@ export const METRIC_INFO: Partial<
     limitations: 'The app reports this value, but its segment-frame definition has not been validated as interchangeable with the published pitching ranges, so no reference comparison is offered.',
   },
   shoulder_external_rotation: {
-    plainLanguage: 'The reconstructed arm lay-back angle near the top of the cocking phase.',
-    computation: 'Axial-rotation term of the ISB Y–X–Y decomposition of the humerus relative to the thorax frame.',
-    limitations: 'This is not compared with clinical lay-back ranges: the required humeral axial-rotation construct and sign convention have not been validated from this landmark reconstruction. Use it only as an exploratory within-session trace.',
+    plainLanguage: 'An exploratory trace of how the reconstructed upper arm rotates around its own long axis; it helps locate a possible arm-layback moment.',
+    computation: 'Continuity-corrected, unwrapped axial-rotation term of a Y–X–Y decomposition of the humerus relative to the thorax frame.',
+    limitations: 'This is a proxy, not a clinical shoulder-external-rotation measurement. Its zero and sign have not been validated, and continuity unwrapping can exceed ±180°. Use its within-pitch shape to nominate a review frame, never its absolute value as clinical layback.',
   },
   trunk_forward_tilt: {
     plainLanguage: 'How far the reconstructed thorax tips forward from the app’s world vertical.',

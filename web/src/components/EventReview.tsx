@@ -5,7 +5,7 @@ import type { EventName } from '../types'
 
 const LABEL: Record<EventName, string> = {
   foot_contact: 'Lead foot contact',
-  max_external_rotation: 'Max external rotation',
+  max_external_rotation: 'MER candidate (review)',
   ball_release: 'Ball release',
 }
 

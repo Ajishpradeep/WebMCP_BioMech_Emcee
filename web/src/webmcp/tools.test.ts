@@ -148,12 +148,25 @@ describe('measurement tools', () => {
 
   it('refuses absolute angular velocity while the slow-motion factor is unknown', async () => {
     const res = (await call('get_kinematic_sequence')) as Result
+    expect(res.available).toBe(true)
+    expect(res.quality).toBe('medium')
     expect(res.observedOrder).toHaveLength(4)
     expect(res.literatureNote).toMatch(/not itself a fault/)
     expect(res.rateUnitsAvailable).toBe(false)
     for (const p of res.peaks) expect(p.peakAngularVelocityDegPerSec).toBeNull()
     expect(res.peakAngularVelocityUnavailable).toMatch(/slow motion/i)
     expect(res.separationUnits).toMatch(/percent/)
+    expect(res.intervals).toHaveLength(3)
+  })
+
+  it('refuses a sequence when a cut clip cannot support peak timing', async () => {
+    const res = (await call('get_kinematic_sequence', { sessionId: 'delivery-02' })) as Result
+    expect(res.available).toBe(false)
+    expect(res.quality).toBe('unavailable')
+    expect(res.unavailableReason).toMatch(/edge of the clip/i)
+    expect(res.observedOrder).toEqual([])
+    expect(res.peaks).toEqual([])
+    expect(res.intervals).toEqual([])
   })
 })
 
@@ -192,6 +205,11 @@ describe('evidence tools', () => {
     for (const d of res.deviations) expect(['above', 'below']).toContain(d.direction)
     const mags = res.deviations.map((d: any) => d.magnitudeDeg)
     expect([...mags].sort((a: number, b: number) => b - a)).toEqual(mags)
+    expect(res.eventReviewRequired.map((e: any) => e.event)).toContain('max_external_rotation')
+    expect(res.reviewPlan[0].suggestedViewerCalls.map((step: any) => step.tool)).toEqual([
+      'seek_to_event', 'focus_joint', 'annotate_frame',
+    ])
+    expect(res.causalLimit).toMatch(/not what caused/i)
 
     const all = (await call('compare_to_reference', { includeWithinRange: true })) as Result
     expect(all.deviations.length).toBeGreaterThanOrEqual(res.deviations.length)

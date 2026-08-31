@@ -117,10 +117,13 @@ Underlying rig: **[Momentum Human Rig (MHR)](https://github.com/facebookresearch
 
 Consequences, which are already baked into SPEC §6 and must be respected in code:
 
-- ✅ **Joint angles are fine** — scale-invariant, computed from 3D keypoint vectors.
-- ✅ **Segment-to-segment angles are fine** — hip–shoulder separation is the angle between the pelvis
-  and thorax transverse axes. Scale drops out.
-- ✅ **Timing is fine** — derived from frame indices and the known fps.
+- ✅ **Direct two-segment flexion angles are scale-invariant** — but still inherit reconstruction
+  and event-detection error, so current comparisons are `medium` at best.
+- ⚠️ **Frame-dependent rotations are observational proxies** — scale drops out, but anatomical zero,
+  sign, target-line orientation, and protocol equivalence do not. They require construct validation
+  before comparison to marker-based clinical ranges.
+- ⚠️ **Frame order and normalized timing survive a uniform slow-motion factor** — real seconds and
+  rates do not, and a cut/short delivery window may not support peak timing at all.
 - ⚠️ **Ratios only for lengths** — report stride length as **% of body height**, never in cm.
 - ❌ **No absolute distances in metric units.** No vertical oscillation in cm.
 - ❌ **No kinetics.** Torques and forces require force data and a musculoskeletal model.
@@ -269,7 +272,7 @@ Three events, in the order they are easiest to find:
 | Event | Detection heuristic |
 |---|---|
 | **Lead foot contact (FC)** | Lead ankle vertical velocity → ~0 and stays; lowest lead-foot position sustained |
-| **Maximum external rotation (MER)** | Peak of the shoulder external-rotation series between FC and release |
+| **MER candidate** | Peak of the continuity-corrected upper-arm axial-rotation proxy between FC and release; always low confidence until human review |
 | **Ball release (BR)** | Peak throwing-hand/wrist linear speed, immediately after MER |
 
 Every event returns `{ frame, t, method, confidence }`. **Expose a manual override in the UI** — event
@@ -317,7 +320,7 @@ agent from inventing ranges.
 | Metric | Reference | Confidence |
 |---|---|---|
 | Hip–shoulder separation at FC | Pelvis–thorax transverse angle; larger separation associates with greater trunk rotation velocity and ball velocity | `medium` |
-| Kinematic sequence order | Ideal is proximal-to-distal: **pelvis → trunk → arm → forearm → hand** | `medium` |
+| Partial kinematic sequence order | Report four observed segments only: **pelvis, trunk, upper arm, forearm**; no ideal/quality score | `medium` when the delivery window passes quality gates |
 | Pelvis→trunk separation time | Timing between pelvis and trunk peak angular velocities. **Report as % of the FC→BR window, not seconds** (§3.2b) | `medium` |
 
 > **Critical nuance — do not build a "sequence score."** In a study of 208 pitches across 22 pitchers,
@@ -331,7 +334,11 @@ Motion.* Curr Rev Musculoskelet Med. 2019;12(2):98–104. doi:10.1007/s12178-019
 Diffendaffer AZ, Bagwell MS, Fleisig GS, et al. *The Clinician's Guide to Baseball Pitching
 Biomechanics.* Sports Health. 2023;15(2):274–281. doi:10.1177/19417381221078537 ·
 Kinematic-sequence data: *Kinematic sequence patterns in the overhead baseball pitch.* Sports
-Biomechanics. 2020;19(5). PMID 30213227.
+Biomechanics. 2020;19(5). PMID 30213227; doi:10.1080/14763141.2018.1503321.
+
+Single-camera validation context (for a different, specifically validated system—not evidence that
+this implementation is validated): Dobos et al. *Validation of pitchAI markerless motion capture
+using marker-based 3D motion capture.* doi:10.1080/14763141.2022.2137425.
 
 ### 5.3 Confidence model
 

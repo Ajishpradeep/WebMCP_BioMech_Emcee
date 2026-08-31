@@ -159,8 +159,20 @@ function unwrapDegrees(xs: (number | null)[]): (number | null)[] {
 /** Metric series across the whole clip: name -> per-frame values. */
 export function metricSeries(session: Session): Record<MetricName, (number | null)[]> {
   const acc = {} as Record<MetricName, (number | null)[]>
+  // Use the continuity-corrected segment frames. Building each pose independently can
+  // choose the equally valid 180°-flipped transverse axes on adjacent frames. That
+  // leaves flexion unchanged but creates impossible jumps in axial rotation and any
+  // downstream peak detector that consumes it.
+  const frames = frameSeries(session)
+  const throwing = session.subject.handedness === 'left' ? 'l' : 'r'
+  const lead = throwing === 'r' ? 'l' : 'r'
   for (let i = 0; i < session.frames.length; i++) {
-    const m = metricsFor(poseAt(session, i))
+    const m = metricsFor({
+      frames: frames[i],
+      landmarks: landmarksAt(session, i),
+      throwing,
+      lead,
+    })
     for (const k of Object.keys(m) as MetricName[]) {
       ;(acc[k] ??= []).push(m[k])
     }

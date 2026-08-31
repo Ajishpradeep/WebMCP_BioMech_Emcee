@@ -119,10 +119,13 @@ describe('analysis output contract', () => {
   })
 
   it('reports a kinematic sequence with the literature caveat attached', () => {
+    expect(result.sequence.available).toBe(true)
+    expect(result.sequence.quality).toBe('medium')
     expect(result.sequence.observedOrder).toHaveLength(4)
     expect(new Set(result.sequence.observedOrder).size).toBe(4)
     expect(result.sequence.literatureNote).toMatch(/not itself a fault/)
     expect(result.sequence.literatureNote).toMatch(/partial four-segment/i)
     for (const p of result.sequence.peaks) expect(p.peakSpeedVideo).toBeGreaterThan(0)
+    expect(result.sequence.intervals).toHaveLength(3)
   })
 })

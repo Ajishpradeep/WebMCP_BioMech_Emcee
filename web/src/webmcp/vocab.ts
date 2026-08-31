@@ -31,7 +31,7 @@ export const EVENT_NAMES: EventName[] = ['foot_contact', 'max_external_rotation'
 
 export const EVENT_LABEL: Record<EventName, string> = {
   foot_contact: 'lead foot contact',
-  max_external_rotation: 'maximum external rotation',
+  max_external_rotation: 'maximum external-rotation candidate (review recommended)',
   ball_release: 'ball release',
 }
 
@@ -69,12 +69,12 @@ export const METRIC_LABEL: Record<MetricName, string> = {
   lead_hip_flexion: 'lead hip flexion',
   elbow_flexion: 'elbow flexion',
   shoulder_abduction: 'shoulder abduction',
-  shoulder_external_rotation: 'shoulder external rotation',
+  shoulder_external_rotation: 'shoulder axial-rotation proxy',
   shoulder_horizontal_abduction: 'shoulder horizontal abduction',
-  trunk_forward_tilt: 'trunk forward tilt',
-  trunk_lateral_tilt: 'trunk lateral tilt',
-  hip_shoulder_separation: 'hip–shoulder separation',
-  lead_foot_angle: 'lead foot angle',
+  trunk_forward_tilt: 'camera-frame forward trunk-tilt proxy',
+  trunk_lateral_tilt: 'camera-frame lateral trunk-tilt proxy',
+  hip_shoulder_separation: 'pelvis-to-trunk rotation proxy',
+  lead_foot_angle: 'foot-to-pelvis angle proxy',
 }
 
 /**

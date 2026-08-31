@@ -7,7 +7,7 @@
  * derivable from monocular video rather than a fabricated one.
  */
 
-import { worst } from '../../../biomech/confidence'
+import { gradeMetric, worst } from '../../../biomech/confidence'
 import { METRIC_INFO, REFERENCES, REFUSALS } from '../../../biomech/reference'
 import type { MetricName } from '../../../biomech/angles'
 import type { Confidence, EventName } from '../../../types'
@@ -108,7 +108,7 @@ export const getMetricDefinition: PitchTool = {
       ...(refs.length === 0
         ? { note: 'This app measures this angle but our cited sources publish no reference range for it, so no comparison is offered.' }
         : {}),
-      meta: metaFor(session, refs.length ? worst(...refs.map((r) => r.confidence)) : 'medium',
+      meta: metaFor(session, refs.length ? worst(...refs.map((r) => r.confidence)) : gradeMetric(metric),
         [...citations],
         ['A reference range describes what pitching populations do, not what any individual should do.'],
       ),
@@ -120,7 +120,7 @@ export const compareToReference: PitchTool = {
   name: 'compare_to_reference',
   title: 'Compare to reference ranges',
   description:
-    'Compares every measured angle in this pitch against its published reference range and returns the ones that fall outside, with the direction and size of the deviation and the citation behind the range. Answers "what stands out?" in a single call. Deviations are observations about this delivery, not faults and not a diagnosis.',
+    'Answers plain-English questions such as “what stands out?” or “where did I mess up?” by comparing only construct-compatible angles, ranking observations, checking event reliability, and suggesting the existing viewer tools that can show the relevant moment and body part. It never treats a deviation as a diagnosis or proven cause.',
   inputSchema: {
     type: 'object',
     properties: {
@@ -157,6 +157,35 @@ export const compareToReference: PitchTool = {
       ? [...outside].sort((a, b) => (b.magnitude ?? 0) - (a.magnitude ?? 0))[0]
       : null
 
+    const lowEvents = analysis.events.filter((candidate) =>
+      candidate.confidence === 'low' || candidate.confidence === 'unavailable',
+    )
+    const focusFor: Partial<Record<MetricName, string>> = {
+      lead_knee_flexion: 'lead_knee',
+      elbow_flexion: 'throwing_elbow',
+    }
+    const reviewPlan = rows.slice(0, 3).map((reading) => {
+      const focus = focusFor[reading.metric] ?? reading.metric
+      const direction = reading.status === 'above' ? 'more' : 'less'
+      return {
+        observation:
+          `${METRIC_LABEL[reading.metric]} at ${EVENT_LABEL[reading.event]} was ${reading.value}°, ` +
+          `${direction} than the cited ${reading.reference?.range.join('–')}° population range by ${reading.magnitude}° ` +
+          `(confidence: ${reading.confidence}).`,
+        evidenceRegion: focus,
+        suggestedViewerCalls: [
+          { tool: 'seek_to_event', input: { event: reading.event } },
+          { tool: 'focus_joint', input: { joint: focus, cameraPlane: 'auto' } },
+          { tool: 'annotate_frame', input: {
+            event: reading.event,
+            joint: focus,
+            label: `${METRIC_LABEL[reading.metric]}: ${reading.value}° (${reading.status} reference)`,
+            severity: 'attention',
+          } },
+        ],
+      }
+    })
+
     return {
       unit: 'deg',
       deviations: rows.map((r) => ({
@@ -167,6 +196,7 @@ export const compareToReference: PitchTool = {
         direction: r.status,
         magnitudeDeg: r.magnitude,
         confidence: r.confidence,
+        eventConfidence: r.eventConfidence,
       })),
       omitted: ranked.length - rows.length,
       summary:
@@ -174,9 +204,21 @@ export const compareToReference: PitchTool = {
         (biggest
           ? `; the largest is ${METRIC_LABEL[biggest.metric]} at ${EVENT_LABEL[biggest.event]}, ${r1(biggest.magnitude ?? 0)}° ${biggest.status} the range (confidence: ${biggest.confidence}).`
           : '.'),
+      eventReviewRequired: lowEvents.map((candidate) => ({
+        event: candidate.name,
+        label: EVENT_LABEL[candidate.name],
+        frame: candidate.frame,
+        reason: candidate.method,
+      })),
+      reviewPlan,
+      causalLimit:
+        'These measurements identify where to look, not what caused the motion. The suggested viewer calls highlight the landmarks that define each observation; they do not prove those joints caused another error.',
       meta: metaFor(session, rows.length ? worst(...rows.map((r) => r.confidence)) : 'high',
         [...citations],
-        ['Outside a reference range is an observation, not a fault or a diagnosis.'],
+        [
+          'Outside a reference range is an observation, not a fault or a diagnosis.',
+          ...(lowEvents.length ? ['Review low-confidence event frames before interpreting their measurements.'] : []),
+        ],
       ),
     }
   },
@@ -255,6 +297,9 @@ export const comparePitches: PitchTool = {
       caveats.unshift(
         `These pitches were shot from DIFFERENT views ("${A.session.source.view}" vs "${B.session.source.view}"). Treat differences in rotation and separation metrics as unreliable.`,
       )
+    }
+    if ([...A.analysis.events, ...B.analysis.events].some((candidate) => candidate.confidence === 'low')) {
+      caveats.unshift('At least one shared event anchor has low confidence; verify those frames before interpreting cross-pitch differences.')
     }
 
     const largest = comparisons[0]

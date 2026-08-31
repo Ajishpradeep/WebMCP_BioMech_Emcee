@@ -106,13 +106,18 @@ export function detectEvents(session: Session): PhaseEvent[] {
     manualOverride: false,
   })
 
+  const deliveryFrames = brFrame - fcFrame
+  const boundaryRelease = brFrame <= 1 || brFrame >= n - 2
+  const shortDeliveryWindow = deliveryFrames < 8
+
   return [
     mk('foot_contact', fcFrame, 'lead-ankle descent arrest after leg lift',
-      fcFrame > liftFrame && fcFrame < brFrame ? 'medium' : 'low'),
-    mk('max_external_rotation', merFrame, 'peak shoulder external rotation between FC and BR',
-      peakedness(er, merFrame, fcFrame, brFrame)),
+      fcFrame > liftFrame && fcFrame < brFrame && !shortDeliveryWindow ? 'medium' : 'low'),
+    mk('max_external_rotation', merFrame,
+      'peak reconstructed shoulder axial-rotation proxy between FC and BR; human review recommended',
+      'low'),
     mk('ball_release', brFrame, 'peak throwing-hand speed',
-      peakedness(wristSpeed, brFrame, 0, n - 1)),
+      boundaryRelease ? 'low' : peakedness(wristSpeed, brFrame, 0, n - 1)),
   ].sort((a, b) => a.frame - b.frame)
 }
 

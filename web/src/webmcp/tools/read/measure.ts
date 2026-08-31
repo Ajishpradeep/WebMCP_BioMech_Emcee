@@ -8,9 +8,8 @@
  */
 
 import { normalisedPct } from '../../../biomech/analyze'
-import { metricsFor, poseAt } from '../../../biomech/angles'
-import { rateUnavailableReason, worst } from '../../../biomech/confidence'
-import { referenceFor } from '../../../biomech/reference'
+import { gradeMetric, rateUnavailableReason, worst } from '../../../biomech/confidence'
+import { METRIC_INFO, referenceFor } from '../../../biomech/reference'
 import type { Confidence, EventName } from '../../../types'
 import { metaFor, ToolInputError, type PitchTool } from '../../registry'
 import {
@@ -61,6 +60,7 @@ export const getPhaseEvents: PitchTool = {
         method: e.method,
         confidence: e.confidence,
         manualOverride: e.manualOverride,
+        requiresHumanReview: e.confidence === 'low' || e.confidence === 'unavailable',
       })),
       deliveryWindow:
         fc && br ? { fromFrame: fc.frame, toFrame: br.frame, frames: br.frame - fc.frame } : null,
@@ -103,12 +103,20 @@ export const getKinematicsAtEvent: PitchTool = {
 
     const readings = analysis.readings.filter((r) => r.event === event)
     const referenced = new Set(readings.map((r) => r.metric))
-    const all = metricsFor(poseAt(session, detected.frame))
+    const all = Object.fromEntries(
+      Object.entries(analysis.series).map(([metric, values]) => [metric, values[detected.frame] ?? null]),
+    )
 
     // Metrics with no published range at this event still get reported — as a plain
     // value, never dressed up with a comparison nobody has published.
-    const otherMetrics: Record<string, number | null> = {}
-    for (const m of METRIC_NAMES) if (!referenced.has(m)) otherMetrics[m] = all[m]
+    const otherMetrics = METRIC_NAMES.filter((metric) => !referenced.has(metric)).map((metric) => ({
+      name: metric,
+      label: METRIC_LABEL[metric],
+      value: all[metric] ?? null,
+      unit: 'deg',
+      confidence: gradeMetric(metric),
+      comparison: 'none' as const,
+    }))
 
     const citations = new Set<string>()
     for (const r of readings) for (const c of r.citations) citations.add(c)
@@ -127,6 +135,7 @@ export const getKinematicsAtEvent: PitchTool = {
         status: r.status,
         deviationDeg: r.magnitude,
         confidence: r.confidence,
+        eventConfidence: r.eventConfidence,
       })),
       otherMetrics,
       meta: metaFor(
@@ -233,8 +242,9 @@ export const getJointAngleSeries: PitchTool = {
         pctOfContactToRelease: pct(normalisedPct(peakFrame, analysis.events)),
       },
       coveragePct: Math.round((analysis.coverage[metric] ?? 0) * 1000) / 10,
-      meta: metaFor(session, (ref?.confidence ?? 'medium') as Confidence, ref?.citations ?? [], [
+      meta: metaFor(session, (ref?.confidence ?? gradeMetric(metric)) as Confidence, ref?.citations ?? [], [
         'Samples are every Nth frame; the peak is taken from the full-resolution series.',
+        ...(METRIC_INFO[metric]?.limitations ? [METRIC_INFO[metric]!.limitations] : []),
       ]),
     }
   },
@@ -259,6 +269,10 @@ export const getKinematicSequence: PitchTool = {
     const rateReason = rateUnavailableReason(session)
 
     return {
+      available: seq.available,
+      quality: seq.quality,
+      unavailableReason: seq.unavailableReason,
+      deliveryWindow: seq.deliveryWindow,
       observedOrder: seq.observedOrder.map((s) => SEGMENT_LABEL[s] ?? s),
       peaks: seq.peaks.map((p) => ({
         segment: SEGMENT_LABEL[p.segment] ?? p.segment,
@@ -271,14 +285,24 @@ export const getKinematicSequence: PitchTool = {
       // and four copies of it would crowd out the measurements.
       ...(rateReason ? { peakAngularVelocityUnavailable: rateReason } : {}),
       isProximalToDistal: seq.isProximalToDistal,
+      intervals: seq.intervals.map((interval) => ({
+        from: SEGMENT_LABEL[interval.from] ?? interval.from,
+        to: SEGMENT_LABEL[interval.to] ?? interval.to,
+        frames: interval.frames,
+        normalizedPctPoints: interval.normalizedPctPoints,
+        videoSeconds: interval.videoSeconds,
+        realSeconds: interval.realSeconds,
+      })),
       pelvisToTrunkSeparationPct: seq.pelvisToTrunkSeparationPct,
       separationUnits:
         'percent of the foot-contact to ball-release window, not seconds — the slow-motion factor of the source is unknown.',
       rateUnitsAvailable: seq.rateUnitsAvailable,
       literatureNote: seq.literatureNote,
-      meta: metaFor(session, analysis.rateConfidence === 'unavailable' ? 'medium' : 'high',
+      meta: metaFor(session, seq.available ? 'medium' : 'unavailable',
         ['kinematicSeq2020'],
-        ['Peak ORDER and normalised timing survive an unknown time warp; absolute angular velocity does not.'],
+        [seq.available
+          ? 'Peak order and normalised timing survive a uniform unknown time scale; absolute angular velocity does not.'
+          : seq.unavailableReason ?? 'The sequence is unavailable.'],
       ),
     }
   },

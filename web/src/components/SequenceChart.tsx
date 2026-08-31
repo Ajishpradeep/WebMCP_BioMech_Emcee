@@ -128,13 +128,10 @@ export function SequenceChart({
         <div>
           <h3>Kinematic sequence</h3>
           <p className="dim small">
-            Peak order:{' '}
-            <strong className="mono">{seq.observedOrder.join(' → ')}</strong>
-            {seq.isProximalToDistal ? (
-              <span className="tag ok">four-segment order matches</span>
-            ) : (
-              <span className="tag neutral">four-segment order differs</span>
-            )}
+            {seq.available ? (
+              <>Observed peak order: <strong className="mono">{seq.observedOrder.join(' → ')}</strong>{' '}
+                <span className="tag neutral">partial sequence</span></>
+            ) : <><span className="tag warn">sequence unavailable</span> {seq.unavailableReason}</>}
           </p>
         </div>
         <div className="sc-actions">
@@ -238,14 +235,16 @@ export function SequenceChart({
       </div>
 
       <p className="sc-note">
-        {seq.rateUnitsAvailable
+        {!seq.available
+          ? `No peak order or intervals reported: ${seq.unavailableReason}`
+          : seq.rateUnitsAvailable
           ? 'Rates shown in real time.'
           : 'Slow-motion source at an unknown factor — absolute angular velocity is unavailable. Peak order and normalised timing remain valid.'}
       </p>
       <details className="sc-details">
         <summary>Interpretation and chart method</summary>
         <p>{seq.literatureNote}</p>
-        <p>Curves are display-smoothed to remove frame-scale reconstruction chatter. Peak calculations and agent results retain the analysis values.</p>
+        <p>Peak calculations use a centred seven-frame derivative smoother. The chart adds zero-phase display smoothing to remove residual frame-scale chatter without moving the reported peak frames.</p>
       </details>
       </>
       )}

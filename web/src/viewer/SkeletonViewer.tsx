@@ -12,7 +12,6 @@ import { Grid, OrbitControls, Html } from '@react-three/drei'
 import { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 
-import { metricsFor, poseAt } from '../biomech/angles'
 import { useAnalysis } from '../store'
 import type { Session } from '../types'
 import { METRIC_LABEL, metricsForJoint } from '../webmcp/vocab'
@@ -188,7 +187,10 @@ function AngleReadout({ session, vf }: { session: Session; vf: ViewerFrames }) {
     const metrics = metricsForJoint(selectedJoint, session.subject.handedness)
     const idx = session.joints.indexOf(selectedJoint)
     if (metrics.length === 0 || idx < 0) return null
-    const values = metricsFor(poseAt(session, currentFrame))
+    const series = useAnalysis.getState().analysis?.series
+    const values = Object.fromEntries(
+      metrics.map((metric) => [metric, series?.[metric]?.[currentFrame] ?? null]),
+    )
     const p = jointAt(vf, Math.min(currentFrame, vf.frameCount - 1), idx)
     return {
       p,

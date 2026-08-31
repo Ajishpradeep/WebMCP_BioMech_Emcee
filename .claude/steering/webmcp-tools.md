@@ -187,15 +187,18 @@ snapshot it can reason across — something the UI can only show one panel at a 
 ---
 
 #### `get_kinematic_sequence`
-> Returns the order and timing of peak angular velocity across pelvis, trunk, arm, forearm, and hand,
-> and how the observed order compares with patterns reported in the literature.
+> Returns a quality-gated partial order and normalized timing across pelvis, trunk, upper arm, and
+> forearm, plus the literature context needed to avoid treating an order as a score.
 
 `readOnlyHint: true`
 **Input:** `{ sessionId?: string }`
 **Returns:**
 ```jsonc
 {
-  "observedOrder": ["pelvis", "trunk", "arm", "hand", "forearm"],
+  "available": true,
+  "quality": "medium",
+  "unavailableReason": null,
+  "observedOrder": ["pelvis", "trunk", "upper arm", "forearm"],
   "peaks": [ { "segment": "pelvis", "frame": 44, "tVideo": 0.733, "tNormPct": 8.1,
                "peakAngularVelocity": null,
                "reason": "Slow-motion source at an unknown factor: absolute angular velocity is not derivable (tech.md 3.2b)." } ],
@@ -203,6 +206,10 @@ snapshot it can reason across — something the UI can only show one panel at a 
                                         // NOT seconds: clips are slow-motion at an unknown
                                         // factor, so absolute rates are unavailable (tech.md 3.2b).
   "isProximalToDistal": false,
+  "intervals": [
+    { "from": "pelvis", "to": "trunk", "frames": 28,
+      "normalizedPctPoints": 20.1, "videoSeconds": 0.934, "realSeconds": null }
+  ],
   "literatureNote": "Complete proximal-to-distal sequencing is uncommon: across 208 analysed pitches, no pitch showed a fully proximal-to-distal order and 14 distinct patterns were observed. The most prevalent was pelvis → trunk → arm → hand → forearm. A non-PDS order is therefore not itself a fault.",
   "meta": { "confidence": "medium", … }
 }
