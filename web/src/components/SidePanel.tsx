@@ -151,8 +151,9 @@ export function SidePanel({ session }: { session: Session | null }) {
             </h2>
             {annotations.length === 0 ? (
               <p className="dim small">
-                None yet. Once the WebMCP tools land (Task&nbsp;15), an agent can pin notes into
-                the 3D view with <span className="mono">annotate_frame</span>.
+                None yet. An agent can pin notes into the 3D view with{' '}
+                <span className="mono">annotate_frame</span>; they stay here and in the viewer
+                while you scrub.
               </p>
             ) : (
               <>

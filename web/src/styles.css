@@ -336,6 +336,21 @@ body {
   opacity: 0.45;
   transition: opacity 0.2s;
 }
+.angle-readout {
+  background: rgba(10, 13, 18, 0.92);
+  border: 1px solid rgba(94, 234, 212, 0.5);
+  border-radius: 5px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-family: var(--mono);
+  white-space: nowrap;
+  transform: translate(12px, -50%);
+  color: var(--accent-2);
+}
+.angle-readout .ar-row { display: flex; gap: 10px; justify-content: space-between; }
+.angle-readout .ar-label { color: var(--fg-dim); }
+.angle-readout .ar-value { font-variant-numeric: tabular-nums; }
+
 .pin.attention { border-color: var(--red); color: var(--red); }
 .pin.pin-near { opacity: 1; }
 

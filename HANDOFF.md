@@ -3,8 +3,9 @@
 > **New session? Read this file first, then [`CLAUDE.md`](CLAUDE.md).** This is the live log of what
 > is done, what was learned, and what to do next. Updated at the end of every completed task.
 
-**Last updated:** 2026-08-31, end of the biomechanics engine
-**Next task:** [Tasks 13–16 — the WebMCP tool surface ★](.claude/steering/webmcp-tools.md)
+**Last updated:** 2026-08-31, end of the WebMCP tool surface
+**Next task:** finish Task 16 in a real browser (DevTools + ChatGPT in-app), then
+[Task 17 — deploy](PLAN.md). Checklist state: [`evals/pitch-analysis.md`](evals/pitch-analysis.md).
 
 ---
 
@@ -80,8 +81,9 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 | 12 — 3D viewer + timeline | ✅ | Playback, scrub, camera presets, trail, annotation pins. |
 | 8–10 — Biomechanics engine | ✅ | `web/src/biomech/`, 27 unit + real-data tests green. |
 | 12b — Metrics panel | ✅ | Readings, confidence badges, cited definitions, sequence chart. |
-| **13–16 — WebMCP tools ★** | ⏭️ **NEXT** | **The graded artifact. Protect this time.** |
-| 17–18 — Deploy + submit | ⏳ | |
+| **13–15 — WebMCP tools ★** | ✅ | **All 13 registered.** `web/src/webmcp/`, 35 harness tests green. |
+| 16 — Verification + evals | 🟡 | Headless half done ([`evals/pitch-analysis.md`](evals/pitch-analysis.md)); **DevTools + ChatGPT in-app browser still owed.** |
+| 17–18 — Deploy + submit | ⏭️ **NEXT** | |
 
 **Reordered vs PLAN.md**: 4–7 and 11–12 were done together because inference turned out to be
 ~5 min of compute, and a viewer can't be verified without real data. See the callout in `PLAN.md`.
@@ -202,6 +204,45 @@ independent evidence the engine is right.
 - Event detection on the **Scherzer** clip is poor (FC→BR only 13 frames). It is an edited coaching
   breakdown; **Skenes is the reference session.**
 
+## 4c. The WebMCP tool surface — how it actually works
+
+`web/src/webmcp/` — 13 tools, 9 read / 4 write. This is the graded artifact.
+
+| File | Role |
+|---|---|
+| `registry.ts` | ★ `toolResult()` return-shape choke point · error convention · `meta` builder · `nextPaint()` · `registerTools()` |
+| `vocab.ts` | Natural-language → canonical ids. All the fuzziness lives here so handlers stay strict |
+| `useWebMCP.ts` | Registration lifecycle: one `AbortController` per loaded pitch |
+| `tools/read/session.ts` | A · `list_pitch_sessions` · `get_session_overview` |
+| `tools/read/measure.ts` | B · `get_phase_events` · `get_kinematics_at_event` · `get_joint_angle_series` · `get_kinematic_sequence` |
+| `tools/read/evidence.ts` | C · `get_metric_definition` (+ the structured refusals) · `compare_to_reference` · `compare_pitches` |
+| `tools/write/viewer.ts` | D ★ · `seek_to_event` · `focus_joint` · `set_overlay` · `annotate_frame` |
+| `tools.test.ts` | 35 assertions running every handler against both real sessions |
+
+**Things worth knowing before you change any of it:**
+
+- **`toolResult()` is the only place the return shape is decided.** Today it is the identity
+  function (plain objects, per the spec's `Promise<any>`). If a live agent turns out to need the
+  MCP `{content:[…]}` envelope, wrap it there and nowhere else.
+- **Errors are returned, not thrown.** `runTool()` converts a `ToolInputError` into
+  `{ ok: false, error, validValues, retryable: true }` so the model gets the list of values that
+  would have worked. Unexpected exceptions get a clean message; the stack goes to the console.
+- **Write tools `await nextPaint()` before returning** — agents read the page to plan the next
+  step, so the UI must have changed by the time they do. It falls back to a timer where rAF never
+  fires (hidden tab, Node under test).
+- **Output budget is enforced by test**, hard ceiling 3 000 chars. Three tools were over and were
+  trimmed; see `evals/pitch-analysis.md` §2 before adding a field to any response.
+- **`compare_pitches` analyses the second pitch off-screen** via `store.analysisFor()`, which caches
+  into `store.cache`. It never yanks the human's view to the other session.
+- **`angle_readouts` now does something.** It was a dead toggle; `focus_joint` turns it on and
+  `SkeletonViewer` renders the focused joint's angles in 3D. Without that, two write tools would
+  have had no visible effect — which would have undermined the whole submission claim.
+- **`reference_ghost` does not exist** (PLAN cut list #2). `set_overlay` returns a retryable error
+  naming the five real overlays rather than accepting a no-op. Full deviation list in the eval doc §4.
+
+**Still owed on Task 16:** DevTools registration + "Run tool" for all 13, write tools visibly moving
+the screen, and end-to-end in ChatGPT's in-app browser. Those need the deployed HTTPS origin.
+
 ## 5. The `session.json` contract (FROZEN)
 
 `pipeline/joint_map.py` `JOINT_NAMES` ↔ `web/src/types.ts` `JOINT_NAMES` must match **exactly, in
@@ -271,30 +312,23 @@ web/
   src/viewer/geometry.ts          camera-frame → viewer-space transform
   src/viewer/SkeletonViewer.tsx   r3f scene, imperative per-frame updates
   src/components/                 Timeline · SidePanel · UploadPanel
+  src/webmcp/                     ★ the 13 WebMCP tools — the graded artifact (§4c)
   public/sessions/                ★ committed static analyses (the deployed data)
+evals/pitch-analysis.md           ★ tool-surface verification record + prompt evals
 ```
 
 ---
 
-## 8. Next: Tasks 8–10 — the biomechanics engine
+## 8. Next: finish Task 16, then ship
 
-Pure TypeScript in `web/src/biomech/`, **no React imports**, unit-tested with Vitest (not yet
-installed — `npm i -D vitest`).
+1. **Task 16, browser half.** Work the unticked boxes in `evals/pitch-analysis.md` §1. The one that
+   can silently invalidate the rest is the **return-shape convention** — confirm against a live
+   agent before recording the demo, and if it needs the envelope, change `toolResult()` only.
+2. **Task 17 — deploy.** Static build, HTTPS, and `curl -I` the deployed URL: an
+   `Origin-Agent-Cluster: ?0` header disables WebMCP with no error at all.
+3. **Task 18 — submission.** Demo structure is in PLAN.md. **Lead with `annotate_frame`** — the
+   agent's reasoning becoming a persistent pin in the human's workspace is the strongest single
+   argument in the submission. The line for the Devpost description: *4 of 13 tools are write tools
+   that act on the human's live 3D view.*
 
-1. **`joints.ts` + `angles.ts`** — signed joint angles from `keypoints3d`. Knee/elbow flexion,
-   shoulder abduction + external rotation, trunk forward/lateral tilt, and **hip–shoulder
-   separation** (angle between the pelvis axis `r_hip − l_hip` and the thorax axis
-   `r_acromion − l_acromion`, projected on the transverse plane).
-   *Verify with unit tests on synthetic poses with known angles — every number in the app rests here.*
-2. **`events.ts`** — foot contact, MER, ball release (tech.md §5.1). Return
-   `{ frame, t, method, confidence }`; write into `store.events` so the timeline markers light up.
-3. **`reference.ts` / `confidence.ts` / `sequence.ts` / `analyze.ts`** — published ranges **with
-   citations** (tech.md §5.2), confidence grading, kinematic sequence with the mandatory
-   `literatureNote`.
-
-**Decide first:** whether to plumb `pred_global_rots` through (see §4 ★★). It is the single biggest
-available accuracy win, but costs a 127-joint mapping. If you do, it is a **schema change** — bump
-`schemaVersion` and re-run the pipeline.
-
-The store, the viewer, and the timeline are already wired to consume `events` and `annotations`, so
-the engine should light up the existing UI without new plumbing.
+⚠️ Unresolved and blocking Task 18: **source-footage rights** (§6 above). Decide before recording.

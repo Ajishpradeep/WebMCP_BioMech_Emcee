@@ -5,6 +5,7 @@ import { SidePanel } from './components/SidePanel'
 import { Timeline } from './components/Timeline'
 import { useAnalysis } from './store'
 import { SkeletonViewer } from './viewer/SkeletonViewer'
+import { useWebMCP } from './webmcp/useWebMCP'
 
 export default function App() {
   const session = useAnalysis((s) => s.session)
@@ -15,6 +16,10 @@ export default function App() {
   const error = useAnalysis((s) => s.error)
   const loadIndex = useAnalysis((s) => s.loadIndex)
   const loadSession = useAnalysis((s) => s.loadSession)
+
+  // Registers the 13 WebMCP tools against this document, re-registering when the loaded
+  // pitch changes. No-ops in a browser without WebMCP.
+  const webmcp = useWebMCP()
 
   // Load the session index, then auto-open the first session.
   useEffect(() => { loadIndex() }, [loadIndex])
@@ -61,8 +66,15 @@ export default function App() {
         </div>
         <div className="topbar-right">
           {session && <span className="session-name">{session.source.label}</span>}
-          <span className="tag webmcp" title="WebMCP tools land in Tasks 13–15">
-            WebMCP · pending
+          <span
+            className={`tag webmcp ${webmcp.supported ? 'ok' : ''}`}
+            title={
+              webmcp.supported
+                ? `Registered tools: ${webmcp.toolNames.join(', ')}`
+                : 'document.modelContext is unavailable here — needs a WebMCP-capable browser over HTTPS. The app works fully without it.'
+            }
+          >
+            {webmcp.supported ? `WebMCP · ${webmcp.registered} tools` : 'WebMCP · not in this browser'}
           </span>
         </div>
       </header>

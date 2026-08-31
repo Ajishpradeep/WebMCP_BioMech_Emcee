@@ -20,6 +20,12 @@ import type {
 
 export type LoadState = 'idle' | 'loading' | 'ready' | 'error'
 
+/** A session plus its derived analysis, computed in the browser. */
+export interface AnalysedSession {
+  session: Session
+  analysis: AnalysisResult
+}
+
 interface AnalysisState {
   // ── available sessions ──
   index: SessionIndexEntry[]
@@ -35,6 +41,12 @@ interface AnalysisState {
    * tools will expose and what a backend MCP server could not (SPEC §3).
    */
   analysis: AnalysisResult | null
+  /**
+   * Analyses kept alongside the active one, keyed by session id. `compare_pitches` needs
+   * a second pitch without yanking the human's view to it, so it analyses that session
+   * off-screen and caches the result here.
+   */
+  cache: Record<string, AnalysedSession>
 
   // ── viewer state (client-only; no server representation) ──
   currentFrame: number
@@ -61,6 +73,10 @@ interface AnalysisState {
   addAnnotation: (a: Omit<Annotation, 'id' | 'createdAt'>) => Annotation
   clearAnnotations: () => void
   seekToEvent: (name: EventName) => PhaseEvent | null
+  /** Active session, cached session, or fetch-and-analyse — without changing the view. */
+  analysisFor: (sessionId?: string) => Promise<AnalysedSession>
+  /** Analyse a session into the cache without displaying it. */
+  cacheAnalysis: (session: Session) => AnalysedSession
 }
 
 const DEFAULT_OVERLAYS: Record<OverlayName, boolean> = {
@@ -78,6 +94,7 @@ export const useAnalysis = create<AnalysisState>((set, get) => ({
   sessionState: 'idle',
   error: null,
   analysis: null,
+  cache: {},
 
   currentFrame: 0,
   playing: false,
@@ -116,7 +133,8 @@ export const useAnalysis = create<AnalysisState>((set, get) => ({
 
   adoptSession(session) {
     const analysis = analyze(session)
-    set({
+    set((s) => ({
+      cache: { ...s.cache, [session.sessionId]: { session, analysis } },
       session,
       analysis,
       sessionState: 'ready',
@@ -126,7 +144,7 @@ export const useAnalysis = create<AnalysisState>((set, get) => ({
       annotations: [],
       events: analysis.events,
       error: null,
-    })
+    }))
   },
 
   setFrame(frame) {
@@ -166,5 +184,27 @@ export const useAnalysis = create<AnalysisState>((set, get) => ({
     if (!ev) return null
     get().setFrame(ev.frame)
     return ev
+  },
+
+  cacheAnalysis(session) {
+    const entry: AnalysedSession = { session, analysis: analyze(session) }
+    set((s) => ({ cache: { ...s.cache, [session.sessionId]: entry } }))
+    return entry
+  },
+
+  async analysisFor(sessionId) {
+    const st = get()
+    const id = sessionId ?? st.session?.sessionId
+    if (!id) throw new Error('No pitch session is loaded.')
+    if (st.session?.sessionId === id && st.analysis) {
+      return { session: st.session, analysis: st.analysis }
+    }
+    const hit = st.cache[id]
+    if (hit) return hit
+
+    const entry = st.index.find((s) => s.sessionId === id)
+    const res = await fetch(`/sessions/${entry?.file ?? `${id}.json`}`)
+    if (!res.ok) throw new Error(`Session "${id}" could not be loaded (HTTP ${res.status}).`)
+    return get().cacheAnalysis(await res.json())
   },
 }))

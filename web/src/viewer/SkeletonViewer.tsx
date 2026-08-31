@@ -12,8 +12,10 @@ import { Grid, OrbitControls, Html } from '@react-three/drei'
 import { useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 
+import { metricsFor, poseAt } from '../biomech/angles'
 import { useAnalysis } from '../store'
 import type { Session } from '../types'
+import { METRIC_LABEL, metricsForJoint } from '../webmcp/vocab'
 import { buildViewerFrames, jointAt, type ViewerFrames } from './geometry'
 import { AxialRotationDial, SegmentFrames } from './SegmentFrames'
 
@@ -170,6 +172,47 @@ function AnnotationPins({ session, vf }: { session: Session; vf: ViewerFrames })
   )
 }
 
+/* ── angle readout on the focused joint ─────────────────────────────────── */
+/**
+ * What `focus_joint` and the `angle_readouts` overlay are FOR: the number the agent is
+ * talking about, rendered on the joint it belongs to. Recomputed per displayed frame,
+ * which is cheap because it is one pose, not the whole clip.
+ */
+function AngleReadout({ session, vf }: { session: Session; vf: ViewerFrames }) {
+  const show = useAnalysis((s) => s.overlays.angle_readouts)
+  const selectedJoint = useAnalysis((s) => s.selectedJoint)
+  const currentFrame = useAnalysis((s) => s.currentFrame)
+
+  const readout = useMemo(() => {
+    if (!show || !selectedJoint) return null
+    const metrics = metricsForJoint(selectedJoint, session.subject.handedness)
+    const idx = session.joints.indexOf(selectedJoint)
+    if (metrics.length === 0 || idx < 0) return null
+    const values = metricsFor(poseAt(session, currentFrame))
+    const p = jointAt(vf, Math.min(currentFrame, vf.frameCount - 1), idx)
+    return {
+      p,
+      rows: metrics.map((m) => ({ label: METRIC_LABEL[m], value: values[m] })),
+    }
+  }, [show, selectedJoint, currentFrame, session, vf])
+
+  if (!readout) return null
+  return (
+    <group position={[readout.p[0], readout.p[1], readout.p[2]]}>
+      <Html distanceFactor={vf.scale * 4} style={{ pointerEvents: 'none' }}>
+        <div className="angle-readout">
+          {readout.rows.map((r) => (
+            <div key={r.label} className="ar-row">
+              <span className="ar-label">{r.label}</span>
+              <span className="ar-value">{r.value === null ? '—' : `${r.value.toFixed(1)}°`}</span>
+            </div>
+          ))}
+        </div>
+      </Html>
+    </group>
+  )
+}
+
 /* ── camera presets ──────────────────────────────────────────────────────── */
 function CameraRig({ vf }: { vf: ViewerFrames }) {
   const plane = useAnalysis((s) => s.cameraPlane)
@@ -230,6 +273,7 @@ export function SkeletonViewer({ session }: { session: Session }) {
       <Skeleton session={session} vf={vf} />
       <SegmentFrames session={session} vf={vf} />
       <AxialRotationDial session={session} vf={vf} />
+      <AngleReadout session={session} vf={vf} />
       <AnnotationPins session={session} vf={vf} />
       <PlaybackClock session={session} />
       <CameraRig vf={vf} />

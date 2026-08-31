@@ -17,6 +17,8 @@ export interface Citation {
   key: string
   text: string
   doi?: string
+  /** Compact form for WebMCP `meta.citations` — the full text blows the output budget. */
+  short: string
 }
 
 export const CITATIONS: Record<string, Citation> = {
@@ -24,19 +26,23 @@ export const CITATIONS: Record<string, Citation> = {
     key: 'christoffer2019',
     text: 'Christoffer DJ, Melugin HP, Cherny CE. A Clinician’s Guide to Analysis of the Pitching Motion. Curr Rev Musculoskelet Med. 2019;12(2):98–104.',
     doi: '10.1007/s12178-019-09556-4',
+    short: 'Christoffer 2019, Curr Rev Musculoskelet Med, doi:10.1007/s12178-019-09556-4',
   },
   diffendaffer2023: {
     key: 'diffendaffer2023',
     text: 'Diffendaffer AZ, Bagwell MS, Fleisig GS, et al. The Clinician’s Guide to Baseball Pitching Biomechanics. Sports Health. 2023;15(2):274–281.',
     doi: '10.1177/19417381221078537',
+    short: 'Diffendaffer 2023, Sports Health, doi:10.1177/19417381221078537',
   },
   kinematicSeq2020: {
     key: 'kinematicSeq2020',
     text: 'Kinematic sequence patterns in the overhead baseball pitch. Sports Biomechanics. 2020;19(5). PMID 30213227.',
+    short: 'Kinematic sequence patterns, Sports Biomech 2020;19(5), PMID 30213227',
   },
   markerless: {
     key: 'markerless',
     text: 'Markerless vs marker-based agreement in sports settings is reported at RMSD 6.3–23.0°, weakest for internal/external rotation.',
+    short: 'Markerless vs marker-based agreement: RMSD 6.3–23.0°, worst for axial rotation',
   },
 }
 
@@ -195,5 +201,35 @@ export const REFUSALS: Record<string, { reason: string; insteadUse: string[] }> 
     reason:
       'Ball speed needs a calibrated scale and a tracked ball. The reconstruction is camera-frame with an estimated focal length, so absolute speeds are not recoverable.',
     insteadUse: ['hip_shoulder_separation', 'lead_knee_flexion'],
+  },
+}
+
+/**
+ * Metrics the engine computes but for which our cited sources publish no reference range.
+ * They are still measurable and still worth reporting — `get_metric_definition` serves
+ * these so the agent gets the computation and the caveats without a fabricated range.
+ */
+export const METRIC_INFO: Partial<
+  Record<MetricName, { plainLanguage: string; computation: string; limitations: string }>
+> = {
+  trail_knee_flexion: {
+    plainLanguage: 'How bent the back (drive-side) knee is.',
+    computation: 'Angle between the trail thigh and shank long axes.',
+    limitations:
+      'Robust to measure, but our cited sources report ranges at events for the lead knee only, so there is no published range to compare against.',
+  },
+  lead_hip_flexion: {
+    plainLanguage: 'How far the front thigh is flexed relative to the pelvis.',
+    computation: 'Angle between the pelvis long axis and the lead thigh long axis.',
+    limitations:
+      'Depends on the pelvis frame, which is built from hip landmarks and is noisier than a pure two-segment angle. No published range in our cited sources.',
+  },
+  shoulder_horizontal_abduction: {
+    plainLanguage:
+      'Where the throwing arm sits in front of or behind the plane of the shoulders — how far the arm is laid out to the side.',
+    computation:
+      'Plane-of-elevation term of the ISB Y–X–Y decomposition of the humerus relative to the thorax frame.',
+    limitations:
+      'A transverse-plane quantity, so it is more sensitive to reconstruction noise, and the plane/axial split degrades near 0° elevation. No published range in our cited sources.',
   },
 }
