@@ -91,6 +91,7 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 | **13–15 — WebMCP tools ★** | ✅ code / 🟡 live | 13 handlers implemented; registration is one stable document surface with a visible partial/failure state; live registration is still unverified. |
 | 16 — Verification + evals | 🟡 | Headless half done ([`evals/pitch-analysis.md`](evals/pitch-analysis.md)); **DevTools + ChatGPT in-app browser still owed.** |
 | 16b — Scientific truth gate | 🟡 phase 1 | Incompatible comparisons removed and four-segment sequence labeled; manual event-frame validation remains. |
+| P1 — Human event correction | ✅ | Reviewers can apply the current frame to FC/MER/BR; analysis and WebMCP reads update together. |
 | 17 — GCP deploy | ✅ | Public Cloud Run origin verified; see [`docs/deployment.md`](docs/deployment.md). |
 | 18 — Submission package | ⏭️ | README, license, clean footage, video, description, final Devpost checks. |
 

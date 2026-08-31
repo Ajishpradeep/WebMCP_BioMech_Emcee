@@ -73,6 +73,10 @@ interface AnalysisState {
   addAnnotation: (a: Omit<Annotation, 'id' | 'createdAt'>) => Annotation
   clearAnnotations: () => void
   seekToEvent: (name: EventName) => PhaseEvent | null
+  /** Replace one detected event with the frame currently reviewed by a human. */
+  setEventFrame: (name: EventName, frame: number) => boolean
+  /** Discard one human correction and restore the detector's event for this session. */
+  resetEventFrame: (name: EventName) => void
   /** Active session, cached session, or fetch-and-analyse — without changing the view. */
   analysisFor: (sessionId?: string) => Promise<AnalysedSession>
   /** Analyse a session into the cache without displaying it. */
@@ -184,6 +188,54 @@ export const useAnalysis = create<AnalysisState>((set, get) => ({
     if (!ev) return null
     get().setFrame(ev.frame)
     return ev
+  },
+
+  setEventFrame(name, frame) {
+    const st = get()
+    if (!st.session || !st.analysis) return false
+    const max = st.session.frames.length - 1
+    const safeFrame = Math.max(0, Math.min(max, Math.round(frame)))
+    const revised = st.events.map((event) =>
+      event.name === name
+        ? {
+            ...event,
+            frame: safeFrame,
+            t: st.session!.frames[safeFrame]?.t ?? event.t,
+            method: 'human-reviewed frame',
+            confidence: 'medium' as const,
+            manualOverride: true,
+          }
+        : event,
+    ).sort((a, b) => a.frame - b.frame)
+    const fc = revised.find((event) => event.name === 'foot_contact')?.frame
+    const mer = revised.find((event) => event.name === 'max_external_rotation')?.frame
+    const br = revised.find((event) => event.name === 'ball_release')?.frame
+    if (fc === undefined || mer === undefined || br === undefined || !(fc < mer && mer < br)) return false
+
+    const analysis = analyze(st.session, revised)
+    set((state) => ({
+      analysis,
+      events: analysis.events,
+      currentFrame: safeFrame,
+      playing: false,
+      cache: { ...state.cache, [st.session!.sessionId]: { session: st.session!, analysis } },
+    }))
+    return true
+  },
+
+  resetEventFrame(name) {
+    const st = get()
+    if (!st.session) return
+    const automatic = analyze(st.session)
+    const restored = automatic.events.find((event) => event.name === name)
+    if (!restored) return
+    const revised = st.events.map((event) => event.name === name ? restored : event)
+    const analysis = analyze(st.session, revised)
+    set((state) => ({
+      analysis,
+      events: analysis.events,
+      cache: { ...state.cache, [st.session!.sessionId]: { session: st.session!, analysis } },
+    }))
   },
 
   cacheAnalysis(session) {

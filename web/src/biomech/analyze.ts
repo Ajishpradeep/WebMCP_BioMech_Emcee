@@ -79,8 +79,8 @@ function readingFor(
   }
 }
 
-export function analyze(session: Session): AnalysisResult {
-  const events = detectEvents(session)
+export function analyze(session: Session, reviewedEvents?: PhaseEvent[]): AnalysisResult {
+  const events = reviewedEvents ?? detectEvents(session)
   const series = metricSeries(session)
   const sequence = kinematicSequence(session, events)
 

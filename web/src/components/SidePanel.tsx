@@ -1,6 +1,7 @@
 import { useAnalysis } from '../store'
 import { JOINT_NAMES, type JointName, type OverlayName, type Session } from '../types'
 import { MetricsPanel } from './MetricsPanel'
+import { EventReview } from './EventReview'
 import { UploadPanel } from './UploadPanel'
 
 const OVERLAY_LABEL: Record<OverlayName, string> = {
@@ -89,6 +90,7 @@ export function SidePanel({ session }: { session: Session | null }) {
       {session && (
         <>
           {analysis && <MetricsPanel session={session} analysis={analysis} />}
+          <EventReview />
 
           <section>
             <h2>Capture</h2>

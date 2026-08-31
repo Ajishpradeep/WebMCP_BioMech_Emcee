@@ -40,7 +40,7 @@ biomechanics evidence workspace**, not an autonomous coach or a motion-capture r
 | E | P0 | Scientific truth gate | Incompatible comparisons removed and partial sequence labeled; manual event-frame validation remains | 🟡 `truth gate, phase 1` |
 | F | P0 | Judge-facing UX | No dead production upload CTA; first-paint loader; narrow layout usable | ✅ local production visual check |
 | G | P0 | WebMCP runtime hardening | Exactly 13 tools or visible failure; success/error contract tests | 🟡 code complete; live host verification remains |
-| H | P1 | Human event correction loop | Human changes FC/MER/BR; dependent analysis and agent reads update | ⏭️ |
+| H | P1 | Human event correction loop | Human changes FC/MER/BR; dependent analysis and agent reads update | ✅ store + tool regression test |
 | I | P0 | Submission package | README and license complete; clean footage decision, live eval, <3 min demo, Devpost draft remain | 🟡 |
 
 ### P0 acceptance decisions
@@ -53,6 +53,10 @@ biomechanics evidence workspace**, not an autonomous coach or a motion-capture r
   and lead-knee flexion comparisons remain, at `medium` confidence.
 - Kinematic sequence is a **partial four-segment order**, not the published five-segment sequence.
 - Event tests must compare against manually reviewed frames, not only assert ordering.
+- **Implemented 2026-08-31:** reviewers can set FC/MER/BR to the currently inspected frame. The
+  event order is protected, dependent browser analysis is recomputed, and WebMCP reads report the
+  reviewed event. A manually labelled benchmark for the committed clips is still required before
+  claiming event-detection accuracy.
 - The public build presents precomputed review sessions; local CUDA upload is development tooling.
 - Demo comparison data should be the same athlete and camera setup, using self-recorded or clearly
   licensed footage. Until replaced, cross-view demo comparisons remain explicitly unreliable.

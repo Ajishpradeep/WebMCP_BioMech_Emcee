@@ -177,6 +177,7 @@ body {
 .tag.backend { margin-left: auto; }
 .tag.backend.online { color: var(--accent-2); border-color: rgba(94, 234, 212, 0.4); }
 .tag.backend.offline { color: var(--fg-faint); }
+.tag.review { color: var(--accent-2); border-color: rgba(94, 234, 212, 0.45); margin-left: 6px; }
 
 /* ── sessions ─────────────────────────────────────────────────────────── */
 .session-list { display: flex; flex-direction: column; gap: 6px; }
@@ -198,6 +199,14 @@ body {
 .session-item.on { border-color: var(--accent); background: rgba(56, 189, 248, 0.08); }
 .si-label { font-size: 13px; }
 .si-meta { font-size: 11px; color: var(--fg-faint); }
+
+/* ── event review ─────────────────────────────────────────────────────── */
+.event-review > p { margin: -3px 0 11px; }
+.event-list { display: flex; flex-direction: column; gap: 7px; }
+.event-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px 0; border-bottom: 1px solid rgba(30,39,51,0.6); }
+.event-row strong { display: block; font-size: 12px; font-weight: 500; }
+.event-row .mono { font-size: 10px; }
+.event-actions { display: flex; gap: 5px; flex: none; }
 
 /* ── metadata + caveats ───────────────────────────────────────────────── */
 .meta dl { margin: 0 0 12px; display: flex; flex-direction: column; gap: 5px; }

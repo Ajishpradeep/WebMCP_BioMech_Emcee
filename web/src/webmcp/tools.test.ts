@@ -208,6 +208,26 @@ describe('evidence tools', () => {
 })
 
 describe('viewer-control tools move the store the UI renders from', () => {
+  it('propagates a human-reviewed event frame into analysis and agent reads', async () => {
+    const st = useAnalysis.getState()
+    const original = st.events.find((e) => e.name === 'max_external_rotation')!
+    const changedFrame = original.frame - 1
+    expect(st.setEventFrame('max_external_rotation', changedFrame)).toBe(true)
+
+    const changed = useAnalysis.getState().events.find((e) => e.name === 'max_external_rotation')!
+    expect(changed.frame).toBe(changedFrame)
+    expect(changed.manualOverride).toBe(true)
+    expect(changed.method).toMatch(/human-reviewed/)
+    expect(useAnalysis.getState().analysis?.events.find((e) => e.name === changed.name)?.frame).toBe(changedFrame)
+
+    const read = (await call('get_phase_events')) as Result
+    expect(read.events.find((e: any) => e.name === 'max_external_rotation').manualOverride).toBe(true)
+    expect(read.events.find((e: any) => e.name === 'max_external_rotation').frame).toBe(changedFrame)
+
+    useAnalysis.getState().resetEventFrame('max_external_rotation')
+    expect(useAnalysis.getState().events.find((e) => e.name === 'max_external_rotation')?.frame).toBe(original.frame)
+  })
+
   it('seeks to an event and pauses playback', async () => {
     useAnalysis.getState().setPlaying(true)
     const res = (await call('seek_to_event', { event: 'mer' })) as Result
