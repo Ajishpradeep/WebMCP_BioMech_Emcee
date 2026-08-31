@@ -8,7 +8,7 @@ Two layers of verification, because they catch different failures:
 
 | Layer | Catches | Where |
 |---|---|---|
-| **Headless harness** — `web/src/webmcp/tools.test.ts`, 35 assertions | wrong values, missing `meta`, output-budget creep, unhelpful errors, write tools that don't write | `cd web && npx vitest run src/webmcp/tools.test.ts` |
+| **Headless harness** — `web/src/webmcp/tools.test.ts` | wrong values, missing `meta`, output-budget creep, unhelpful errors, write tools that don't write | `cd web && npx vitest run src/webmcp/tools.test.ts` |
 | **Live agent** — DevTools, then ChatGPT's in-app browser | registration, return-shape convention, tool *selection* | a deployed HTTPS origin (Task 17) |
 
 The harness runs every handler against the two real reconstructed deliveries in
@@ -25,7 +25,8 @@ The harness runs every handler against the two real reconstructed deliveries in
 - [x] Errors return a retryable message naming the values that would have worked — never a stack trace
 - [x] Output budget enforced: hard ceiling of 3 000 characters per response, asserted per tool
 - [x] Non-WebMCP browser: `registerTools` no-ops, the app is fully usable, the header says so
-- [x] Loading a new session aborts the `AbortController` and re-registers (fires `toolchange`)
+- [x] The fixed 13-tool surface registers once; handlers resolve live Zustand state at execution time,
+  avoiding duplicate or stale registrations when a session changes
 - [ ] **All 13 visible in DevTools → Application → WebMCP → Available Tools** — needs Chrome 149+/flag
 - [ ] **Each runs from the DevTools "Run tool" button**
 - [ ] **Write tools visibly change the screen when run from DevTools** — the submission's core claim
@@ -90,10 +91,9 @@ model, monocular video provides neither — and offers `insteadUse`.
 
 ### 3.4 "Is 42° of hip–shoulder separation good?"
 **Expect:** `get_metric_definition { metric: "hip_shoulder_separation" }`.
-**Pass:** quotes 30–60° with the Diffendaffer 2023 citation, and says a range describes a population
-rather than a target. **Fail:** inventing a range — the failure mode this tool exists to prevent.
-**Note:** this metric currently reads small and negative at foot contact on our clips (HANDOFF §4b).
-The tool returning `medium` confidence plus its limitations text is the honest handling of that.
+**Pass:** explains how this app computes signed separation and says no comparison is offered because
+the frame/sign convention has not been proven equivalent to published values. **Fail:** quoting a
+30–60° target or inventing a range.
 
 ### 3.5 "Show me the moment his arm lays back the most, and mark it."
 **Expect:** `get_phase_events` → `seek_to_event { event: "max_external_rotation" }` →
@@ -104,12 +104,10 @@ shoulder highlights with its angle readout, and a pin appears that survives scru
 frontal plane; the pin landed on frame 633 anchored to `r_acromion`.
 
 ### 3.6 "What should he work on?"
-**Expect:** `compare_to_reference`, then `get_metric_definition` on whatever stands out.
-**Pass:** presents deviations as observations with their confidence grades, and does not rank them
-into a training plan on `low`-confidence axial rotation alone.
-**Recorded (Skenes):** largest deviation `shoulder_external_rotation` at MER, 85.3° vs [166, 182],
-80.7° below, confidence `low`. A good agent notices the confidence and says the ISB axial term and
-the clinical lay-back measure are not the same construct.
+**Expect:** `compare_to_reference`, then `get_metric_definition` on a returned direct flexion metric.
+**Pass:** presents deviations as observations with `medium` confidence and does not turn exploratory
+axial, trunk, separation, or foot angles into a training plan. The external-rotation lay-back range
+is intentionally unavailable because the constructs have not been validated as equivalent.
 
 ### 3.7 Robustness — fuzzy input
 Already covered headlessly, worth re-checking live: "front knee" → `l_knee` for a right-hander,
