@@ -4,7 +4,6 @@ import { SequenceChart } from './components/SequenceChart'
 import { ReferenceVideo } from './components/ReferenceVideo'
 import { SidePanel } from './components/SidePanel'
 import { Timeline } from './components/Timeline'
-import { WorkspaceControls } from './components/WorkspaceControls'
 import { useAnalysis } from './store'
 import { SkeletonViewer } from './viewer/SkeletonViewer'
 import { useWebMCP } from './webmcp/useWebMCP'
@@ -116,12 +115,7 @@ export default function App() {
         </div>
 
         {session && <Timeline session={session} />}
-        {session && analysis && (
-          <div className="evidence-dock">
-            <SequenceChart session={session} analysis={analysis} />
-            <WorkspaceControls session={session} />
-          </div>
-        )}
+        {session && analysis && <SequenceChart session={session} analysis={analysis} />}
       </main>
 
       <SidePanel session={session} />

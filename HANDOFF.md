@@ -92,7 +92,7 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 | 6 — 🔒 Freeze schema | ✅ | **Frozen.** `pipeline/joint_map.py` ↔ `web/src/types.ts`. |
 | 7 — Smoothing + export | ✅ | Savitzky–Golay. Proportions validated (§4). |
 | 11 — Web app scaffold | ✅ | React 19 + Vite 8 + r3f + Zustand. |
-| 12 — 2D/3D viewer + timeline | ✅ | Frame-synchronized source reference beside the 3D reconstruction; playback, scrub, annotation pins, and a persistent shared-view dock for camera, focus, and evidence layers. |
+| 12 — 2D/3D viewer + timeline | ✅ | Frame-synchronized source reference beside the 3D reconstruction; playback, scrub, annotation pins, and camera/focus/evidence controls integrated into one transport toolbar. |
 | 8–10 — Biomechanics engine | ✅ | `web/src/biomech/`; complete suite currently 79 tests green, including the retained real-session numerical audit and synthetic short-clip refusal. |
 | 12b — Metrics panel | ✅ | Stable event/live tile grids, confidence/status color, and `i` disclosures for ranges, methods, limitations, and citations. |
 | **13–15 — WebMCP tools ★** | ✅ code / 🟡 live | 13 handlers implemented; registration is one stable document surface with a visible partial/failure state; live registration is still unverified. |
@@ -291,14 +291,21 @@ accessible `i` disclosure holds the definition, computation, limitation, exact o
 citation. Live mode uses the same tile language, follows the inspected frame, and deliberately
 omits event-reference comparison styling.
 
-Kinematic Sequence remains on the left of the bottom evidence area, with the persistent **Shared
-view** workspace on the right at wide widths; the two stack before their text or controls become
-cramped. Shared View now uses a readable two-column control layout instead of a narrow vertical
-strip, keeping camera plane, focused joint, active state, and evidence layers visible. This makes
-`focus_joint` and `set_overlay` actions immediately legible, while `annotate_frame` produces a
-clickable shared note that returns the human to its frame and joint. The right inspector is wider,
-and event-review instructions and labels are no longer set at miniature sizes. No WebMCP schema,
-tool behavior, biomechanics, or scientific boundary changed.
+Playback, frame/time, shared camera/focus/evidence controls, and speed now form one transport
+toolbar directly beneath the synchronized viewers, followed by the scrubber. At wide widths the
+shared controls occupy the middle of the playback row; at narrower widths that middle group wraps
+within the same toolbar. Its compact live-state indicator and evidence-layer count keep
+`focus_joint` and `set_overlay` actions legible without a separate Shared View panel; the five named
+layer toggles remain available from the Evidence menu.
+
+Kinematic Sequence now owns the full lower evidence row. Its responsive `800×160` chart coordinate
+system uses the available plot width instead of centering a narrow fixed-aspect chart with empty
+side gutters. At wide widths the plot sits beside a readable context rail containing current
+segment values, the validity boundary, and method disclosure; at narrower widths those elements
+become a horizontal rail below the full-width plot. `annotate_frame` still produces a clickable
+shared note that returns the human to its frame and joint. The right inspector remains wider, and
+event-review instructions and labels are no longer miniature. No WebMCP schema, tool behavior,
+biomechanics, or scientific boundary changed.
 
 **Verified:** local production render at 1600×1000 and 1200×900; 79 tests; typecheck; production
 build. The existing bundle-size warning remains a deferred P2 concern.

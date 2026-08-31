@@ -1,5 +1,6 @@
 import { useAnalysis } from '../store'
 import type { Session } from '../types'
+import { WorkspaceControls } from './WorkspaceControls'
 
 const EVENT_LABEL: Record<string, string> = {
   foot_contact: 'FC',
@@ -24,11 +25,13 @@ export function Timeline({ session }: { session: Session }) {
   return (
     <div className="timeline">
       <div className="tl-controls">
-        <button className="btn icon" onClick={() => stepFrame(-1)} title="Previous frame (←)">‹</button>
-        <button className="btn icon primary" onClick={togglePlaying} title="Play / pause (space)">
-          {playing ? '❚❚' : '▶'}
-        </button>
-        <button className="btn icon" onClick={() => stepFrame(1)} title="Next frame (→)">›</button>
+        <div className="tl-playback">
+          <button className="btn icon" onClick={() => stepFrame(-1)} title="Previous frame (←)">‹</button>
+          <button className="btn icon primary" onClick={togglePlaying} title="Play / pause (space)">
+            {playing ? '❚❚' : '▶'}
+          </button>
+          <button className="btn icon" onClick={() => stepFrame(1)} title="Next frame (→)">›</button>
+        </div>
 
         <div className="tl-readout">
           <span className="mono">{String(currentFrame).padStart(3, '0')}</span>
@@ -37,6 +40,8 @@ export function Timeline({ session }: { session: Session }) {
           <span className="mono">{t.toFixed(2)}s</span>
           {session.timebase.slowMotion && <span className="tag slowmo">slow-mo</span>}
         </div>
+
+        <WorkspaceControls session={session} />
 
         <div className="tl-rate">
           {[0.25, 0.5, 1, 2].map((r) => (

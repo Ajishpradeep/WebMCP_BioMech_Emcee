@@ -54,19 +54,13 @@ export function WorkspaceControls({ session }: { session: Session }) {
 
   return (
     <section className="workspace-controls" aria-label="Shared viewer controls">
-      <div className="workspace-intro">
-        <div className="workspace-head">
-          <div>
-            <h3>Shared view</h3>
-            <p>Human and agent control the same workspace.</p>
-          </div>
-          <span className="tag shared">live state</span>
-        </div>
-        <div className="shared-state" aria-live="polite">
-          <span>{PLANE_LABEL[cameraPlane]} view</span>
-          <span>{focusLabel}</span>
-          <span>{activeOverlays.length} layers</span>
-        </div>
+      <div
+        className="workspace-state"
+        aria-live="polite"
+        title="Human and agent control the same live viewer state"
+      >
+        <span className="tag shared">shared view</span>
+        <span>{PLANE_LABEL[cameraPlane]} · {focusLabel} · {activeOverlays.length} layers</span>
       </div>
 
       <div className="control-block">
@@ -100,20 +94,26 @@ export function WorkspaceControls({ session }: { session: Session }) {
       </label>
 
       <div className="control-block overlay-control">
-        <span className="control-label">Evidence layers</span>
-        <div className="overlay-chips">
-          {(Object.keys(OVERLAY_LABEL) as OverlayName[]).map((overlay) => (
-            <button
-              key={overlay}
-              className={overlays[overlay] ? 'on' : ''}
-              onClick={() => setOverlay(overlay, !overlays[overlay])}
-              aria-pressed={overlays[overlay]}
-            >
-              <span className="overlay-check" aria-hidden="true">{overlays[overlay] ? '✓' : '+'}</span>
-              {OVERLAY_LABEL[overlay]}
-            </button>
-          ))}
-        </div>
+        <span className="control-label">Evidence</span>
+        <details className="overlay-menu">
+          <summary>
+            <span>Layers</span>
+            <strong className="mono">{activeOverlays.length}/{Object.keys(OVERLAY_LABEL).length}</strong>
+          </summary>
+          <div className="overlay-chips">
+            {(Object.keys(OVERLAY_LABEL) as OverlayName[]).map((overlay) => (
+              <button
+                key={overlay}
+                className={overlays[overlay] ? 'on' : ''}
+                onClick={() => setOverlay(overlay, !overlays[overlay])}
+                aria-pressed={overlays[overlay]}
+              >
+                <span className="overlay-check" aria-hidden="true">{overlays[overlay] ? '✓' : '+'}</span>
+                {OVERLAY_LABEL[overlay]}
+              </button>
+            ))}
+          </div>
+        </details>
       </div>
     </section>
   )

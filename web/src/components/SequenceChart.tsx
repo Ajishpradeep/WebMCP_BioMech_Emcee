@@ -33,9 +33,9 @@ const SERIES_LABEL: Record<SequenceSegment, string> = {
   forearm: 'Forearm',
 }
 
-const W = 640
-const H = 150
-const M = { top: 9, right: 14, bottom: 24, left: 44 }
+const W = 800
+const H = 160
+const M = { top: 10, right: 18, bottom: 26, left: 48 }
 
 /**
  * Display-only zero-phase Gaussian smoothing. The biomechanics engine retains its
@@ -144,109 +144,117 @@ export function SequenceChart({
         </div>
       </div>
 
-      {open && (showTable ? (
-        <table className="sc-table">
-          <thead>
-            <tr><th>Segment</th><th>Peak frame</th><th>% of FC→BR</th><th>deg / video-s</th><th>deg/s</th></tr>
-          </thead>
-          <tbody>
-            {seq.peaks.map((p) => (
-              <tr key={p.segment}>
-                <td><span className="swatch" style={{ background: SERIES_COLOR[p.segment] }} />{SERIES_LABEL[p.segment]}</td>
-                <td className="mono">{p.frame}</td>
-                <td className="mono">{p.tNormPct === null ? '—' : `${p.tNormPct.toFixed(1)}%`}</td>
-                <td className="mono">{p.peakSpeedVideo}</td>
-                <td className="mono dim">{p.peakAngularVelocity ?? 'unavailable'}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <svg
-          ref={svgRef}
-          viewBox={`0 0 ${W} ${H}`}
-          className="sc-svg"
-          onMouseMove={onMove}
-          onMouseLeave={() => setHover(null)}
-          onClick={() => hover !== null && setFrame(hover)}
-          role="img"
-          aria-label="Angular speed of pelvis, thorax, upper arm and forearm through the delivery"
-        >
-          {/* recessive grid */}
-          {[0, 0.25, 0.5, 0.75, 1].map((g) => (
-            <g key={g}>
-              <line x1={M.left} x2={W - M.right} y1={y(yMax * g)} y2={y(yMax * g)} className="sc-grid" />
-              <text x={M.left - 6} y={y(yMax * g) + 3} className="sc-axis" textAnchor="end">
-                {Math.round(yMax * g)}
-              </text>
-            </g>
-          ))}
-
-          {/* event markers */}
-          {analysis.events.map((e) => (
-            <g key={e.name}>
-              <line x1={x(e.frame)} x2={x(e.frame)} y1={M.top} y2={H - M.bottom} className="sc-event" />
-              <text x={x(e.frame)} y={H - M.bottom + 12} className="sc-axis" textAnchor="middle">
-                {e.name === 'foot_contact' ? 'FC' : e.name === 'ball_release' ? 'BR' : 'MER'}
-              </text>
-            </g>
-          ))}
-
-          {/* series */}
-          {SEQUENCE_SEGMENTS.map((s) => (
-            <path key={s} d={plot[s]} fill="none" stroke={SERIES_COLOR[s]} strokeWidth={2}
-              strokeLinejoin="round" strokeLinecap="round" />
-          ))}
-
-          {/* peak markers — 8px, ringed against the surface so overlaps stay legible */}
-          {seq.peaks.map((p) => {
-            const v = displayTraces[p.segment][p.frame]
-            if (v === null) return null
-            return (
-              <circle key={p.segment} cx={x(p.frame)} cy={y(v)} r={4.5}
-                fill={SERIES_COLOR[p.segment]} stroke="#0c1016" strokeWidth={2} />
-            )
-          })}
-
-          {/* crosshair */}
-          <line x1={x(hf)} x2={x(hf)} y1={M.top} y2={H - M.bottom} className="sc-cursor" />
-
-          <text x={M.left} y={H - 4} className="sc-axis">frame</text>
-          <text x={W - M.right} y={H - 4} className="sc-axis" textAnchor="end">
-            deg / video-second
-          </text>
-        </svg>
-      ))}
-
       {open && (
-      <>
-      {/* legend — always present for ≥2 series; identity never by colour alone */}
-      <div className="sc-legend">
-        {SEQUENCE_SEGMENTS.map((s) => {
-          const v = displayTraces[s][hf]
-          return (
-            <span key={s} className="sc-key">
-              <span className="swatch" style={{ background: SERIES_COLOR[s] }} />
-              {SERIES_LABEL[s]}
-              <span className="mono dim">{v === null ? '—' : Math.round(v)}</span>
-            </span>
-          )
-        })}
-      </div>
+        <div className="sc-body">
+          <div className="sc-plot">
+            {showTable ? (
+              <table className="sc-table">
+                <thead>
+                  <tr><th>Segment</th><th>Peak frame</th><th>% of FC→BR</th><th>deg / video-s</th><th>deg/s</th></tr>
+                </thead>
+                <tbody>
+                  {seq.peaks.map((p) => (
+                    <tr key={p.segment}>
+                      <td><span className="swatch" style={{ background: SERIES_COLOR[p.segment] }} />{SERIES_LABEL[p.segment]}</td>
+                      <td className="mono">{p.frame}</td>
+                      <td className="mono">{p.tNormPct === null ? '—' : `${p.tNormPct.toFixed(1)}%`}</td>
+                      <td className="mono">{p.peakSpeedVideo}</td>
+                      <td className="mono dim">{p.peakAngularVelocity ?? 'unavailable'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <svg
+                ref={svgRef}
+                viewBox={`0 0 ${W} ${H}`}
+                className="sc-svg"
+                onMouseMove={onMove}
+                onMouseLeave={() => setHover(null)}
+                onClick={() => hover !== null && setFrame(hover)}
+                role="img"
+                aria-label="Angular speed of pelvis, thorax, upper arm and forearm through the delivery"
+              >
+                {/* recessive grid */}
+                {[0, 0.25, 0.5, 0.75, 1].map((g) => (
+                  <g key={g}>
+                    <line x1={M.left} x2={W - M.right} y1={y(yMax * g)} y2={y(yMax * g)} className="sc-grid" />
+                    <text x={M.left - 6} y={y(yMax * g) + 3} className="sc-axis" textAnchor="end">
+                      {Math.round(yMax * g)}
+                    </text>
+                  </g>
+                ))}
 
-      <p className="sc-note">
-        {!seq.available
-          ? `No peak order or intervals reported: ${seq.unavailableReason}`
-          : seq.rateUnitsAvailable
-          ? 'Rates shown in real time.'
-          : 'Slow-motion source at an unknown factor — absolute angular velocity is unavailable. Peak order and normalised timing remain valid.'}
-      </p>
-      <details className="sc-details">
-        <summary>Interpretation and chart method</summary>
-        <p>{seq.literatureNote}</p>
-        <p>Peak calculations use a centred seven-frame derivative smoother. The chart adds zero-phase display smoothing to remove residual frame-scale chatter without moving the reported peak frames.</p>
-      </details>
-      </>
+                {/* event markers */}
+                {analysis.events.map((e) => (
+                  <g key={e.name}>
+                    <line x1={x(e.frame)} x2={x(e.frame)} y1={M.top} y2={H - M.bottom} className="sc-event" />
+                    <text x={x(e.frame)} y={H - M.bottom + 12} className="sc-axis" textAnchor="middle">
+                      {e.name === 'foot_contact' ? 'FC' : e.name === 'ball_release' ? 'BR' : 'MER'}
+                    </text>
+                  </g>
+                ))}
+
+                {/* series */}
+                {SEQUENCE_SEGMENTS.map((s) => (
+                  <path key={s} d={plot[s]} fill="none" stroke={SERIES_COLOR[s]} strokeWidth={2}
+                    strokeLinejoin="round" strokeLinecap="round" />
+                ))}
+
+                {/* Peak markers are ringed against the surface so overlaps stay legible. */}
+                {seq.peaks.map((p) => {
+                  const v = displayTraces[p.segment][p.frame]
+                  if (v === null) return null
+                  return (
+                    <circle key={p.segment} cx={x(p.frame)} cy={y(v)} r={4.5}
+                      fill={SERIES_COLOR[p.segment]} stroke="#0c1016" strokeWidth={2} />
+                  )
+                })}
+
+                <line x1={x(hf)} x2={x(hf)} y1={M.top} y2={H - M.bottom} className="sc-cursor" />
+                <text x={M.left} y={H - 4} className="sc-axis">frame</text>
+                <text x={W - M.right} y={H - 4} className="sc-axis" textAnchor="end">
+                  deg / video-second
+                </text>
+              </svg>
+            )}
+          </div>
+
+          <aside className="sc-context" aria-label="Kinematic sequence chart context">
+            <div className="sc-context-block">
+              <span className="sc-context-label">At inspected frame</span>
+              <div className="sc-legend">
+                {SEQUENCE_SEGMENTS.map((s) => {
+                  const v = displayTraces[s][hf]
+                  return (
+                    <span key={s} className="sc-key">
+                      <span className="swatch" style={{ background: SERIES_COLOR[s] }} />
+                      <span>{SERIES_LABEL[s]}</span>
+                      <strong className="mono">{v === null ? '—' : Math.round(v)}</strong>
+                    </span>
+                  )
+                })}
+              </div>
+            </div>
+
+            <div className="sc-context-block">
+              <span className="sc-context-label">What is valid</span>
+              <p className="sc-note">
+                {!seq.available
+                  ? `No peak order or intervals reported: ${seq.unavailableReason}`
+                  : seq.rateUnitsAvailable
+                  ? 'Rates shown in real time.'
+                  : 'Slow-motion factor is unknown. Use peak order and normalised timing; absolute angular velocity is unavailable.'}
+              </p>
+            </div>
+
+            <details className="sc-details sc-context-block">
+              <summary>Interpretation and method</summary>
+              <p>{seq.literatureNote}</p>
+              <p>Peak calculations use a centred seven-frame derivative smoother. The chart adds zero-phase display smoothing without moving the reported peak frames.</p>
+            </details>
+          </aside>
+        </div>
       )}
     </div>
   )
