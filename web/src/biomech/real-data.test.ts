@@ -100,17 +100,17 @@ describe('analysis output contract', () => {
   const result = analyze(session)
 
   it('grades every reading and attaches citations where a reference exists', () => {
-    expect(result.readings.length).toBeGreaterThan(5)
+    expect(result.readings.length).toBeGreaterThanOrEqual(5)
     for (const r of result.readings) {
       expect(['high', 'medium', 'low', 'unavailable']).toContain(r.confidence)
       if (r.reference) expect(r.citations.length).toBeGreaterThan(0)
     }
   })
 
-  it('marks shoulder external rotation as low confidence', () => {
+  it('keeps unvalidated axial rotation out of reference-ranked readings', () => {
     const er = result.readings.find((r) => r.metric === 'shoulder_external_rotation')
-    expect(er).toBeDefined()
-    expect(er!.confidence).toBe('low')
+    expect(er).toBeUndefined()
+    expect(result.series.shoulder_external_rotation.some((v) => v !== null)).toBe(true)
   })
 
   it('refuses rate units because the clip is slow motion at an unknown factor', () => {
@@ -123,6 +123,7 @@ describe('analysis output contract', () => {
     expect(result.sequence.observedOrder).toHaveLength(4)
     expect(new Set(result.sequence.observedOrder).size).toBe(4)
     expect(result.sequence.literatureNote).toMatch(/not itself a fault/)
+    expect(result.sequence.literatureNote).toMatch(/partial four-segment/i)
     for (const p of result.sequence.peaks) expect(p.peakSpeedVideo).toBeGreaterThan(0)
   })
 })

@@ -64,8 +64,9 @@ function readingFor(
     }
   }
 
-  // Compare on magnitude: several of these are signed, and the published ranges are not.
-  const v = Math.abs(value)
+  // References are admitted only when their signed construct is compatible with this
+  // implementation. Never erase a sign with `Math.abs()` just to make a range fit.
+  const v = value
   const [lo, hi] = ref.range
   const status: DeviationDirection = v < lo ? 'below' : v > hi ? 'above' : 'within'
   const magnitude = status === 'below' ? lo - v : status === 'above' ? v - hi : 0

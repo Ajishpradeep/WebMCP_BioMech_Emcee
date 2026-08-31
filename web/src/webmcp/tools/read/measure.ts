@@ -244,7 +244,7 @@ export const getKinematicSequence: PitchTool = {
   name: 'get_kinematic_sequence',
   title: 'Get kinematic sequence',
   description:
-    'Returns the order in which pelvis, trunk, arm and forearm reach peak angular speed, when each peak lands as a percentage of the foot-contact-to-release window, and how that compares with patterns reported in the literature. Read literatureNote before judging the order: a non-proximal-to-distal sequence is common and is not by itself a fault.',
+    'Returns a partial four-segment order: pelvis, trunk, upper arm and forearm peak angular speed. It is not a published full five-segment kinematic sequence or a quality score. Read literatureNote before judging the order: a different order is common and is not by itself a fault.',
   inputSchema: {
     type: 'object',
     properties: {

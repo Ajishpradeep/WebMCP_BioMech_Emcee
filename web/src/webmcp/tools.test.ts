@@ -118,10 +118,10 @@ describe('measurement tools', () => {
     expect(res.deliveryWindow.frames).toBeGreaterThan(0)
   })
 
-  it('gives a reference-anchored snapshot at an event, plus the unreferenced angles', async () => {
+  it('gives only construct-compatible references at an event, plus the unreferenced angles', async () => {
     const res = (await call('get_kinematics_at_event', { event: 'BR' })) as Result
     expect(res.event).toBe('ball_release')
-    expect(res.metrics.length).toBeGreaterThan(3)
+    expect(res.metrics.length).toBeGreaterThanOrEqual(2)
     for (const m of res.metrics) {
       expect(m.unit).toBe('deg')
       expect(['within', 'above', 'below', 'no_reference', 'unavailable']).toContain(m.status)
@@ -158,13 +158,21 @@ describe('measurement tools', () => {
 })
 
 describe('evidence tools', () => {
-  it('serves cited reference ranges from the single source of truth', async () => {
-    const res = (await call('get_metric_definition', { metric: 'x factor' })) as Result
-    expect(res.metric).toBe('hip_shoulder_separation')
+  it('serves only construct-compatible cited reference ranges', async () => {
+    const res = (await call('get_metric_definition', { metric: 'elbow flexion' })) as Result
+    expect(res.metric).toBe('elbow_flexion')
     expect(res.available).toBe(true)
-    expect(res.referenceRanges[0].range).toEqual([30, 60])
+    expect(res.referenceRanges[0].range).toEqual([74, 90])
     expect(res.meta.citations.join(' ')).toMatch(/doi:/)
     expect(res.limitations.length).toBeGreaterThan(20)
+  })
+
+  it('explains but does not rank a metric with an unvalidated convention', async () => {
+    const res = (await call('get_metric_definition', { metric: 'x factor' })) as Result
+    expect(res.metric).toBe('hip_shoulder_separation')
+    expect(res.referenceRanges).toEqual([])
+    expect(res.note).toMatch(/no comparison/i)
+    expect(res.limitations).toMatch(/not been proven equivalent/i)
   })
 
   it('returns a structured refusal for kinetics instead of a number', async () => {

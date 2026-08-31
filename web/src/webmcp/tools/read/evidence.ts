@@ -84,7 +84,7 @@ export const getMetricDefinition: PitchTool = {
 
     const refs = REFERENCES.filter((r) => r.metric === metric)
     const info = refs[0] ?? METRIC_INFO[metric]
-    const citations = new Set<string>(['markerless'])
+    const citations = new Set<string>()
     for (const r of refs) for (const c of r.citations) citations.add(c)
 
     return {

@@ -90,7 +90,7 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 | 12b — Metrics panel | ✅ | Readings, confidence badges, cited definitions, sequence chart. |
 | **13–15 — WebMCP tools ★** | ✅ code / 🟡 live | 13 handlers implemented; 35 harness assertions green. Live registration is still unverified. |
 | 16 — Verification + evals | 🟡 | Headless half done ([`evals/pitch-analysis.md`](evals/pitch-analysis.md)); **DevTools + ChatGPT in-app browser still owed.** |
-| 16b — Scientific truth gate | ⏭️ | Remove incompatible comparisons; label the sequence as partial; validate event frames. |
+| 16b — Scientific truth gate | 🟡 phase 1 | Incompatible comparisons removed and four-segment sequence labeled; manual event-frame validation remains. |
 | 17 — GCP deploy | ✅ | Public Cloud Run origin verified; see [`docs/deployment.md`](docs/deployment.md). |
 | 18 — Submission package | ⏭️ | README, license, clean footage, video, description, final Devpost checks. |
 

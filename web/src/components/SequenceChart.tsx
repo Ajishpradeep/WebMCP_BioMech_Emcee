@@ -107,9 +107,9 @@ export function SequenceChart({
             Peak order:{' '}
             <strong className="mono">{seq.observedOrder.join(' → ')}</strong>
             {seq.isProximalToDistal ? (
-              <span className="tag ok">proximal → distal</span>
+              <span className="tag ok">four-segment order matches</span>
             ) : (
-              <span className="tag neutral">not strictly proximal → distal</span>
+              <span className="tag neutral">four-segment order differs</span>
             )}
           </p>
         </div>

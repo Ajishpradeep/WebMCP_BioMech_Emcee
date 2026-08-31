@@ -39,11 +39,6 @@ export const CITATIONS: Record<string, Citation> = {
     text: 'Kinematic sequence patterns in the overhead baseball pitch. Sports Biomechanics. 2020;19(5). PMID 30213227.',
     short: 'Kinematic sequence patterns, Sports Biomech 2020;19(5), PMID 30213227',
   },
-  markerless: {
-    key: 'markerless',
-    text: 'Markerless vs marker-based agreement in sports settings is reported at RMSD 6.3–23.0°, weakest for internal/external rotation.',
-    short: 'Markerless vs marker-based agreement: RMSD 6.3–23.0°, worst for axial rotation',
-  },
 }
 
 export interface ReferenceRange {
@@ -62,18 +57,12 @@ export interface ReferenceRange {
 }
 
 export const REFERENCES: ReferenceRange[] = [
-  // ── at lead foot contact ──
-  {
-    metric: 'shoulder_abduction', event: 'foot_contact',
-    range: [78, 95], typical: 93, sd: 11, unit: 'deg', confidence: 'high',
-    citations: ['christoffer2019', 'diffendaffer2023'],
-    plainLanguage: 'How far the throwing arm is raised away from the trunk when the lead foot lands.',
-    computation: 'Elevation term of the ISB Y–X–Y decomposition of the humerus relative to the thorax frame.',
-    limitations: 'Elevation is well conditioned; the plane/axial split degrades near 0° elevation.',
-  },
+  // Only direct two-segment flexion angles are compared. Other values remain visible as
+  // measurements, but their frame definitions or signs have not been proven equivalent
+  // to the clinical-review ranges below.
   {
     metric: 'elbow_flexion', event: 'foot_contact',
-    range: [74, 90], typical: 87, sd: 15, unit: 'deg', confidence: 'high',
+    range: [74, 90], typical: 87, sd: 15, unit: 'deg', confidence: 'medium',
     citations: ['christoffer2019', 'diffendaffer2023'],
     plainLanguage: 'How bent the throwing elbow is at lead foot contact.',
     computation: 'Angle between the humerus and forearm long axes, from joint centres alone.',
@@ -81,91 +70,31 @@ export const REFERENCES: ReferenceRange[] = [
   },
   {
     metric: 'lead_knee_flexion', event: 'foot_contact',
-    range: [40, 49], typical: 43, sd: 10, unit: 'deg', confidence: 'high',
+    range: [40, 49], typical: 43, sd: 10, unit: 'deg', confidence: 'medium',
     citations: ['christoffer2019', 'diffendaffer2023'],
     plainLanguage: 'How bent the front knee is as it lands.',
     computation: 'Angle between the thigh and shank long axes.',
     limitations: 'Robust. The flexion axis is ill-conditioned when the knee is near full extension.',
   },
   {
-    metric: 'lead_foot_angle', event: 'foot_contact',
-    range: [14, 21.6], typical: 17, sd: 9, unit: 'deg', confidence: 'medium',
-    citations: ['christoffer2019', 'diffendaffer2023'],
-    plainLanguage: 'How much the front foot is turned open or closed relative to the pelvis at landing.',
-    computation: 'Heel→toe vector against the pelvis anterior axis, projected on the transverse plane.',
-    limitations: 'Transverse-plane angles are more sensitive to reconstruction noise than sagittal ones.',
-  },
-  {
-    metric: 'hip_shoulder_separation', event: 'foot_contact',
-    range: [30, 60], unit: 'deg', confidence: 'medium',
-    citations: ['diffendaffer2023'],
-    plainLanguage: 'How far the shoulders have stayed closed relative to the hips — the stretch that stores energy across the trunk.',
-    computation: 'Signed angle from the pelvis medio-lateral axis to the thorax medio-lateral axis, about world vertical.',
-    limitations: 'A transverse-plane measure, so `medium` confidence at best from a single camera.',
-  },
-
-  // ── at maximum external rotation ──
-  {
-    metric: 'shoulder_external_rotation', event: 'max_external_rotation',
-    range: [166, 182], typical: 175, sd: 8, unit: 'deg', confidence: 'low',
-    citations: ['christoffer2019', 'diffendaffer2023', 'markerless'],
-    plainLanguage: 'How far the throwing arm lays back at the top of the cocking phase — the headline number in pitching biomechanics.',
-    computation: 'Axial-rotation term of the ISB Y–X–Y decomposition of the humerus relative to the thorax. Requires the elbow antero-posterior axis (olecranon → cubital fossa) to resolve rotation about the humeral long axis.',
-    limitations: 'Internal/external rotation is where markerless methods agree worst with marker-based systems. Treat the trend across a session as far more reliable than any single absolute value.',
-  },
-  {
     metric: 'elbow_flexion', event: 'max_external_rotation',
-    range: [95, 102], typical: 100, sd: 11, unit: 'deg', confidence: 'high',
+    range: [95, 102], typical: 100, sd: 11, unit: 'deg', confidence: 'medium',
     citations: ['christoffer2019', 'diffendaffer2023'],
     plainLanguage: 'Elbow bend at maximum external rotation.',
     computation: 'Angle between the humerus and forearm long axes.',
     limitations: 'Robust.',
   },
   {
-    metric: 'shoulder_abduction', event: 'max_external_rotation',
-    range: [66, 100], typical: 90, unit: 'deg', confidence: 'high',
-    citations: ['christoffer2019', 'diffendaffer2023'],
-    plainLanguage: 'Arm elevation at maximum external rotation — usually close to 90°.',
-    computation: 'Elevation term of the ISB Y–X–Y decomposition.',
-    limitations: 'Well conditioned near 90° elevation.',
-  },
-
-  // ── at ball release ──
-  {
-    metric: 'shoulder_abduction', event: 'ball_release',
-    range: [70, 94], typical: 94, sd: 8, unit: 'deg', confidence: 'high',
-    citations: ['christoffer2019', 'diffendaffer2023'],
-    plainLanguage: 'Arm elevation at the moment the ball leaves the hand.',
-    computation: 'Elevation term of the ISB Y–X–Y decomposition.',
-    limitations: 'Well conditioned.',
-  },
-  {
     metric: 'elbow_flexion', event: 'ball_release',
-    range: [24, 39], typical: 24, sd: 5, unit: 'deg', confidence: 'high',
+    range: [24, 39], typical: 24, sd: 5, unit: 'deg', confidence: 'medium',
     citations: ['christoffer2019', 'diffendaffer2023'],
     plainLanguage: 'How extended the elbow is at release.',
     computation: 'Angle between the humerus and forearm long axes.',
     limitations: 'Robust.',
   },
   {
-    metric: 'trunk_forward_tilt', event: 'ball_release',
-    range: [30, 55], typical: 36, sd: 7, unit: 'deg', confidence: 'high',
-    citations: ['christoffer2019', 'diffendaffer2023'],
-    plainLanguage: 'How far the trunk has tipped forward over the front leg at release.',
-    computation: 'Signed angle of the thorax long axis from world vertical, about the thorax medio-lateral axis.',
-    limitations: 'Sagittal-plane measure — among the better conditioned angles.',
-  },
-  {
-    metric: 'trunk_lateral_tilt', event: 'ball_release',
-    range: [21, 29.5], typical: 23, sd: 10, unit: 'deg', confidence: 'high',
-    citations: ['christoffer2019', 'diffendaffer2023'],
-    plainLanguage: 'How far the trunk is tilted toward the glove side at release.',
-    computation: 'Signed angle of the thorax long axis from world vertical, about the thorax anterior axis.',
-    limitations: 'Frontal-plane measure — well conditioned.',
-  },
-  {
     metric: 'lead_knee_flexion', event: 'ball_release',
-    range: [31.2, 41], typical: 35, sd: 13, unit: 'deg', confidence: 'high',
+    range: [31.2, 41], typical: 35, sd: 13, unit: 'deg', confidence: 'medium',
     citations: ['christoffer2019', 'diffendaffer2023'],
     plainLanguage: 'Front-knee bend at release. Extending the front leg from landing to release helps transfer energy upward.',
     computation: 'Angle between the thigh and shank long axes.',
@@ -212,6 +141,36 @@ export const REFUSALS: Record<string, { reason: string; insteadUse: string[] }> 
 export const METRIC_INFO: Partial<
   Record<MetricName, { plainLanguage: string; computation: string; limitations: string }>
 > = {
+  shoulder_abduction: {
+    plainLanguage: 'How far the throwing arm is raised away from the trunk.',
+    computation: 'Elevation term of the ISB Y–X–Y decomposition of the humerus relative to the thorax frame.',
+    limitations: 'The app reports this value, but its segment-frame definition has not been validated as interchangeable with the published pitching ranges, so no reference comparison is offered.',
+  },
+  shoulder_external_rotation: {
+    plainLanguage: 'The reconstructed arm lay-back angle near the top of the cocking phase.',
+    computation: 'Axial-rotation term of the ISB Y–X–Y decomposition of the humerus relative to the thorax frame.',
+    limitations: 'This is not compared with clinical lay-back ranges: the required humeral axial-rotation construct and sign convention have not been validated from this landmark reconstruction. Use it only as an exploratory within-session trace.',
+  },
+  trunk_forward_tilt: {
+    plainLanguage: 'How far the reconstructed thorax tips forward from the app’s world vertical.',
+    computation: 'Signed angle of the thorax long axis from world vertical, about the thorax medio-lateral axis.',
+    limitations: 'This world-frame measurement is useful for review, but it has not been shown equivalent to the published pitching convention; no reference comparison is offered.',
+  },
+  trunk_lateral_tilt: {
+    plainLanguage: 'How far the reconstructed thorax tilts sideways from the app’s world vertical.',
+    computation: 'Signed angle of the thorax long axis from world vertical, about the thorax anterior axis.',
+    limitations: 'The sign and published convention have not been audited against this reconstruction, so no reference comparison is offered.',
+  },
+  hip_shoulder_separation: {
+    plainLanguage: 'The signed rotational difference between the reconstructed pelvis and thorax.',
+    computation: 'Signed angle from the pelvis medio-lateral axis to the thorax medio-lateral axis, about world vertical.',
+    limitations: 'The sign and anatomical-frame convention have not been proven equivalent to published hip–shoulder separation values. It is displayed as an exploratory measurement, never ranked against a range.',
+  },
+  lead_foot_angle: {
+    plainLanguage: 'How much the front foot is turned relative to the reconstructed pelvis.',
+    computation: 'Heel→toe vector against the pelvis anterior axis, projected on the transverse plane.',
+    limitations: 'Published foot-angle values may use the pitching direction or home plate rather than the pelvis as their reference. This construct mismatch prevents a valid range comparison.',
+  },
   trail_knee_flexion: {
     plainLanguage: 'How bent the back (drive-side) knee is.',
     computation: 'Angle between the trail thigh and shank long axes.',

@@ -20,14 +20,14 @@ export function worst(...cs: Confidence[]): Confidence {
 
 /** Grade set by which anatomical plane the measurement lives in. */
 const PLANE_GRADE: Record<MetricName, Confidence> = {
-  // sagittal / frontal — best agreement
-  lead_knee_flexion: 'high',
-  trail_knee_flexion: 'high',
-  lead_hip_flexion: 'high',
-  elbow_flexion: 'high',
-  shoulder_abduction: 'high',
-  trunk_forward_tilt: 'high',
-  trunk_lateral_tilt: 'high',
+  // Best conditioned planes are still unvalidated markerless measurements here.
+  lead_knee_flexion: 'medium',
+  trail_knee_flexion: 'medium',
+  lead_hip_flexion: 'medium',
+  elbow_flexion: 'medium',
+  shoulder_abduction: 'medium',
+  trunk_forward_tilt: 'medium',
+  trunk_lateral_tilt: 'medium',
   // transverse — derived from segment vectors, noisier
   hip_shoulder_separation: 'medium',
   lead_foot_angle: 'medium',

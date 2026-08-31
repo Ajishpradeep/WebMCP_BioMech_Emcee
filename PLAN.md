@@ -37,7 +37,7 @@ biomechanics evidence workspace**, not an autonomous coach or a motion-capture r
 | B | P0 | Reframe product documents and replace stale execution assumptions | Cross-doc terminology/claim audit | ✅ |
 | C | P0 | Add minimal reproducible GCP static deployment | Container image builds from a clean dependency install | ✅ |
 | D | P0 | Deploy public HTTPS origin | Cold-load assets; no `Origin-Agent-Cluster: ?0`; service public | ✅ `pitchlab-webmcp-00001-2bm` |
-| E | P0 | Scientific truth gate | No incompatible construct is ranked or compared; partial sequence labeled | ⏭️ |
+| E | P0 | Scientific truth gate | Incompatible comparisons removed and partial sequence labeled; manual event-frame validation remains | 🟡 `truth gate, phase 1` |
 | F | P0 | Judge-facing UX | No dead production upload CTA; first-paint loader; narrow layout usable | ⏭️ |
 | G | P0 | WebMCP runtime hardening | Exactly 13 tools or visible failure; success/error contract tests | ⏭️ |
 | H | P1 | Human event correction loop | Human changes FC/MER/BR; dependent analysis and agent reads update | ⏭️ |
@@ -48,6 +48,9 @@ biomechanics evidence workspace**, not an autonomous coach or a motion-capture r
 - `shoulder_external_rotation` must not be compared with the 166–182° clinical lay-back range until
   both quantities use the same construct and convention.
 - Hip–shoulder separation and trunk-tilt signs/conventions must be audited before they can be ranked.
+- **Completed 2026-08-31:** the app no longer ranks external rotation, shoulder/trunk angles,
+  hip–shoulder separation, or lead-foot angle against clinical ranges. Only direct two-segment elbow
+  and lead-knee flexion comparisons remain, at `medium` confidence.
 - Kinematic sequence is a **partial four-segment order**, not the published five-segment sequence.
 - Event tests must compare against manually reviewed frames, not only assert ordering.
 - The public build presents precomputed review sessions; local CUDA upload is development tooling.

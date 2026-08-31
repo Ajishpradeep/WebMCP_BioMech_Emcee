@@ -4,8 +4,9 @@
  * ⚠️ Timebase: both demo clips are slow-motion at an unknown factor, so angular speed
  * in real deg/s is NOT derivable (tech.md §3.2b). What survives any monotonic time warp
  * is (a) the ORDER of the peaks and (b) their timing normalised to the foot-contact →
- * ball-release window. Those are what we report. Absolute rates are returned only when
- * `timebase.realTimeScale` is known.
+ * ball-release window. Those are what we report. This app observes only four segments;
+ * it is not a published full five-segment kinematic sequence. Absolute rates are returned
+ * only when `timebase.realTimeScale` is known.
  *
  * ⚠️ Do not build a "sequence score". Across 208 analysed pitches, not one showed a
  * complete proximal-to-distal order and 14 distinct patterns appeared, the most common
@@ -21,7 +22,7 @@ import { angularSpeed } from './vec'
 export const SEQUENCE_SEGMENTS = ['pelvis', 'thorax', 'upperarm', 'forearm'] as const
 export type SequenceSegment = (typeof SEQUENCE_SEGMENTS)[number]
 
-/** The canonical proximal-to-distal ordering. */
+/** The expected order for this app's intentionally partial, four-segment view. */
 export const PROXIMAL_TO_DISTAL: SequenceSegment[] = ['pelvis', 'thorax', 'upperarm', 'forearm']
 
 export interface SegmentPeak {
@@ -40,6 +41,7 @@ export interface SegmentPeak {
 export interface KinematicSequence {
   observedOrder: SequenceSegment[]
   peaks: SegmentPeak[]
+  /** Whether the four observed segments occur in the expected order; not a quality score. */
   isProximalToDistal: boolean
   /** Pelvis→thorax peak separation, as a percentage of the FC→BR window. */
   pelvisToTrunkSeparationPct: number | null
@@ -50,7 +52,8 @@ export interface KinematicSequence {
 }
 
 const LITERATURE_NOTE =
-  'Complete proximal-to-distal sequencing is uncommon: across 208 analysed pitches no ' +
+  'This is a partial four-segment view (pelvis, thorax, upper arm, forearm), not the ' +
+  'published five-segment sequence. Complete proximal-to-distal sequencing is uncommon: across 208 analysed pitches no ' +
   'pitch showed a fully proximal-to-distal order and 14 distinct patterns were observed, ' +
   'the most prevalent being pelvis → trunk → arm → hand → forearm. A non-PDS order is ' +
   'therefore not itself a fault.'
