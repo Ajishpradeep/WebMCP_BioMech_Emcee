@@ -44,3 +44,12 @@ verification is recorded in [`evals/webmcp-live-checklist.md`](../evals/webmcp-l
 The retained synchronized source video remains provisional because its redistribution rights are
 unresolved; this deployment is not cleared as the final submission asset. See
 [`ATTRIBUTION.md`](../ATTRIBUTION.md).
+
+## Provisional live WebMCP validation
+
+On 2026-09-01, the same revision passed native WebMCP discovery and all 13 direct tool invocations
+in a fresh **Google Chrome for Testing 154.0.8035.0** profile with WebMCP enabled. All four writes
+visibly changed the rendered application before returning, and the current plain-object return shape
+was accepted by the host. This reduces the interoperability risk but does not make the deployment
+submission-final: ChatGPT in-app-browser natural-language testing and cleared evidence are still
+blocking. Full observations and client caveats are in the live checklist.

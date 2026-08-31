@@ -3,15 +3,15 @@
 > **New session? Read this file first, then [`CLAUDE.md`](CLAUDE.md).** This is the live log of what
 > is done, what was learned, and what to do next. Updated at the end of every completed task.
 
-**Last updated:** 2026-09-01, after owner-review convergence and Cloud Run revision `00007-tkw`
-**Current state:** **OWNER APP-REVIEW HOLD.** The canonical product name is Biomech Emcee and the
-participant identity is recorded as Pradeep Rajasekar (preferred name: Ajish). The next session is
-for the owner's application observations and requested fixes—not Devpost submission work. Do not
-redeploy, capture final assets, or advance the Devpost workflow during that review unless explicitly
-requested. After the app review is declared complete, use [`docs/devpost-resume.md`](docs/devpost-resume.md)
-to reconcile the entire final product before resuming compliance, testing, and validation. The
-current Biomech Emcee owner-review build is live, but it is not submission-final because its source
-video rights and live WebMCP host checks remain unresolved.
+**Last updated:** 2026-09-01, at the start of post-owner-review submission convergence
+**Current state:** **LIVE WEBMCP VALIDATION (Task 16).** The owner application review is complete;
+its product, UX, and scientific decisions remain preserved below. Tasks 16–18 now advance through
+the ordered release gates in [`docs/devpost-resume.md`](docs/devpost-resume.md): live WebMCP proof,
+cleared evidence, final deployment reconciliation, then judge-experience validation. The current
+Cloud Run build is a provisional validation origin, not submission-final, because live supported-host
+checks and source-video rights remain unresolved. Do not capture final assets or claim client
+compatibility until the corresponding ledger items in
+[`evals/webmcp-live-checklist.md`](evals/webmcp-live-checklist.md) are backed by observed evidence.
 
 ---
 
@@ -96,8 +96,8 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 | 12 — 2D/3D viewer + timeline | ✅ | Frame-synchronized source reference beside the 3D reconstruction; playback, scrub, annotation pins, and camera/focus/evidence controls integrated into one transport toolbar. |
 | 8–10 — Biomechanics engine | ✅ | `web/src/biomech/`; complete suite currently 79 tests green, including the retained real-session numerical audit and synthetic short-clip refusal. |
 | 12b — Metrics panel | ✅ | Stable event/live tile grids, confidence/status color, and `i` disclosures for ranges, methods, limitations, and citations. |
-| **13–15 — WebMCP tools ★** | ✅ code / 🟡 live | 13 handlers implemented; registration is one stable document surface with a visible partial/failure state; live registration is still unverified. |
-| 16 — Verification + evals | 🟡 | Headless half done ([`evals/pitch-analysis.md`](evals/pitch-analysis.md)); **DevTools + ChatGPT in-app browser still owed.** |
+| **13–15 — WebMCP tools ★** | ✅ code / 🟡 live | Chrome 154 native validation passed all 13 handlers, visible writes, schemas/annotations, reload lifecycle, and plain-object returns; ChatGPT remains untested. |
+| 16 — Verification + evals | 🟡 | Native Chrome half passed ([`evals/webmcp-live-checklist.md`](evals/webmcp-live-checklist.md)); **ChatGPT in-app browser natural-language selection still blocks completion.** |
 | 16b — Scientific truth gate | 🟡 phase 2 | Incompatible comparisons removed; branch flips fixed; short-clip event/KSA gates implemented. Human MER review and external validation remain. |
 | P1 — Human event correction | ✅ | Reviewers can apply the current frame to FC/MER/BR; analysis and WebMCP reads update together. |
 | P1 — Owner-review UX hierarchy | ✅ | Right inspector now reads as event anchors → measurements → shared notes; all four write-tool effects have prominent visible surfaces. |
@@ -389,15 +389,18 @@ evals/pitch-analysis.md           ★ tool-surface verification record + prompt 
 
 ---
 
-## 8. Next: owner app review, then a fresh compliance session
+## 8. Next: post-owner-review submission convergence
 
-1. **Owner app-review session.** Inspect the product and implement the owner's requested changes.
-   Keep commits atomic and update this handoff, but do not treat the current Devpost draft or live
-   deployment as final.
-2. **Fresh Devpost/testing session.** When the owner declares app review complete, follow
-   [`docs/devpost-resume.md`](docs/devpost-resume.md). Task 16's browser half remains open; the one
-   check that can silently invalidate the rest is the **return-shape convention** against a live
-   agent.
+The owner review is complete. Preserve the owner-review history and decisions in §4d; do not reopen
+product strategy or perform another redesign pass.
+
+1. **Task 16 — live WebMCP validation.** Complete the deployed-origin, Chrome/DevTools, all-tool,
+   visible-write, return-shape, and ChatGPT in-app-browser checks in
+   [`evals/webmcp-live-checklist.md`](evals/webmcp-live-checklist.md). Any critical interoperability
+   failure blocks all later gates until fixed and retested.
+2. **Cleared evidence, then Task 17 final deployment.** Replace or remove the provisional source
+   video, validate the retained evidence path, deploy the exact intended revision, and repeat the
+   critical live WebMCP flow after deployment.
 3. **Task 18 — submission assets.** The current Cloud Run deployment, README, license, and initial
    Devpost draft are complete. Replace the provisional professional-player session with cleared
    footage, capture final screenshots, and record the public narrated demo under three minutes.

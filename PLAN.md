@@ -17,13 +17,14 @@ implementation validates. The final product is therefore framed as **Biomech Emc
 movement review with WebMCP**, not an autonomous coach or a motion-capture replacement. Baseball
 pitching is the only implemented reference workflow; multi-sport support remains a product direction.
 
-### Owner app-review hold
+### Post-owner-review submission convergence (active 2026-09-01)
 
-Devpost compliance work is deliberately paused after the naming/positioning lock. The owner will
-start a fresh session to inspect the application and request product changes. That session may edit
-the app and product documents, but must preserve the evidence boundaries below. When the app review
-is complete, start another fresh session and resume the Devpost, testing, and validation pipeline
-using [`docs/devpost-resume.md`](docs/devpost-resume.md).
+The owner application review is complete. Its product, UX, naming, and scientific decisions are
+preserved in the repository history and `HANDOFF.md` §4d. Tasks 16–18 now proceed in this strict
+order: **live WebMCP validation → cleared evidence → final deployment reconciliation → judge
+experience validation**. Use [`docs/devpost-resume.md`](docs/devpost-resume.md) and the live ledger
+in [`evals/webmcp-live-checklist.md`](evals/webmcp-live-checklist.md). A critical live WebMCP failure
+stops later submission work until the smallest fix is deployed and retested.
 
 ### Execution rules
 
@@ -48,10 +49,10 @@ using [`docs/devpost-resume.md`](docs/devpost-resume.md).
 | D | P0 | Deploy public HTTPS origin | Cold-load assets; no `Origin-Agent-Cluster: ?0`; service public | ✅ `pitchlab-webmcp-00007-tkw` |
 | E | P0 | Scientific truth gate | Incompatible comparisons removed and partial sequence labeled; manual event-frame validation remains | 🟡 `truth gate, phase 1` |
 | F | P0 | Judge-facing UX | No dead production upload CTA; first-paint loader; narrow layout usable | ✅ local production visual check |
-| G | P0 | WebMCP runtime hardening | Exactly 13 tools or visible failure; success/error contract tests | 🟡 code complete; live host verification remains |
+| G | P0 | WebMCP runtime hardening | Exactly 13 tools or visible failure; success/error contract tests | 🟡 Chrome 154 native pass; ChatGPT natural-language gate remains |
 | H | P1 | Human event correction loop | Human changes FC/MER/BR; dependent analysis and agent reads update | ✅ store + tool regression test |
 | I | P0 | Submission package | README, license, and Devpost draft complete; cleared footage, live eval, screenshots, and <3 min demo remain | 🟡 |
-| J | P0 | Post-app-review compliance reconciliation | Re-audit the final app against official fields, judging criteria, draft claims, live tests, screenshots, video, repo, and deployment | ⏸️ owner hold |
+| J | P0 | Post-app-review compliance reconciliation | Re-audit the final app against official fields, judging criteria, draft claims, live tests, screenshots, video, repo, and deployment | ▶️ active; stopped at ChatGPT gate |
 
 ### P0 acceptance decisions
 

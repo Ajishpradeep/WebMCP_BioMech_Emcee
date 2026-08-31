@@ -1,13 +1,13 @@
 # Devpost, testing, and validation resume protocol
 
-**Status:** paused for owner application review
+**Status:** active — post-owner-review submission convergence
 
-**Resume trigger:** the owner explicitly says the application-review changes are complete
+**Resume trigger satisfied:** the owner explicitly declared the application review complete on
+2026-09-01. Tasks 16–18 are active.
 
-This document is the entry point for the fresh session that follows the owner's app-review session.
-It prevents the submission packet from drifting away from whatever the product becomes during that
-review. Do not assume the current Devpost draft, screenshots, deployment, test counts, feature list,
-or claims remain correct.
+This document is the execution protocol for the post-owner-review convergence session. It prevents
+the submission packet from drifting away from the reviewed product. Do not assume the current
+Devpost draft, screenshots, deployment, test counts, feature list, or claims remain correct.
 
 ## Locked identity and positioning
 
