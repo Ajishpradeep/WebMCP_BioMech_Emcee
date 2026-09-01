@@ -15,10 +15,10 @@ proof.
 | LIVE WEBMCP | All 13 runtime checks | PASS | Every tool returned native status `Completed`; correct structured refusals count as passes |
 | LIVE WEBMCP | Four visible write effects | PASS | f95→f127 seek; left elbow/sagittal focus; 5→4 layers; persistent and revisitable note |
 | LIVE WEBMCP | Return shape confirmed | PASS | Plain object results were preserved in native outputs; no MCP content envelope required |
-| LIVE WEBMCP | ChatGPT natural-language evals | PENDING | Prior deployed revision passed; owner must repeat against revision `00009-lqk` |
+| LIVE WEBMCP | ChatGPT natural-language evals | PENDING | Prior deployed revision passed; owner must repeat against revision `00010-d65` |
 | EVIDENCE | Redistribution rights / provenance | PASS | Pexels License and attributed CC BY-SA 4.0 Wikimedia derivative; no unverified session ships |
 | EVIDENCE | Reconstruction QA / event review / bundle | PASS | 288-frame Pexels and 246-frame Wikimedia sessions passed QA and numerical gates |
-| FINAL DEPLOYMENT | Exact revision / HTTPS / cold load | PASS | Commit `bc34f7c`; revision `00009-lqk`; 100% traffic; current session set and assets verified |
+| FINAL DEPLOYMENT | Exact revision / HTTPS / cold load | PASS | Commit `dc4fdf3`; revision `00010-d65`; 100% traffic; current session set and assets verified |
 | FINAL DEPLOYMENT | Post-deploy WebMCP critical flow | PASS | Chrome 154: inspect → navigate → focus → overlay → annotate/revisit |
 | JUDGE EXPERIENCE | Clean-profile and human-only usability | PASS | Cleared 2D/3D sync, aspect-ratio resize, event confirmation and rights cards observed without errors |
 | JUDGE EXPERIENCE | ChatGPT agent journey and refusal | PENDING | Repeat the prompt set below against the exact final candidate |
@@ -29,9 +29,9 @@ proof.
 
 - Date: 2026-09-01.
 - Origin tested: `https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app/?session=delivery-03`.
-- Deployed code commit: `bc34f7c` (`fix: replace provisional pitch evidence`).
-- Cloud Run revision: `pitchlab-webmcp-00009-lqk`, 100% traffic; ready at
-  2026-09-01 10:17:33 UTC.
+- Deployed code commit: `dc4fdf3` (`docs: reconcile cleared release evidence`).
+- Cloud Run revision: `pitchlab-webmcp-00010-d65`, 100% traffic; ready at
+  2026-09-01 10:28:43 UTC.
 - Passing native client: **Google Chrome for Testing 154.0.8035.0**, fresh ephemeral profile,
   native `--enable-features=WebMCP`; discovery and invocation used GoogleChromeLabs
   `webmcp-evals` 0.0.4's Puppeteer integration. No polyfill was injected.
@@ -52,7 +52,7 @@ specified. Reload exposed the same 13 unique tools with no stale or duplicate re
 | `get_phase_events` | PASS | 1,341 chars; FC/MER/BR; correction retest returned MER f121 with `manualOverride: true` |
 | `get_kinematics_at_event` | PASS | 2,435 chars; event readings, other metrics, confidence and `meta` |
 | `get_joint_angle_series` | PASS | 1,296 chars; bounded FC→BR elbow-flexion series |
-| `get_kinematic_sequence` | PASS | 2,120 chars; partial order and known-timebase rate qualification |
+| `get_kinematic_sequence` | PASS | 2,210 chars; partial order and known-timebase rate qualification |
 | `get_metric_definition` | PASS | 1,511 chars; torque refusal separately passed without a fabricated value |
 | `compare_to_reference` | PASS | 2,656 chars; compatible flexion constructs and bounded review plan |
 | `compare_pitches` | PASS | 2,145 chars; descriptive-only cross-session result with compatibility warnings |
@@ -117,5 +117,5 @@ shared viewer changing and the annotation remaining revisitable.
 
 - [x] Native 13-definition/runtime extraction and temporary validation captures.
 - [x] Browser/client version, deployed revision, output sizes, writes and caveats recorded here.
-- [ ] Owner-observed ChatGPT repeat against revision `00009-lqk`.
+- [ ] Owner-observed ChatGPT repeat against revision `00010-d65`.
 - [ ] Final screenshot set and short screen recording of the critical write chain.

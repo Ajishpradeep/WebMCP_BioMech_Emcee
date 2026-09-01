@@ -34,7 +34,7 @@ illustration.
 - [ ] **Final candidate verified end-to-end in ChatGPT's in-app browser** — owner repeat pending
 - [x] **Return-shape convention confirmed against a live host** — plain objects work; leave
       `toolResult()` centralized and unchanged
-- [ ] Tool *selection* eval with ChatGPT against revision `00009-lqk` (§3 below)
+- [ ] Tool *selection* eval with ChatGPT against revision `00010-d65` (§3 below)
 
 ---
 

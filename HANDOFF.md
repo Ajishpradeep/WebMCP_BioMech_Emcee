@@ -8,7 +8,7 @@
 its product, UX, and scientific decisions remain preserved below. Tasks 16–18 now advance through
 the ordered release gates in [`docs/devpost-resume.md`](docs/devpost-resume.md): live WebMCP proof,
 cleared evidence, final deployment reconciliation, then judge-experience validation. Cloud Run
-revision `00009-lqk` serves the cleared Pexels and attributed CC BY-SA 4.0 Wikimedia sessions; the
+revision `00010-d65` serves the cleared Pexels and attributed CC BY-SA 4.0 Wikimedia sessions; the
 former unverified session and its public assets are removed. Native Chrome 154 passed all 13 tools
 and the visible write chain after deployment. Do not capture final assets or claim submission-final
 ChatGPT compatibility until the remaining owner-observed repeat in
@@ -97,13 +97,13 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 | 12 — 2D/3D viewer + timeline | ✅ | Frame-synchronized source reference beside the 3D reconstruction; playback, scrub, annotation pins, and camera/focus/evidence controls integrated into one transport toolbar. |
 | 8–10 — Biomechanics engine | ✅ | `web/src/biomech/`; complete suite currently 85 tests green, including both real-session numerical contracts and synthetic short-clip refusal. |
 | 12b — Metrics panel | ✅ | Stable event/live tile grids, confidence/status color, and `i` disclosures for ranges, methods, limitations, and citations. |
-| **13–15 — WebMCP tools ★** | ✅ code / ✅ final native | Chrome 154 passed all 13 handlers and visible writes on `00009-lqk`; ChatGPT natural-language behavior passed a prior revision and requires one exact-revision repeat. |
-| 16 — Verification + evals | ✅ native / 🟡 ChatGPT repeat | Revision `00009-lqk` passed exact registration, all 13 runtime calls, visible writes, correction readback, reload, refusal, and output budgets in Chrome 154. |
+| **13–15 — WebMCP tools ★** | ✅ code / ✅ final native | Chrome 154 passed all 13 handlers and visible writes on `00010-d65`; ChatGPT natural-language behavior passed a prior revision and requires one exact-revision repeat. |
+| 16 — Verification + evals | ✅ native / 🟡 ChatGPT repeat | Revision `00010-d65` passed exact registration, all 13 runtime calls, visible writes, correction readback, reload, refusal, and output budgets in Chrome 154. |
 | 16b — Scientific truth gate | 🟡 phase 2 | Incompatible comparisons removed; branch flips fixed; short-clip event/KSA gates implemented. Human MER review and external validation remain. |
 | P1 — Human event correction | ✅ | Reviewers can apply the current frame to FC/MER/BR; analysis and WebMCP reads update together. |
 | P1 — Owner-review UX hierarchy | ✅ | Right inspector now reads as event anchors → measurements → shared notes; all four write-tool effects have prominent visible surfaces. |
 | P1 — Reference-view legibility | ✅ deployed | The synchronized 2D source is a resizable lower-right picture-in-picture surface; the 3D canvas retains the full stage, and long joint readouts/pins wrap with compact labels. The licensed portrait reference renders correctly locally and on Cloud Run. |
-| 17 — GCP deploy | ✅ | Commit `bc34f7c`, revision `00009-lqk`, 100% traffic; cold load, evidence assets, UI, rights cards and native WebMCP retest passed. |
+| 17 — GCP deploy | ✅ | Commit `dc4fdf3`, revision `00010-d65`, 100% traffic; cold load, evidence assets, UI, rights cards and native WebMCP retest passed. |
 | 18 — Submission package | 🟡 | README, license, evidence disposition, and Devpost draft are reconciled; ChatGPT final-revision repeat, screenshots, video, and final form answers remain. |
 
 The public UI intentionally shows only precomputed review sessions. The local CUDA upload panel is

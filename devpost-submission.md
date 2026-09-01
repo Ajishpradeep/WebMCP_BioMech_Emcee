@@ -174,7 +174,7 @@ Suggested outline:
 ### Required before submission
 
 - Repeat the critical natural-language WebMCP flow in ChatGPT's in-app browser against deployed
-  revision `00009-lqk`; the native Chrome retest already passes and is recorded in
+  revision `00010-d65`; the native Chrome retest already passes and is recorded in
   `evals/webmcp-live-checklist.md`.
 - Capture 3–5 final screenshots from the cleared-data build.
 - Record and publish the narrated under-three-minute YouTube demo.
@@ -196,7 +196,7 @@ Suggested outline:
   benchmark for the final dataset remains required.
 - The cleared-evidence revision passed native Chrome 154 registration and all 13 executions,
   including visible writes. An earlier revision passed owner-observed ChatGPT in-app-browser tool
-  selection; the exact ChatGPT build was not captured, and revision `00009-lqk` requires the same
+  selection; the exact ChatGPT build was not captured, and revision `00010-d65` requires the same
   owner-observed natural-language repeat.
 - Baseball pitching is the only implemented domain workflow. The WebMCP interaction pattern is
   designed for reuse, but no other sport is represented as implemented or validated.

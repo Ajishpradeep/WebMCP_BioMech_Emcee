@@ -30,9 +30,9 @@ review billing and access settings before using this configuration with non-demo
 
 ## Final-candidate verification record
 
-On 2026-09-01 at 10:17:33 UTC, revision `pitchlab-webmcp-00009-lqk` became ready and received 100%
-of traffic. Its application source milestone is commit `bc34f7c`
-(`fix: replace provisional pitch evidence`). Documentation-only commits after that milestone do not
+On 2026-09-01 at 10:28:43 UTC, revision `pitchlab-webmcp-00010-d65` became ready and received 100%
+of traffic. Its application source milestone is commit `dc4fdf3`
+(`docs: reconcile cleared release evidence`). Documentation-only commits after that milestone do not
 alter the deployed web artifact.
 
 Observed against the stable URL:
