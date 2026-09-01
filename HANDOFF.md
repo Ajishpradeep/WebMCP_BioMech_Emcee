@@ -3,16 +3,18 @@
 > **New session? Read this file first, then [`CLAUDE.md`](CLAUDE.md).** This is the live log of what
 > is done, what was learned, and what to do next. Updated at the end of every completed task.
 
-**Last updated:** 2026-09-01, after licensed-session integration and local verification
-**Current state:** **CLEARED EVIDENCE GATE.** The owner application review is complete;
+**Last updated:** 2026-09-01, after licensed-session deployment and native WebMCP retest
+**Current state:** **MIXED EVIDENCE / RELEASE-CANDIDATE DEPLOYMENT.** The owner application review is complete;
 its product, UX, and scientific decisions remain preserved below. Tasks 16–18 now advance through
 the ordered release gates in [`docs/devpost-resume.md`](docs/devpost-resume.md): live WebMCP proof,
 cleared evidence, final deployment reconciliation, then judge-experience validation. The current
-Cloud Run build is a provisional validation origin, not submission-final. Native Chrome 154 and an
+Cloud Run build is a release candidate, not submission-final. Native Chrome 154 and an
 owner-observed ChatGPT in-app-browser run have now cleared live supported-host validation on the
-prior revision. A licensed Pexels session is locally integrated and visually verified; the retained
-legacy session's redistribution rights remain unresolved. Do not capture final assets or claim final-build client
-compatibility until the corresponding ledger items in
+prior revision. The licensed Pexels session is now the deployed default and revision
+`pitchlab-webmcp-00008-wfw` passed the post-deploy native Chrome gate. The retained legacy session's
+redistribution rights remain unresolved, and the exact revision still needs the owner-observed
+ChatGPT natural-language repeat. Do not capture final assets or claim submission-final compatibility
+until the corresponding ledger items in
 [`evals/webmcp-live-checklist.md`](evals/webmcp-live-checklist.md) are backed by observed evidence.
 
 ---
@@ -98,14 +100,14 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 | 12 — 2D/3D viewer + timeline | ✅ | Frame-synchronized source reference beside the 3D reconstruction; playback, scrub, annotation pins, and camera/focus/evidence controls integrated into one transport toolbar. |
 | 8–10 — Biomechanics engine | ✅ | `web/src/biomech/`; complete suite currently 85 tests green, including both real-session numerical contracts and synthetic short-clip refusal. |
 | 12b — Metrics panel | ✅ | Stable event/live tile grids, confidence/status color, and `i` disclosures for ranges, methods, limitations, and citations. |
-| **13–15 — WebMCP tools ★** | ✅ code / ✅ provisional live | Chrome 154 passed all 13 handlers and visible writes; ChatGPT natural-language discovery, navigation, focus, annotation, correction readback, and refusal also passed. |
-| 16 — Verification + evals | ✅ provisional origin / 🟡 final retest | Supported-client evidence is recorded in [`evals/webmcp-live-checklist.md`](evals/webmcp-live-checklist.md). Repeat the critical flow after cleared evidence is deployed. |
+| **13–15 — WebMCP tools ★** | ✅ code / ✅ candidate native | Chrome 154 passed all 13 handlers and visible writes on `00008-wfw`; ChatGPT natural-language discovery, navigation, focus, annotation, correction readback, and refusal passed the prior revision. |
+| 16 — Verification + evals | ✅ native candidate / 🟡 ChatGPT repeat | Revision `00008-wfw` passed exact registration, all 13 runtime calls, visible writes, correction readback, reload, and refusal in Chrome 154. Repeat the natural-language flow in ChatGPT against this revision. |
 | 16b — Scientific truth gate | 🟡 phase 2 | Incompatible comparisons removed; branch flips fixed; short-clip event/KSA gates implemented. Human MER review and external validation remain. |
 | P1 — Human event correction | ✅ | Reviewers can apply the current frame to FC/MER/BR; analysis and WebMCP reads update together. |
 | P1 — Owner-review UX hierarchy | ✅ | Right inspector now reads as event anchors → measurements → shared notes; all four write-tool effects have prominent visible surfaces. |
-| P1 — Reference-view legibility | ✅ local | The synchronized 2D source is a resizable lower-right picture-in-picture surface; the 3D canvas retains the full stage, and long joint readouts/pins wrap with compact labels. The licensed portrait reference also renders correctly. 85 tests, typecheck, build, and desktop render pass. |
-| 17 — GCP deploy | ✅ | Public Cloud Run origin verified; see [`docs/deployment.md`](docs/deployment.md). |
-| 18 — Submission package | 🟡 | README, license, and Devpost draft complete; cleared footage, live-host verification, screenshots, video, and final form answers remain. |
+| P1 — Reference-view legibility | ✅ deployed | The synchronized 2D source is a resizable lower-right picture-in-picture surface; the 3D canvas retains the full stage, and long joint readouts/pins wrap with compact labels. The licensed portrait reference renders correctly locally and on Cloud Run. |
+| 17 — GCP deploy | ✅ candidate | Commit `06d048c` is live as revision `pitchlab-webmcp-00008-wfw` at 100% traffic; HTTPS, headers, licensed assets, cold render, and native WebMCP retest pass. It is not submission-final while the legacy clip remains. |
+| 18 — Submission package | 🟡 | README, license, and Devpost draft complete; legacy-footage disposition, ChatGPT final-revision repeat, screenshots, video, and final form answers remain. |
 
 The public UI intentionally shows only precomputed review sessions. The local CUDA upload panel is
 available in development but hidden in the deployed static build, so judges do not encounter a
@@ -402,26 +404,23 @@ evals/pitch-analysis.md           ★ tool-surface verification record + prompt 
 The owner review is complete. Preserve the owner-review history and decisions in §4d; do not reopen
 product strategy or perform another redesign pass.
 
-1. **Task 16 — provisional-origin live WebMCP validation: complete.** Chrome 154 and ChatGPT's
-   in-app browser passed the observed checks in
-   [`evals/webmcp-live-checklist.md`](evals/webmcp-live-checklist.md). Preserve this evidence and
-   repeat the critical path on the final revision.
-2. **Current gate: cleared evidence, then Task 17 final deployment.** Replace or remove the provisional source
-   video, validate the retained evidence path, deploy the exact intended revision, and repeat the
-   critical live WebMCP flow after deployment.
-3. **Task 18 — submission assets.** The current Cloud Run deployment, README, license, and initial
-   Devpost draft are complete. Replace the provisional professional-player session with cleared
-   footage, capture final screenshots, and record the public narrated demo under three minutes.
+1. **Task 16 — native final-candidate WebMCP validation: complete.** Chrome 154 passed the exact
+   13-tool set, every runtime call, visible writes, annotation revisit, corrected-event readback,
+   reload, and unsupported-torque refusal on revision `00008-wfw`. The owner must now repeat the
+   natural-language ChatGPT in-app-browser prompts on this revision.
+2. **Current blocker: remove or clear the retained legacy session.** `delivery-02` is cleared,
+   QA-passed, deployed, and the default judge path. `delivery-01` remains available only because the
+   owner requested it temporarily; its YouTube redistribution rights are unverified. Remove it from
+   the submission-final session index/bundle or record written permission.
+3. **Task 18 — submission assets.** After that evidence-set decision and the ChatGPT repeat, perform
+   the clean-profile judge run, capture final screenshots, and record the public narrated demo under
+   three minutes.
 4. **Task 18 — final form.** Reconcile [`devpost-submission.md`](devpost-submission.md) against the
    final app and live official form. **Lead with `annotate_frame`** — the
    agent's reasoning becoming a persistent pin in the human's workspace is the strongest single
    argument in the submission. The line for the Devpost description: *4 of 13 tools are write tools
    that act on the human's live 3D view.*
 
-⚠️ Unresolved and blocking final submission: **source-footage rights** (§6 above). The current
-professional-footage session and synchronized 2D file may be used for provisional internal
-validation, but not the final deployment or submission assets unless rights are cleared.
-
-The first replacement candidate is the CC0 Wikimedia Commons clip `Gant Windup.webm`; see
-[`ATTRIBUTION.md`](ATTRIBUTION.md). Its copyright license is verified, but it remains pending
-reconstruction QA and a trademark/identity treatment before it can replace the provisional session.
+⚠️ Unresolved and blocking final submission: **the retained legacy session only** (§6 above). The
+Pexels `delivery-02` session is the cleared replacement. The YouTube-derived `delivery-01` source and
+synchronized 2D file must not remain in the final evidence bundle without documented permission.

@@ -12,16 +12,16 @@ Last updated: 2026-09-01. Status values require observed evidence: `PASS`, `FAIL
 
 | Gate | Item | Status | Evidence |
 |---|---|---|---|
-| LIVE WEBMCP | Deployed-origin preflight | PASS | HTTPS 200; public top-level page; one intended session; headers/assets verified |
+| LIVE WEBMCP | Deployed-origin preflight | PASS | HTTPS 200; public top-level page; licensed default plus explicitly retained provisional session; headers/assets verified |
 | LIVE WEBMCP | Chrome registration / exactly 13 tools | PASS | Native Chrome 154 WebMCP discovery; exact set, no duplicates; reload remained 13 |
 | LIVE WEBMCP | All 13 runtime checks | PASS | Every tool returned native status `Completed`; correct refusals count as passes |
-| LIVE WEBMCP | Four visible write effects | PASS | Screens observed: frame 562→701; elbow/side focus; 5→4 layers; persistent note |
+| LIVE WEBMCP | Four visible write effects | PASS | Candidate screens observed: f52→f88; elbow/side focus; 5→4 layers; persistent/revisitable note |
 | LIVE WEBMCP | Return shape confirmed | PASS | Plain objects were preserved in native `Completed` outputs; no envelope change needed |
-| LIVE WEBMCP | ChatGPT in-app browser / natural-language evals | PASS | Owner-observed prompt run discovered all 13 tools, read corrected state, visibly navigated/focused, and pinned a note |
-| EVIDENCE | Redistribution rights / provenance | BLOCKED | Current synchronized source video is provisional |
-| EVIDENCE | Reconstruction QA / event review / final bundle | PENDING | Run only on retained cleared evidence path |
-| FINAL DEPLOYMENT | Exact revision / HTTPS / headers / cold load | PENDING | Retest after evidence clearance |
-| FINAL DEPLOYMENT | Post-deploy WebMCP critical flow | PENDING | Inspect → navigate → focus → annotate |
+| LIVE WEBMCP | ChatGPT in-app browser / natural-language evals | PENDING | Prior revision passed owner-observed prompts; repeat against `00008-wfw` / licensed default |
+| EVIDENCE | Redistribution rights / provenance | BLOCKED | Licensed default is cleared; retained legacy YouTube session remains unverified |
+| EVIDENCE | Reconstruction QA / event review / final bundle | PASS | Licensed 288-frame default passed reconstruction QA, event review, numerical gates and deployed-bundle checks; final set still blocked by legacy retention |
+| FINAL DEPLOYMENT | Exact revision / HTTPS / headers / cold load | PASS | Commit `06d048c`; revision `00008-wfw`; 100% traffic; clean public render and asset/header checks pass |
+| FINAL DEPLOYMENT | Post-deploy WebMCP critical flow | PASS | Chrome 154: inspect → f88 navigate → elbow focus → overlay → persistent annotation/revisit |
 | JUDGE EXPERIENCE | Clean-profile and human-only usability | PENDING | Test exact final URL |
 | JUDGE EXPERIENCE | Agent journey and refusal path | PENDING | Derive final sequence from validated behavior |
 | SUBMISSION | README/repo/license consistency | PENDING | Reconcile against final revision |
@@ -30,7 +30,7 @@ Last updated: 2026-09-01. Status values require observed evidence: `PASS`, `FAIL
 ## Preconditions
 
 - [x] Fresh ephemeral Chrome profile used by the native GoogleChromeLabs/Puppeteer harness.
-- [x] URL cold-loads over HTTPS and the intended single `delivery-01` session appears.
+- [x] URL cold-loads over HTTPS and licensed `delivery-02` appears as the default session.
 - [x] Header reports `WebMCP · 13 tools` (not unsupported, partial, or failed).
 - [x] Response-header check confirms no `Origin-Agent-Cluster: ?0`.
 
@@ -147,7 +147,43 @@ Last updated: 2026-09-01. Status values require observed evidence: `PASS`, `FAIL
 - [x] Ask for elbow valgus torque or pitch velocity. The agent refuses rather than fabricating a value.
 
 The owner-observed ChatGPT run confirms **agent selection from natural language** as well as the
-underlying native Chrome tool behavior. The final cleared deployment must repeat this sequence.
+underlying native Chrome tool behavior on revision `00007-tkw`. Revision `00008-wfw` still needs
+the owner-observed natural-language repeat; native Chrome coverage alone does not satisfy that item.
+
+## Licensed-default post-deployment run — 2026-09-01
+
+- Origin: `https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app/?session=delivery-02`
+- Cloud Run: revision `pitchlab-webmcp-00008-wfw`, 100% traffic; deployed source milestone
+  `06d048c`; service became ready at 2026-09-01 06:37:35 UTC.
+- Static runtime: HTTPS shell `200`; no `Origin-Agent-Cluster: ?0`; 288-frame session JSON loaded;
+  the 31,778,448-byte synchronized MP4 returned a valid `206` byte-range response.
+- Clean render: licensed full-body 2D source, reconstructed 3D skeleton, event anchors, metrics, and
+  the resizable reference window all painted at 1600×1000 without console or page errors.
+- Rights UI: both public session `i` controls opened. `delivery-02` showed Tima Miroshnichenko, the
+  exact Pexels source and Pexels License; `delivery-01` showed `Rights unverified`, the exact
+  PastimeAthletics upload, and the removal/permission warning.
+- Native client: Google Chrome for Testing 154.0.8035.0, fresh headless profile,
+  `--enable-features=WebMCP`, GoogleChromeLabs/Puppeteer native integration; no polyfill.
+- Registration: `document.modelContext` present in a secure top-level document; exactly 13 expected
+  unique tools, nine reads/four writes, descriptions/schemas/annotations present; reload again
+  produced exactly 13 with no duplicates.
+- Runtime: all 13 calls completed. Outputs stayed below 3,500 JSON characters. `compare_pitches`
+  now returns `comparisonScope: descriptive_only` because the owner temporarily retained both
+  sessions; its caveats explicitly say athlete identity is not encoded and the views differ. Do not
+  narrate this as improvement/regression or make it part of the core judge path.
+- Visible write chain: `seek_to_event(ball_release)` painted f88; `focus_joint(throwing_elbow)`
+  painted the elbow highlight/readout and selected the sagittal side view; disabling `motion_trail`
+  painted 5→4 layers; `annotate_frame` painted the f88 note and Shared Notes entry. Clicking the note
+  after seeking away returned to f88. Calls completed after the corresponding paint (122–204 ms).
+- Boundaries: invalid event input returned the structured retryable contract; elbow-valgus-torque
+  returned `available: false` and the force/inverse-dynamics refusal; moving MER to f82 in the UI was
+  returned as f82 with `manualOverride: true`.
+- Errors: no console or page errors. Three MP4 requests were cancelled during seek/reload and logged
+  as `net::ERR_ABORTED`; independent range delivery and visible rendering passed, so these are media
+  request replacement/teardown events rather than missing assets.
+- Harness correction: the first run reached its final reload but timed out waiting for
+  `networkidle2` because the larger MP4 continued streaming. Changing only the reload wait to
+  `domcontentloaded` produced the complete passing report; no application code changed.
 
 ## Evidence to retain
 
