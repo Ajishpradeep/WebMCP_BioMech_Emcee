@@ -326,10 +326,26 @@ export const comparePitches: PitchTool = {
     }
 
     const largest = comparisons[0]
+    const sameView = A.session.source.view === B.session.source.view
+    const knownTimebases = A.session.timebase.realTimeScale !== null && B.session.timebase.realTimeScale !== null
     return {
       sessionA: { sessionId: A.session.sessionId, label: A.session.source.label },
       sessionB: { sessionId: B.session.sessionId, label: B.session.source.label },
       comparisonScope: 'descriptive_only',
+      ranking: {
+        available: false,
+        reason: 'These sessions do not establish a controlled same-athlete, same-camera, same-protocol comparison, so “better” and “worse” are unsupported.',
+      },
+      compatibility: {
+        athleteIdentity: 'not_established',
+        cameraSetup: sameView ? 'described_as_same_view_but_not_calibrated' : 'different_views',
+        timebase: knownTimebases
+          ? `both marked normal-rate with ${A.session.timebase.scaleSource}/${B.session.timebase.scaleSource} scale sources; ${r1(A.session.timebase.videoFps)} vs ${r1(B.session.timebase.videoFps)} fps`
+          : 'at least one real-time scale is unknown; compare event angles and normalized timing only',
+        captureProtocol: 'not_established_as_controlled',
+        eventDefinitions: 'same application detector and human-review contract',
+        measurements: 'same application pipeline and metric constructs',
+      },
       unit: 'deg',
       comparisons: shown,
       omitted: comparisons.length - shown.length,

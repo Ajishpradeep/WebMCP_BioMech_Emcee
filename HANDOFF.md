@@ -95,7 +95,7 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 | 7 — Smoothing + export | ✅ | Savitzky–Golay. Proportions validated (§4). |
 | 11 — Web app scaffold | ✅ | React 19 + Vite 8 + r3f + Zustand. |
 | 12 — 2D/3D viewer + timeline | ✅ | Frame-synchronized source reference beside the 3D reconstruction; playback, scrub, annotation pins, and camera/focus/evidence controls integrated into one transport toolbar. |
-| 8–10 — Biomechanics engine | ✅ | `web/src/biomech/`; complete suite currently 85 tests green, including both real-session numerical contracts and synthetic short-clip refusal. |
+| 8–10 — Biomechanics engine | ✅ | `web/src/biomech/`; complete suite currently 89 tests green, including both real-session numerical contracts, supported flexion geometry, and synthetic short-clip refusal. |
 | 12b — Metrics panel | ✅ | Stable event/live tile grids, confidence/status color, and `i` disclosures for ranges, methods, limitations, and citations. |
 | **13–15 — WebMCP tools ★** | ✅ code / ✅ final native | Chrome 154 passed all 13 handlers and visible writes on `00010-d65`; ChatGPT natural-language behavior passed a prior revision and requires one exact-revision repeat. |
 | 16 — Verification + evals | ✅ native / 🟡 ChatGPT repeat | Revision `00010-d65` passed exact registration, all 13 runtime calls, visible writes, correction readback, reload, refusal, and output budgets in Chrome 154. |
@@ -340,8 +340,11 @@ detection and every rate metric. `pipeline/run.py` therefore **detects duplicate
 loudly**; always read the pipeline warnings when changing a clip window.
 
 ### ⚠️ `timebase` decides which timing metrics are legal
-The Pexels source has an unknown time scale (`realTimeScale: null`); the Wikimedia source is
-normal-rate video (`realTimeScale: 1`). The engine applies the following gate per session.
+Both bundled sources are currently classified as normal-rate video (`realTimeScale: 1`,
+`scaleSource: estimated`). Their 25 fps and 29.97 fps capture rates still limit fast-event precision,
+so rate-derived observations remain medium-confidence rather than laboratory-validated. The engine
+applies the following gate per session, including the unavailable path for any future source whose
+real-time scale is unknown.
 
 | Quantity | Legal? |
 |---|---|

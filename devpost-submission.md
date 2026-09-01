@@ -22,7 +22,8 @@ workflow applies the pattern to baseball pitching: the reviewer can scrub the de
 anatomical views, inspect bounded kinematic measurements, correct three pitching event frames, and
 see evidence notes in context. Thirteen WebMCP tools let an agent read the live review state,
 retrieve definitions and caveats, navigate the visible viewer, focus relevant joints, toggle
-evidence overlays, compare only compatible measurements, and pin notes at the moment they describe.
+evidence overlays, show application-owned flexion geometry, compare only compatible measurements,
+and pin notes at the moment they describe.
 
 The product deliberately acts as a shared instrument rather than an autonomous coach. It refuses
 kinetic quantities that monocular video cannot establish and does not convert exploratory angles
@@ -63,7 +64,7 @@ The following features work today in the baseball-pitching reference workflow. O
 need their own event taxonomy, measurements, references, and validation.
 
 - Interactive 3D skeleton viewer with timeline, anatomical camera presets, motion trail, segment
-  frames, axial dial, and angle readouts.
+  frames, axial dial, angle readouts, and landmark-grounded elbow/knee flexion arcs.
 - Nine WebMCP read tools for session context, event and metric inspection, evidence definitions,
   cautious reference comparisons, and descriptive cross-session differences.
 - Four WebMCP write tools that visibly seek the viewer, focus a joint, toggle an overlay, and pin an
@@ -101,12 +102,17 @@ offline; session review and WebMCP execution are browser-local.
    camera-frame and timebase limitations.
 4. Ask: “Show maximum layback and leave a note for the reviewer.” The agent should seek to MER,
    focus the throwing shoulder, and pin a visible annotation.
-5. Scrub to a nearby frame and select **Use f123** (with the displayed frame number) for an event
+5. Ask: “Show me what the elbow measurement means at MER.” The agent should seek to MER and focus
+   the throwing elbow; the viewer should emphasize shoulder→elbow→wrist and show the supported
+   flexion arc/value without drawing arbitrary agent-supplied geometry.
+6. Scrub to a nearby frame and select **Use f123** (with the displayed frame number) for an event
    in **Review event frames**.
    Ask for the phase events again; the changed frame should return with `manualOverride: true`.
-6. Ask for elbow valgus torque or pitch velocity. The agent should return a structured refusal, not
+7. Ask: “Compare the two reviews and show the most meaningful differences you can support,” then
+   “Which one is better?” Differences must remain descriptive; ranking must be refused/reframed.
+8. Ask for elbow valgus torque or pitch velocity. The agent should return a structured refusal, not
    invent a value.
-7. Ask whether a hip–shoulder separation value is good. The agent should explain the unvalidated
+9. Ask whether a hip–shoulder separation value is good. The agent should explain the unvalidated
    construct and avoid quoting a target range.
 
 Automated verification from the repository:
@@ -119,7 +125,7 @@ npx vitest run
 npm run build
 ```
 
-Current verified baseline: 85 tests pass, TypeScript typecheck passes, and the production build
+Current verified baseline: 89 tests pass, TypeScript typecheck passes, and the production build
 completes. The final-candidate native live-host results are recorded in
 `evals/webmcp-live-checklist.md`.
 
@@ -140,8 +146,8 @@ Suggested outline:
 - **0:00–0:15 — Working product first:** open on the 3D delivery and ask the agent what is on screen.
 - **0:15–0:45 — Problem and shared workspace:** show that the agent reads the exact live session,
   frame, camera state, events, and evidence limits.
-- **0:45–1:25 — WebMCP wow moment:** ask the agent to find MER, focus the shoulder, stage overlays,
-  and pin a note while the viewer visibly responds.
+- **0:45–1:25 — WebMCP wow moment:** ask the agent to find MER, focus the elbow, show the
+  reconstructed segments/angle arc, and pin a note while the viewer visibly responds.
 - **1:25–1:55 — Human-in-the-loop:** correct an event frame and show that the next agent read uses
   the reviewed event.
 - **1:55–2:25 — Trust boundary:** request torque or injury risk and show the structured refusal;
@@ -156,7 +162,7 @@ Suggested outline:
 
 1. Full 3D workspace at an event, including timeline, evidence chart, and measurements.
 2. WebMCP-capable browser showing all 13 registered tools.
-3. Agent-driven focused-joint view with an annotation pinned at MER.
+3. Agent-driven focused-elbow view with supported flexion geometry and an annotation pinned at MER.
 4. Human event-review control displaying a `reviewed` event.
 5. Evidence/refusal result showing a limitation communicated honestly.
 

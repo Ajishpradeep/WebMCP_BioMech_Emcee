@@ -21,11 +21,11 @@ Everything currently implemented below is for the baseball-pitching workflow. Ot
 require their own event taxonomy, metric definitions, references, and validation; they are a product
 direction, not a current feature.
 
-- Interactive in-browser 3D skeleton review, timeline scrubbing, camera presets, overlays, and
-  persistent annotations.
+- Interactive in-browser 3D skeleton review, timeline scrubbing, camera presets, overlays,
+  application-owned flexion geometry for focused elbows/knees, and persistent annotations.
 - Two committed, precomputed review sessions that cold-load without a GPU or backend. The licensed
-  Pexels full-body session is the default; the legacy YouTube-derived session remains visibly
-  provisional while its redistribution rights are unresolved.
+  Pexels full-body session is the default; the second session is an attributed, trimmed/transcoded
+  Wikimedia derivative distributed under CC BY-SA 4.0.
 - Thirteen WebMCP tools: nine read tools for session, measurement, and evidence context; four write
   tools that visibly navigate and annotate the shared review surface.
 - Published-range comparisons only for construct-compatible direct two-segment elbow and lead-knee
@@ -40,7 +40,8 @@ direction, not a current feature.
 The key state lives in the page: current pitch, frame, selection, view, overlays, and review notes.
 WebMCP lets the agent read that live state and act on the same visual workspace the human sees. A
 useful interaction is: inspect the event list → ask for a bounded measurement with caveats → seek
-the viewer to the relevant frame → focus the joint → pin an observation for the human to review.
+the viewer to the relevant frame → focus the joint and show its supported geometry → pin an
+observation for the human to review.
 
 The app remains useful in ordinary browsers. In a WebMCP-capable HTTPS host, the header reports
 whether all 13 tools registered; a partial registration is surfaced instead of being hidden.
@@ -107,6 +108,7 @@ project’s claim boundary and technical decisions are in
 - `PLAN.md` — pre-submission execution plan and verified milestones.
 - `docs/brand-decision.md` — locked product identity and positioning boundary.
 - `docs/devpost-resume.md` — complete reconciliation protocol after the owner app review.
+- `docs/final-release-qualification.md` — final evidence, comparison, presentation, and freeze ledger.
 
 ## License
 

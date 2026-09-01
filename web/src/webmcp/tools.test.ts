@@ -23,6 +23,7 @@ const read = (f: string) => JSON.parse(readFileSync(join(sessionsDir, f), 'utf8'
 
 const index: SessionIndexEntry[] = read('index.json').sessions
 const active: Session = read('delivery-03.json')
+const bundledComparison: Session = read('delivery-02.json')
 const other: Session = {
   ...active,
   sessionId: 'comparison-fixture',
@@ -73,6 +74,7 @@ type Result = Record<string, any>
 beforeEach(() => {
   useAnalysis.setState({ index: testIndex, indexState: 'ready', cache: {}, annotations: [] })
   useAnalysis.getState().adoptSession(active)
+  useAnalysis.getState().cacheAnalysis(bundledComparison)
   useAnalysis.getState().cacheAnalysis(other)
   useAnalysis.getState().cacheAnalysis(short)
 })
@@ -253,11 +255,19 @@ describe('evidence tools', () => {
     expect(all.deviations.length).toBeGreaterThanOrEqual(res.deviations.length)
   })
 
-  it('compares two pitches without disturbing the loaded one', async () => {
+  it('compares the two bundled pitches descriptively without disturbing the loaded one', async () => {
     const before = useAnalysis.getState().session?.sessionId
-    const res = (await call('compare_pitches', { sessionIdB: 'comparison-fixture' })) as Result
+    const res = (await call('compare_pitches', { sessionIdB: bundledComparison.sessionId })) as Result
     expect(useAnalysis.getState().session?.sessionId).toBe(before)
     expect(res.comparisonScope).toBe('descriptive_only')
+    expect(res.ranking.available).toBe(false)
+    expect(res.ranking.reason).toMatch(/better|worse/i)
+    expect(res.compatibility.athleteIdentity).toBe('not_established')
+    expect(res.compatibility.cameraSetup).toBe('different_views')
+    expect(res.compatibility.captureProtocol).toMatch(/not_established/)
+    expect(res.compatibility.eventDefinitions).toMatch(/same application/)
+    expect(res.compatibility.measurements).toMatch(/same application/)
+    expect(JSON.stringify(res).length).toBeLessThanOrEqual(3000)
     expect(res.comparisons.length).toBeGreaterThan(0)
     expect(res.excludedLowConfidence).toBeGreaterThan(0)
     for (const c of res.comparisons) expect(typeof c.deltaDeg).toBe('number')

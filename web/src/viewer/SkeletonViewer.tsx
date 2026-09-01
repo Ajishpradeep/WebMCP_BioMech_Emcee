@@ -17,6 +17,7 @@ import type { Session } from '../types'
 import { METRIC_LABEL, metricsForJoint } from '../webmcp/vocab'
 import { buildViewerFrames, jointAt, type ViewerFrames } from './geometry'
 import { AxialRotationDial, SegmentFrames } from './SegmentFrames'
+import { SupportedAngleGeometry } from './SupportedAngleGeometry'
 
 const JOINT_COLOR = new THREE.Color('#5eead4')
 const JOINT_SELECTED = new THREE.Color('#fbbf24')
@@ -294,6 +295,7 @@ export function SkeletonViewer({ session }: { session: Session }) {
       <Skeleton session={session} vf={vf} />
       <SegmentFrames session={session} vf={vf} />
       <AxialRotationDial session={session} vf={vf} />
+      <SupportedAngleGeometry session={session} vf={vf} />
       <AngleReadout session={session} vf={vf} />
       <AnnotationPins session={session} vf={vf} />
       <PlaybackClock session={session} />
