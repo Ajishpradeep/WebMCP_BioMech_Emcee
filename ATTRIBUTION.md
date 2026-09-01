@@ -78,6 +78,38 @@ Manifest: [`pipeline/clips.json`](pipeline/clips.json)
 
 ### Cleared replacement candidates — licenses verified, reconstruction pending
 
+#### Selected clear demo candidate: Pexels 5182923
+
+[`Baseball Player Pitching a Baseball`](https://www.pexels.com/video/baseball-player-pitching-a-baseball-5182923/)
+by **Tima Miroshnichenko** was selected after visual inspection on 2026-09-01.
+
+- License: [Pexels License](https://www.pexels.com/license/). Pexels permits free use and
+  modification in websites/apps and online media; attribution is not required. It prohibits selling
+  unaltered copies, redistribution on another stock platform, and implied endorsement.
+- Original media: 2160×3840, 25 fps, 11.52 seconds, 288 frames.
+- Evidence window: a single unobstructed pitcher remains fully visible from set through leg lift,
+  stride, release, and settled follow-through. The background and camera are stable, and no other
+  person competes for detection.
+- Local untouched source:
+  `input_baseball/licensed_candidates/pexels_5182923_fullbody_pitch_uhd.mp4`.
+- Local upload-ready derivative: `input_baseball/pexels_5182923_demo_pitch_cut.mp4`, trimmed to
+  0.00–6.75 seconds with audio omitted (2160×3840, 25 fps, 169 frames).
+- Both files decoded end-to-end and produced no >=0.5-second `freezedetect` warning.
+
+The source and derivative are cleared candidates, not yet final evidence. The 25 fps timebase limits
+fast-event precision, and the clip still must pass person detection, SAM 3D Body reconstruction,
+overlay inspection, event review, and numerical gates. Do not imply that the depicted person or any
+uniform mark endorses Biomech Emcee.
+
+SHA-256:
+
+```text
+27c36e8393dcc2ab1ac4cd6f1bc030bb335215ab19248f735108406e9099a90c  pexels_5182923_fullbody_pitch_uhd.mp4
+a5c1c447c3e8bb86d9d3ca1ac0ed10cfa68a272493ef0f0a66461a72b751500d  pexels_5182923_demo_pitch_cut.mp4
+```
+
+#### Rejected Wikimedia fallback set
+
 The first replacement candidate was
 [`Gant Windup.webm`](https://commons.wikimedia.org/wiki/File:Gant_Windup.webm) from Wikimedia
 Commons:
@@ -115,10 +147,11 @@ git-ignored; provenance remains summarized here so it is not lost:
 | Kyle Harrison delivery | CC BY 4.0 | Clean single rear-view delivery; high resolution but small subject |
 
 All seven decoded end-to-end and produced no ≥0.5-second freeze warning in the initial ffmpeg
-preflight. None is final evidence until person detection, reconstruction overlay, events, numerical
-gates, and trademark/identity treatment pass. CC BY and CC BY-SA derivatives must retain their
-attribution and applicable share-alike notices; the repository's MIT license does not replace those
-asset licenses.
+preflight. The owner rejected this entire set for demo use on 2026-09-01 because of subject scale,
+obstruction, noise, or distracting context. Do not spend pipeline time on them unless the Pexels
+candidate fails and the fallback decision is explicitly reopened. CC BY and CC BY-SA derivatives
+must retain their attribution and applicable share-alike notices; the repository's MIT license does
+not replace those asset licenses.
 
 Two generic Mixkit Free-License alternatives (`Baseball pitcher` #881 and `Baseball player pitching
 the ball` #856) were inspected and rejected before pipeline work because both crop out the lower

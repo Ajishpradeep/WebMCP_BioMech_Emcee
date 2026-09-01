@@ -1,5 +1,40 @@
 # Licensed pitching candidates
 
+## Selected clear demo candidate — Pexels 5182923
+
+Downloaded 2026-09-01 from Pexels' own download endpoint:
+
+- Source page: <https://www.pexels.com/video/baseball-player-pitching-a-baseball-5182923/>
+- Creator: Tima Miroshnichenko
+- License: <https://www.pexels.com/license/>
+- Untouched source: `pexels_5182923_fullbody_pitch_uhd.mp4`
+- Upload-ready derivative: `../pexels_5182923_demo_pitch_cut.mp4` (0.00–6.75 s,
+  pitch through settled follow-through; audio omitted)
+- Source properties: 2160×3840, 25 fps, 11.52 s, 288 frames
+- Demo-cut properties: 2160×3840, 25 fps, 6.76 s, 169 frames
+
+Visual preflight: a single large subject remains fully visible from the initial set through leg lift,
+stride, release, and follow-through. There is no netting, competing person, camera cut, or moving
+background. Both files decoded end-to-end and produced no >=0.5-second freeze report under
+`freezedetect=n=-50dB:d=0.5`.
+
+This is the selected reconstruction candidate, not validated biomechanics. Its main remaining
+capture limitation is 25 fps, so event-frame timing and fast joint rotation must retain appropriately
+bounded confidence. It still requires person detection, SAM 3D Body reconstruction, overlay review,
+event review, and numerical gates before it can replace the provisional deployed session.
+
+The Pexels license permits free use and modification in apps and online media and does not require
+attribution. It prohibits selling unaltered copies, redistribution through another stock platform,
+and implying endorsement. Preserve the source/creator record and avoid athlete or uniform
+endorsement claims even though attribution is not mandatory.
+
+```text
+27c36e8393dcc2ab1ac4cd6f1bc030bb335215ab19248f735108406e9099a90c  pexels_5182923_fullbody_pitch_uhd.mp4
+a5c1c447c3e8bb86d9d3ca1ac0ed10cfa68a272493ef0f0a66461a72b751500d  ../pexels_5182923_demo_pitch_cut.mp4
+```
+
+## Rejected Wikimedia candidate set
+
 Downloaded 2026-09-01 from the original Wikimedia Commons file URLs. These are local pipeline
 candidates, not approved final evidence. Keep the source page, creator, and license attached to any
 derivative. Passing a license check does not replace reconstruction, event, scientific, trademark,
@@ -30,14 +65,8 @@ ccafe6b9f1768d8a0266517fe3e53ed26e9fdca295c7d281a46077a3339c4296  hyun_jin_ryu_p
 23513a396e7fb4b5afb3ebff3d7ad672bbac140feb144207ac98b6612c34e31e  kyle_harrison_delivery_cc_by_4.mpg
 ```
 
-## Recommended test order
-
-1. `hyun_jin_ryu_pitching_cc_by_sa_4.webm` — strongest subject scale and source resolution.
-2. `kenta_maeda_pitching_cc_by_sa_3.ogv` — strong subject scale; inspect stabilization/vignette.
-3. `gant_windup_cc0.webm` — simplest copyright posture; test whether detection overcomes scale.
-4. `kyle_harrison_delivery_cc_by_4.mpg` — clean single delivery but rear view and small subject.
-5. `tim_peterson_delivery_cc0.webm` — lower-resolution fallback.
-
-Do not spend pipeline time on the Steven Brault or Walter Johnson files unless the higher-ranked
-clips fail. Before final deployment, obscure identifiable team marks where necessary and preserve
-the applicable attribution/share-alike notice for every retained CC BY/CC BY-SA derivative.
+The owner rejected this set for demo use on 2026-09-01 because the clips are too distant,
+obstructed, low-resolution, historically noisy, or visually distracting. Do not spend pipeline time
+on them unless the selected Pexels candidate fails reconstruction and the owner explicitly reopens
+the fallback decision. Preserve the applicable attribution/share-alike notice for any CC BY or CC
+BY-SA derivative that is ever reconsidered.
