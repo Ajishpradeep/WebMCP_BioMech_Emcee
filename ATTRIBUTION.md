@@ -76,6 +76,33 @@
 
 Manifest: [`pipeline/clips.json`](pipeline/clips.json)
 
+### Cleared replacement candidate — license verified, reconstruction pending
+
+The first replacement candidate is
+[`Gant Windup.webm`](https://commons.wikimedia.org/wiki/File:Gant_Windup.webm) from Wikimedia
+Commons:
+
+- Creator/rightsholder: **D. Benjamin Miller**; Commons records it as the creator's own work.
+- License: **[CC0 1.0 public-domain dedication](https://creativecommons.org/publicdomain/zero/1.0/)**.
+- Source metadata observed 2026-09-01: 1920×1080 VP8, 23.976 fps, 14.223 seconds.
+- Evidence suitability: one complete delivery and the whole body remain in frame, but the athlete
+  occupies a relatively small part of the image. It is a candidate, not a retained session, until
+  person detection, SAM 3D Body reconstruction, overlay review, event review, and numerical gates
+  pass.
+- Local review copy: `/tmp/gant-windup.webm`; temporary only and not committed.
+
+The WebMCP Challenge does not whitelist particular datasets. Its official rule is that third-party
+data must be used in accordance with its terms and licensing requirements. CC0 clears the source
+video's copyright license for copying, modification, and redistribution. The footage still depicts
+a named professional athlete and a team uniform; CC0 does not independently grant trademark or
+publicity rights. If this candidate passes reconstruction QA, remove or obscure identifiable team
+marks in the judge-facing 2D reference and avoid any claim of athlete/team endorsement before it is
+eligible for the final deployment.
+
+Two generic Mixkit Free-License alternatives (`Baseball pitcher` #881 and `Baseball player pitching
+the ball` #856) were inspected and rejected before pipeline work because both crop out the lower
+legs during the delivery. Their licenses were adequate, but their evidence coverage was not.
+
 > **The bundled clip is a slow-motion recording at an unknown slowdown factor.** This is recorded as
 > `slowMotion: true` / `realTimeScale: null` in the manifest and carried into `session.json`.
 > Consequence: kinematic-sequence **order** and **normalized timing** remain valid, but **absolute

@@ -102,6 +102,7 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 | 16b — Scientific truth gate | 🟡 phase 2 | Incompatible comparisons removed; branch flips fixed; short-clip event/KSA gates implemented. Human MER review and external validation remain. |
 | P1 — Human event correction | ✅ | Reviewers can apply the current frame to FC/MER/BR; analysis and WebMCP reads update together. |
 | P1 — Owner-review UX hierarchy | ✅ | Right inspector now reads as event anchors → measurements → shared notes; all four write-tool effects have prominent visible surfaces. |
+| P1 — Reference-view legibility | ✅ local | The synchronized 2D source is now a resizable lower-right picture-in-picture surface; the 3D canvas retains the full stage, and long joint readouts/pins wrap with compact labels. 79 tests, typecheck, build, and desktop/narrow renders pass. |
 | 17 — GCP deploy | ✅ | Public Cloud Run origin verified; see [`docs/deployment.md`](docs/deployment.md). |
 | 18 — Submission package | 🟡 | README, license, and Devpost draft complete; cleared footage, live-host verification, screenshots, video, and final form answers remain. |
 
@@ -417,3 +418,7 @@ product strategy or perform another redesign pass.
 ⚠️ Unresolved and blocking final submission: **source-footage rights** (§6 above). The current
 professional-footage session and synchronized 2D file may be used for provisional internal
 validation, but not the final deployment or submission assets unless rights are cleared.
+
+The first replacement candidate is the CC0 Wikimedia Commons clip `Gant Windup.webm`; see
+[`ATTRIBUTION.md`](ATTRIBUTION.md). Its copyright license is verified, but it remains pending
+reconstruction QA and a trademark/identity treatment before it can replace the provisional session.
