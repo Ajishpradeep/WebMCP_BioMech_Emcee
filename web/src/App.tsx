@@ -90,7 +90,7 @@ export default function App() {
       </header>
 
       <main className="stage">
-        <div className={`review-views ${session?.source.videoFile ? 'split' : ''}`}>
+        <div className="review-views">
           <div className="viewer">
             {session && <div className="view-badge"><strong>3D reconstruction</strong></div>}
             {indexState === 'loading' && <div className="center dim">Loading review sessions…</div>}
@@ -110,8 +110,8 @@ export default function App() {
               </div>
             )}
             {session && <SkeletonViewer session={session} />}
+            {session && <ReferenceVideo key={session.sessionId} session={session} />}
           </div>
-          {session && <ReferenceVideo key={session.sessionId} session={session} />}
         </div>
 
         {session && <Timeline session={session} />}

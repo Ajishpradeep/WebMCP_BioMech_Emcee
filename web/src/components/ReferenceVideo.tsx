@@ -4,9 +4,9 @@ import { useAnalysis } from '../store'
 import type { Session } from '../types'
 
 /**
- * The source-video pane follows the shared frame clock rather than owning a second
- * timeline. During playback the browser advances the video normally; frame changes,
- * seeks, loops, and WebMCP actions correct any drift against the session timestamp.
+ * The floating source-video reference follows the shared frame clock rather than owning
+ * a second timeline. During playback the browser advances the video normally; frame
+ * changes, seeks, loops, and WebMCP actions correct any drift against the session timestamp.
  */
 export function ReferenceVideo({ session }: { session: Session }) {
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -44,11 +44,16 @@ export function ReferenceVideo({ session }: { session: Session }) {
   if (!videoFile) return null
 
   return (
-    <section className="reference-video" aria-label="Synchronized 2D reference video">
+    <section
+      className="reference-video"
+      aria-label="Synchronized 2D reference video. Resize from the lower-right corner."
+      title="Drag the lower-right corner to resize the synchronized reference"
+    >
       <div className="view-badge">
         <strong>2D reference</strong>
         <span className="mono">frame {currentFrame}</span>
       </div>
+      <span className="reference-resize-hint" aria-hidden="true">resize ↘</span>
       {failed ? (
         <div className="video-fallback dim small">The synchronized reference video could not be loaded.</div>
       ) : (

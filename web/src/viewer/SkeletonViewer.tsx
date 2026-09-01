@@ -23,6 +23,21 @@ const JOINT_SELECTED = new THREE.Color('#fbbf24')
 const BONE_COLOR = '#38bdf8'
 const TRAIL_LEN = 90
 
+/** Compact screen-space labels; full metric names remain in the measurement panel and tools. */
+const VIEWER_METRIC_LABEL: Partial<Record<keyof typeof METRIC_LABEL, string>> = {
+  lead_knee_flexion: 'Lead knee flex',
+  trail_knee_flexion: 'Trail knee flex',
+  lead_hip_flexion: 'Lead hip flex',
+  lead_foot_angle: 'Lead foot angle',
+  shoulder_abduction: 'Shoulder abd',
+  shoulder_external_rotation: 'Shoulder ER',
+  shoulder_horizontal_abduction: 'Shoulder horiz abd',
+  elbow_flexion: 'Elbow flex',
+  hip_shoulder_separation: 'Hip–shoulder sep',
+  trunk_forward_tilt: 'Trunk fwd tilt',
+  trunk_lateral_tilt: 'Trunk lateral tilt',
+}
+
 /* ── playback clock ──────────────────────────────────────────────────────── */
 function PlaybackClock({ session }: { session: Session }) {
   const acc = useRef(0)
@@ -194,7 +209,11 @@ function AngleReadout({ session, vf }: { session: Session; vf: ViewerFrames }) {
     const p = jointAt(vf, Math.min(currentFrame, vf.frameCount - 1), idx)
     return {
       p,
-      rows: metrics.map((m) => ({ label: METRIC_LABEL[m], value: values[m] })),
+      rows: metrics.map((m) => ({
+        label: VIEWER_METRIC_LABEL[m] ?? METRIC_LABEL[m],
+        fullLabel: METRIC_LABEL[m],
+        value: values[m],
+      })),
     }
   }, [show, selectedJoint, currentFrame, session, vf])
 
@@ -204,8 +223,8 @@ function AngleReadout({ session, vf }: { session: Session; vf: ViewerFrames }) {
       <Html distanceFactor={vf.scale * 4} style={{ pointerEvents: 'none' }}>
         <div className="angle-readout">
           {readout.rows.map((r) => (
-            <div key={r.label} className="ar-row">
-              <span className="ar-label">{r.label}</span>
+            <div key={r.fullLabel} className="ar-row" aria-label={r.fullLabel}>
+              <span className="ar-label" title={r.fullLabel}>{r.label}</span>
               <span className="ar-value">{r.value === null ? '—' : `${r.value.toFixed(1)}°`}</span>
             </div>
           ))}
