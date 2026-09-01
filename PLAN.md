@@ -49,7 +49,7 @@ stops later submission work until the smallest fix is deployed and retested.
 | D | P0 | Deploy public HTTPS origin | Cold-load assets; no `Origin-Agent-Cluster: ?0`; service public | ✅ `pitchlab-webmcp-00007-tkw` |
 | E | P0 | Scientific truth gate | Incompatible comparisons removed and partial sequence labeled; manual event-frame validation remains | 🟡 `truth gate, phase 1` |
 | F | P0 | Judge-facing UX | No dead production upload CTA; first-paint loader; narrow layout usable | ✅ local production visual check |
-| G | P0 | WebMCP runtime hardening | Exactly 13 tools or visible failure; success/error contract tests | ✅ provisional origin: Chrome 154 + ChatGPT in-app pass; repeat after final deploy |
+| G | P0 | WebMCP runtime hardening | Exactly 13 tools or visible failure; success/error contract tests | ✅ final native Chrome 154 pass; ChatGPT exact-revision repeat pending |
 | H | P1 | Human event correction loop | Human changes FC/MER/BR; dependent analysis and agent reads update | ✅ store + tool regression test |
 | I | P0 | Submission package | README, license, and Devpost draft complete; cleared footage, live eval, screenshots, and <3 min demo remain | 🟡 |
 | J | P0 | Post-app-review compliance reconciliation | Re-audit the final app against official fields, judging criteria, draft claims, live tests, screenshots, video, repo, and deployment | ▶️ active; advancing to cleared-evidence gate |

@@ -3,8 +3,8 @@
  *
  * Everything here is anchored to the three detected events, so the agent can reason about
  * *when* something happens and see how sure the detector was. Two hard rules from the
- * science constraints hold throughout: no absolute angular velocity while the slow-motion
- * factor is unknown, and no metric without its confidence grade.
+ * science constraints hold throughout: no absolute angular velocity when the time scale is
+ * unknown, and no metric without its confidence grade.
  */
 
 import { normalisedPct } from '../../../biomech/analyze'
@@ -295,13 +295,17 @@ export const getKinematicSequence: PitchTool = {
       })),
       pelvisToTrunkSeparationPct: seq.pelvisToTrunkSeparationPct,
       separationUnits:
-        'percent of the foot-contact to ball-release window, not seconds — the slow-motion factor of the source is unknown.',
+        seq.rateUnitsAvailable
+          ? 'Pelvis-to-trunk separation is reported as percent of the foot-contact to ball-release window; interval realSeconds are also available because this source has a known time scale.'
+          : 'Percent of the foot-contact to ball-release window, not seconds — the source time scale is unknown.',
       rateUnitsAvailable: seq.rateUnitsAvailable,
       literatureNote: seq.literatureNote,
       meta: metaFor(session, seq.available ? 'medium' : 'unavailable',
         ['kinematicSeq2020'],
         [seq.available
-          ? 'Peak order and normalised timing survive a uniform unknown time scale; absolute angular velocity does not.'
+          ? seq.rateUnitsAvailable
+            ? 'Absolute rates are derived from the known source time scale but remain bounded by the video frame rate and reconstruction confidence.'
+            : 'Peak order and normalised timing survive a uniform unknown time scale; absolute angular velocity does not.'
           : seq.unavailableReason ?? 'The sequence is unavailable.'],
       ),
     }

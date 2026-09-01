@@ -119,8 +119,9 @@ npx vitest run
 npm run build
 ```
 
-Current verified baseline: 64 tests pass, TypeScript typecheck passes, and the production build
-completes. Live-host results must be added before submission.
+Current verified baseline: 85 tests pass, TypeScript typecheck passes, and the production build
+completes. The final-candidate native live-host results are recorded in
+`evals/webmcp-live-checklist.md`.
 
 ## Public Demo Link
 
@@ -172,8 +173,9 @@ Suggested outline:
 
 ### Required before submission
 
-- Repeat the critical WebMCP flow in ChatGPT's in-app browser and Chrome after the cleared-evidence
-  revision is deployed; the provisional-origin run is recorded in `evals/webmcp-live-checklist.md`.
+- Repeat the critical natural-language WebMCP flow in ChatGPT's in-app browser against deployed
+  revision `00009-lqk`; the native Chrome retest already passes and is recorded in
+  `evals/webmcp-live-checklist.md`.
 - Capture 3–5 final screenshots from the cleared-data build.
 - Record and publish the narrated under-three-minute YouTube demo.
 - Confirm the official form answers listed below.
@@ -192,9 +194,10 @@ Suggested outline:
   sequence.
 - Event detection is heuristic. Humans can correct events, but a manually labelled accuracy
   benchmark for the final dataset remains required.
-- The provisional origin passed native Chrome 154 registration/execution and owner-observed ChatGPT
-  in-app-browser tool selection. The exact ChatGPT build was not captured, and the final
-  cleared-evidence revision still requires the same post-deployment retest.
+- The cleared-evidence revision passed native Chrome 154 registration and all 13 executions,
+  including visible writes. An earlier revision passed owner-observed ChatGPT in-app-browser tool
+  selection; the exact ChatGPT build was not captured, and revision `00009-lqk` requires the same
+  owner-observed natural-language repeat.
 - Baseball pitching is the only implemented domain workflow. The WebMCP interaction pattern is
   designed for reuse, but no other sport is represented as implemented or validated.
 

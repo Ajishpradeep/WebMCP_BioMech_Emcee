@@ -28,13 +28,13 @@ illustration.
 - [x] Non-WebMCP browser: `registerTools` no-ops, the app is fully usable, the header says so
 - [x] The fixed 13-tool surface registers once; handlers resolve live Zustand state at execution time,
   avoiding duplicate or stale registrations when a session changes
-- [ ] **All 13 visible in DevTools → Application → WebMCP → Available Tools** — needs Chrome 149+/flag
-- [ ] **Each runs from the DevTools "Run tool" button**
-- [ ] **Write tools visibly change the screen when run from DevTools** — the submission's core claim
-- [ ] **Verified end-to-end in ChatGPT's in-app browser**
-- [ ] **Return-shape convention confirmed against a live agent** — if the MCP `{content:[…]}` envelope
-      turns out to be required, change `toolResult()` in `web/src/webmcp/registry.ts` and nowhere else
-- [ ] Tool *selection* eval with a live agent (§3 below)
+- [x] **All 13 exposed by native Chrome WebMCP discovery** on the final candidate
+- [x] **Each runs through the native WebMCP invocation surface**
+- [x] **Write tools visibly change the screen when invoked** — the submission's core claim
+- [ ] **Final candidate verified end-to-end in ChatGPT's in-app browser** — owner repeat pending
+- [x] **Return-shape convention confirmed against a live host** — plain objects work; leave
+      `toolResult()` centralized and unchanged
+- [ ] Tool *selection* eval with ChatGPT against revision `00009-lqk` (§3 below)
 
 ---
 

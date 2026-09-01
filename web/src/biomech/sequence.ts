@@ -1,12 +1,11 @@
 /**
  * Kinematic sequence — the order in which segments reach peak angular speed.
  *
- * ⚠️ Timebase: the bundled demo clip is slow-motion at an unknown factor, so angular speed
- * in real deg/s is NOT derivable (tech.md §3.2b). What survives any monotonic time warp
- * is (a) the ORDER of the peaks and (b) their timing normalised to the foot-contact →
- * ball-release window. Those are what we report. This app observes only four segments;
- * it is not a published full five-segment kinematic sequence. Absolute rates are returned
- * only when `timebase.realTimeScale` is known.
+ * ⚠️ Timebase: absolute rates are returned only when `timebase.realTimeScale` is known
+ * (tech.md §3.2b). For an unknown slow-motion factor, what survives the time warp is
+ * (a) the ORDER of the peaks and (b) their timing normalised to the foot-contact → ball-release
+ * window. This app observes only four segments; it is not a published full five-segment
+ * kinematic sequence.
  *
  * ⚠️ Do not build a "sequence score". Across 208 analysed pitches, not one showed a
  * complete proximal-to-distal order and 14 distinct patterns appeared, the most common
@@ -44,7 +43,7 @@ export interface PeakInterval {
   frames: number
   /** Signed percentage-point gap in the FC→BR window. Negative means reversed order. */
   normalizedPctPoints: number
-  /** Video seconds, not real seconds for slow-motion footage. */
+  /** Video seconds; equal real seconds only when the timebase scale is known to be 1. */
   videoSeconds: number
   /** Real seconds when the time scale is known; otherwise null. */
   realSeconds: number | null

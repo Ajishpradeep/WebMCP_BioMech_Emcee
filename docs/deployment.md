@@ -2,21 +2,18 @@
 
 **Live workspace:** <https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app>
 
-The current public review workspace is a public, unauthenticated Cloud Run service in `ideaslab-gcp`
-(`us-central1`). It serves the static Vite build; all session analysis runs in the browser, so this
-production origin has no upload or GPU-inference backend.
-
-The stable service identifier remains `pitchlab-webmcp`; the application served from it is the
-current Biomech Emcee release-candidate build.
+The public, unauthenticated Cloud Run service is hosted in `ideaslab-gcp` (`us-central1`). It serves
+the static Vite build; session analysis runs in the browser, so production has no upload or
+GPU-inference backend.
 
 ## Reproduce a deployment
 
 The repository contains the complete static-service definition:
 
-- [`web/Dockerfile`](../web/Dockerfile) builds the Vite app with a clean `npm ci` and serves it from
-  nginx on Cloud Run's required port 8080.
-- [`web/nginx.conf`](../web/nginx.conf) handles SPA routes, static cache headers, and deliberately
-  does **not** emit `Origin-Agent-Cluster: ?0`, which would prevent WebMCP registration.
+- [`web/Dockerfile`](../web/Dockerfile) builds with `npm ci` and serves the app through nginx on
+  Cloud Run's required port 8080.
+- [`web/nginx.conf`](../web/nginx.conf) handles SPA routes and static caching. It deliberately does
+  not emit `Origin-Agent-Cluster: ?0`, which would prevent WebMCP registration.
 - [`scripts/deploy-gcp.sh`](../scripts/deploy-gcp.sh) deploys from source.
 
 With authenticated gcloud and a billing-enabled project:
@@ -28,46 +25,52 @@ GCP_SERVICE_NAME=pitchlab-webmcp \
 ./scripts/deploy-gcp.sh
 ```
 
-The script prints the canonical service URL. Deployments are public by design for hackathon judges;
-review Cloud Run billing and access settings before using this configuration for any non-demo data.
+The script prints the canonical service URL. The service is public by design for hackathon judges;
+review billing and access settings before using this configuration with non-demo data.
 
-## Verification record — licensed-session candidate
+## Final-candidate verification record
 
-On 2026-09-01 at 06:37:35 UTC, revision `pitchlab-webmcp-00008-wfw` received 100% traffic. The
-deployed source milestone is commit `06d048c` (`feat: add licensed full-body review session`). The
-stable URL and Cloud Run's revision URL both resolve to this service.
+On 2026-09-01 at 10:17:33 UTC, revision `pitchlab-webmcp-00009-lqk` became ready and received 100%
+of traffic. Its application source milestone is commit `bc34f7c`
+(`fix: replace provisional pitch evidence`). Documentation-only commits after that milestone do not
+alter the deployed web artifact.
 
-Observed checks against the stable URL:
+Observed against the stable URL:
 
-- HTTPS application shell: `200`; secure, top-level document; no iframe dependency.
+- HTTPS application shell: `200`; secure top-level document; no iframe dependency.
 - Headers omit `Origin-Agent-Cluster: ?0` and include `X-Content-Type-Options: nosniff`.
-- `delivery-02` is the first/default session and its JSON contains 288 analysed frames (f0–f287).
-- `delivery-02.mp4` is served as `video/mp4`; a one-megabyte range request returned `206`,
-  `Content-Range: bytes 0-1048575/31778448`.
-- A clean headless render loaded the synchronized full-body 2D reference, 3D reconstruction, event
-  anchors, measurement cards, and resizable picture-in-picture layout without runtime errors.
-- Both session `i` cards were opened on the public origin. The default card rendered its creator,
-  exact Pexels source and license; the legacy card rendered `Rights unverified` and the required
-  removal/permission warning.
-- Native Chrome 154 exposed exactly 13 unique WebMCP tools after initial load and reload. All 13
-  executed with status `Completed`; navigation, joint focus, overlay mutation, annotation paint and
-  annotation revisit were visible before their calls completed. Details are in the live checklist.
+- The public index contains exactly the cleared `delivery-02` Pexels session and attributed
+  `delivery-03` CC BY-SA 4.0 Wikimedia derivative.
+- `delivery-03.json` returned `200`, `application/json`, 802,942 bytes.
+- A range request for `delivery-03.mp4` returned `206`; total object size is 6,781,930 bytes.
+- Removed-session JSON/video and an internal upload-recovery URL returned `404`.
+- A clean render loaded the synchronized 16:9 source, 3D reconstruction, event anchors,
+  measurements, annotations and top-left aspect-preserving resize control without runtime errors.
+- Manual event confirmation visibly changed the control to `Confirmed f120`, marked the event
+  reviewed and announced that measurements and agent reads were updated.
+- Both session `i` cards rendered creator, source, license and modification/provenance information.
 
-This is a deployable release candidate, but **not the submission-final evidence set**. The licensed
-Pexels session is cleared and attributed. The retained `delivery-01` YouTube-derived reference is
-still marked `unverified` in its session information card and blocks final evidence clearance until
-it is removed or written redistribution permission is recorded. See [`ATTRIBUTION.md`](../ATTRIBUTION.md).
+### Post-deployment WebMCP retest
 
-## Provisional live WebMCP validation
+In a fresh **Google Chrome for Testing 154.0.8035.0** profile with native WebMCP enabled,
+`document.modelContext` was present and exactly 13 unique tools registered (nine reads/four writes).
+All 13 completed; reload again produced exactly 13 with no stale registration. Plain object handler
+results were accepted, so the centralized `toolResult()` return shape was not changed.
 
-On 2026-09-01, revision `pitchlab-webmcp-00007-tkw` passed native WebMCP discovery and all 13 direct
-tool invocations
-in a fresh **Google Chrome for Testing 154.0.8035.0** profile with WebMCP enabled. All four writes
-visibly changed the rendered application before returning, and the current plain-object return shape
-was accepted by the host. An owner-observed **ChatGPT in-app-browser** run also passed exact tool
-discovery, natural-language navigation/focus/annotation, human-corrected event readback, construct
-limits, and an unsupported-torque refusal. The exact ChatGPT app/build number was not captured.
-Revision `pitchlab-webmcp-00008-wfw` subsequently passed the same native Chrome gate against the
-licensed default session. The owner must still repeat the natural-language ChatGPT in-app-browser
-flow against this exact revision; do not claim that client retest from the earlier build. Full
-observations and client caveats are in the live checklist.
+The critical chain visibly completed before each tool result:
+
+1. inspect the left-handed Wikimedia session;
+2. seek from foot contact f95 to ball release f127;
+3. focus the throwing left elbow in the sagittal view;
+4. disable the motion trail, changing five visible layers to four;
+5. create a persistent f127 left-elbow annotation and revisit it after seeking away.
+
+A UI correction of MER to f121 was returned by `get_phase_events` with
+`manualOverride: true`. Invalid events returned structured recovery values. Elbow valgus torque
+returned an unavailable response explaining the missing force data/inverse dynamics and did not
+invent a number. There were no console errors, page errors or failed requests.
+
+Full per-tool output sizes and client caveats are recorded in
+[`evals/webmcp-live-checklist.md`](../evals/webmcp-live-checklist.md). The remaining release gate is
+an owner-observed natural-language repeat in ChatGPT's in-app browser against this exact revision;
+do not claim final ChatGPT compatibility until that run is recorded.

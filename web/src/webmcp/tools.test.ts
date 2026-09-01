@@ -191,7 +191,8 @@ describe('measurement tools', () => {
     expect(res.rateUnitsAvailable).toBe(true)
     for (const p of res.peaks) expect(p.peakAngularVelocityDegPerSec).toBeGreaterThan(0)
     expect(res.peakAngularVelocityUnavailable).toBeUndefined()
-    expect(res.separationUnits).toMatch(/seconds/)
+    expect(res.separationUnits).toMatch(/realSeconds are also available/)
+    expect(res.meta.caveats.join(' ')).toMatch(/known source time scale/)
     expect(res.intervals).toHaveLength(3)
   })
 

@@ -3,15 +3,15 @@
 > **New session? Read this file first, then [`CLAUDE.md`](CLAUDE.md).** This is the live log of what
 > is done, what was learned, and what to do next. Updated at the end of every completed task.
 
-**Last updated:** 2026-09-01, during cleared-session replacement and release verification
-**Current state:** **CLEARED EVIDENCE INTEGRATED / DEPLOYMENT RETEST PENDING.** The owner application review is complete;
+**Last updated:** 2026-09-01, after cleared-evidence deployment and native WebMCP retest
+**Current state:** **FINAL CANDIDATE LIVE / CHATGPT RETEST PENDING.** The owner application review is complete;
 its product, UX, and scientific decisions remain preserved below. Tasks 16–18 now advance through
 the ordered release gates in [`docs/devpost-resume.md`](docs/devpost-resume.md): live WebMCP proof,
-cleared evidence, final deployment reconciliation, then judge-experience validation. The current
-Cloud Run currently serves the preceding release candidate. Locally, the cleared Pexels session and
-an attributed CC BY-SA 4.0 Wikimedia session are integrated, while the former unverified session and
-its public assets are removed. Do not capture final assets or claim submission-final compatibility
-until the corresponding ledger items in
+cleared evidence, final deployment reconciliation, then judge-experience validation. Cloud Run
+revision `00009-lqk` serves the cleared Pexels and attributed CC BY-SA 4.0 Wikimedia sessions; the
+former unverified session and its public assets are removed. Native Chrome 154 passed all 13 tools
+and the visible write chain after deployment. Do not capture final assets or claim submission-final
+ChatGPT compatibility until the remaining owner-observed repeat in
 [`evals/webmcp-live-checklist.md`](evals/webmcp-live-checklist.md) are backed by observed evidence.
 
 ---
@@ -97,14 +97,14 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 | 12 — 2D/3D viewer + timeline | ✅ | Frame-synchronized source reference beside the 3D reconstruction; playback, scrub, annotation pins, and camera/focus/evidence controls integrated into one transport toolbar. |
 | 8–10 — Biomechanics engine | ✅ | `web/src/biomech/`; complete suite currently 85 tests green, including both real-session numerical contracts and synthetic short-clip refusal. |
 | 12b — Metrics panel | ✅ | Stable event/live tile grids, confidence/status color, and `i` disclosures for ranges, methods, limitations, and citations. |
-| **13–15 — WebMCP tools ★** | ✅ code / ✅ candidate native | Chrome 154 passed all 13 handlers and visible writes on `00008-wfw`; ChatGPT natural-language discovery, navigation, focus, annotation, correction readback, and refusal passed the prior revision. |
-| 16 — Verification + evals | ✅ native candidate / 🟡 ChatGPT repeat | Revision `00008-wfw` passed exact registration, all 13 runtime calls, visible writes, correction readback, reload, and refusal in Chrome 154. Repeat the natural-language flow in ChatGPT against this revision. |
+| **13–15 — WebMCP tools ★** | ✅ code / ✅ final native | Chrome 154 passed all 13 handlers and visible writes on `00009-lqk`; ChatGPT natural-language behavior passed a prior revision and requires one exact-revision repeat. |
+| 16 — Verification + evals | ✅ native / 🟡 ChatGPT repeat | Revision `00009-lqk` passed exact registration, all 13 runtime calls, visible writes, correction readback, reload, refusal, and output budgets in Chrome 154. |
 | 16b — Scientific truth gate | 🟡 phase 2 | Incompatible comparisons removed; branch flips fixed; short-clip event/KSA gates implemented. Human MER review and external validation remain. |
 | P1 — Human event correction | ✅ | Reviewers can apply the current frame to FC/MER/BR; analysis and WebMCP reads update together. |
 | P1 — Owner-review UX hierarchy | ✅ | Right inspector now reads as event anchors → measurements → shared notes; all four write-tool effects have prominent visible surfaces. |
 | P1 — Reference-view legibility | ✅ deployed | The synchronized 2D source is a resizable lower-right picture-in-picture surface; the 3D canvas retains the full stage, and long joint readouts/pins wrap with compact labels. The licensed portrait reference renders correctly locally and on Cloud Run. |
-| 17 — GCP deploy | 🟡 replacement pending | Revision `00008-wfw` remains live while the cleared two-session replacement and UI fixes complete local gates. Deploy and retest next. |
-| 18 — Submission package | 🟡 | README, license, and Devpost draft complete; legacy-footage disposition, ChatGPT final-revision repeat, screenshots, video, and final form answers remain. |
+| 17 — GCP deploy | ✅ | Commit `bc34f7c`, revision `00009-lqk`, 100% traffic; cold load, evidence assets, UI, rights cards and native WebMCP retest passed. |
+| 18 — Submission package | 🟡 | README, license, evidence disposition, and Devpost draft are reconciled; ChatGPT final-revision repeat, screenshots, video, and final form answers remain. |
 
 The public UI intentionally shows only precomputed review sessions. The local CUDA upload panel is
 available in development but hidden in the deployed static build, so judges do not encounter a
@@ -340,30 +340,27 @@ detection and every rate metric. `pipeline/run.py` therefore **detects duplicate
 loudly**; always read the pipeline warnings when changing a clip window.
 
 ### ⚠️ `timebase` decides which timing metrics are legal
-The bundled demo clip is slow-motion at an **unknown** factor, so `realTimeScale: null`.
+The Pexels source has an unknown time scale (`realTimeScale: null`); the Wikimedia source is
+normal-rate video (`realTimeScale: 1`). The engine applies the following gate per session.
 
 | Quantity | Legal? |
 |---|---|
 | Joint angles at events | ✅ |
 | Sequence **order** (pelvis→trunk→arm→…) | ✅ |
 | **Normalized** timing (% of FC→BR window) | ✅ |
-| Absolute angular velocity (°/s) | ❌ `unavailable` |
-| Separation time in **seconds** | ❌ report as **% of FC→BR** |
+| Absolute angular velocity (°/s) | ✅ only when `realTimeScale` is known; still frame-rate bounded |
+| Separation time in **seconds** | ✅ only when `realTimeScale` is known; otherwise report **% of FC→BR** |
 
 `confidence.ts` (Task 10) must force rate metrics to `unavailable` while `realTimeScale` is null.
 
 ---
 
-## 6. ⚠️ Open risk: source-footage rights
+## 6. Source-footage rights state
 
-`input_baseball/` holds YouTube-sourced MLB/broadcast clips. The original files are **git-ignored**
-and not cleared for redistribution. The owner-review build contains one trimmed 2D reference video
-under `web/public/sessions/` so the human can compare source and reconstruction in sync. That file
-is provisional and inherits the same unresolved rights problem.
-
-The current public review deployment includes this provisional asset and is **not cleared as the
-final submission deployment**. Before Task 18: self-record a pitch (cleanest), remove the 2D asset
-and ship 3D-only, or re-run the review on cleared footage. Full table in
+The public bundle contains only two documented sources: Pexels `delivery-02` under the Pexels
+License and the modified Wikimedia `delivery-03` under CC BY-SA 4.0 with creator credit, source and
+license links, and a change notice. The former unverified source, synchronized video, committed
+session JSON, and public references are removed. Full provenance and obligations are recorded in
 [`ATTRIBUTION.md`](ATTRIBUTION.md).
 
 ---
