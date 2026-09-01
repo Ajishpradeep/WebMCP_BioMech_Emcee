@@ -166,7 +166,9 @@ export const compareToReference: PitchTool = {
       lead_knee_flexion: 'lead_knee',
       elbow_flexion: 'throwing_elbow',
     }
-    const reviewPlan = rows.slice(0, 3).map((reading) => {
+    // One concrete path is enough to move an agent from the largest observation to its
+    // evidence. Repeating the three-call recipe for every deviation wastes the host budget.
+    const reviewPlan = rows.slice(0, 1).map((reading) => {
       const focus = focusFor[reading.metric] ?? reading.metric
       const direction = reading.status === 'above' ? 'more' : 'less'
       return {

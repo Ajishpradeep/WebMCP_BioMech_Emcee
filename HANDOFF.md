@@ -3,17 +3,14 @@
 > **New session? Read this file first, then [`CLAUDE.md`](CLAUDE.md).** This is the live log of what
 > is done, what was learned, and what to do next. Updated at the end of every completed task.
 
-**Last updated:** 2026-09-01, after licensed-session deployment and native WebMCP retest
-**Current state:** **MIXED EVIDENCE / RELEASE-CANDIDATE DEPLOYMENT.** The owner application review is complete;
+**Last updated:** 2026-09-01, during cleared-session replacement and release verification
+**Current state:** **CLEARED EVIDENCE INTEGRATED / DEPLOYMENT RETEST PENDING.** The owner application review is complete;
 its product, UX, and scientific decisions remain preserved below. Tasks 16–18 now advance through
 the ordered release gates in [`docs/devpost-resume.md`](docs/devpost-resume.md): live WebMCP proof,
 cleared evidence, final deployment reconciliation, then judge-experience validation. The current
-Cloud Run build is a release candidate, not submission-final. Native Chrome 154 and an
-owner-observed ChatGPT in-app-browser run have now cleared live supported-host validation on the
-prior revision. The licensed Pexels session is now the deployed default and revision
-`pitchlab-webmcp-00008-wfw` passed the post-deploy native Chrome gate. The retained legacy session's
-redistribution rights remain unresolved, and the exact revision still needs the owner-observed
-ChatGPT natural-language repeat. Do not capture final assets or claim submission-final compatibility
+Cloud Run currently serves the preceding release candidate. Locally, the cleared Pexels session and
+an attributed CC BY-SA 4.0 Wikimedia session are integrated, while the former unverified session and
+its public assets are removed. Do not capture final assets or claim submission-final compatibility
 until the corresponding ledger items in
 [`evals/webmcp-live-checklist.md`](evals/webmcp-live-checklist.md) are backed by observed evidence.
 
@@ -72,7 +69,7 @@ cd web && npm install && npm run dev          # → http://localhost:5173
 
 # 3. Batch-analyse the manifested demo clips
 .venv/bin/python pipeline/run.py                          # all clips
-.venv/bin/python pipeline/run.py delivery-01             # one
+.venv/bin/python pipeline/run.py delivery-03             # one
 .venv/bin/python pipeline/run.py --stride 8               # fast preview
 
 # 4. Health check for the model env
@@ -91,9 +88,9 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 |---|---|---|
 | 1 — SAM 3D Body access | ✅ | Approved. Checkpoints local (2.7 GB, git-ignored). |
 | 2 — Env + smoke test | ✅ | torch 2.6.0+cu124, RTX A6000. |
-| 3 — Demo footage | 🟡 | Licensed Pexels full-body source integrated as default `delivery-02`; legacy `delivery-01` remains provisional with unresolved YouTube redistribution rights. |
+| 3 — Demo footage | ✅ local | Two cleared sources: Pexels `delivery-02` and attributed CC BY-SA 4.0 Wikimedia derivative `delivery-03`. The former unverified public session is removed. |
 | 4 — Frame extraction + detection | ✅ | `pipeline/run.py`, torchvision Faster R-CNN. |
-| 5 — Inference runner | ✅ | **QA gate passed** for the licensed 288-frame Pexels delivery and the retained legacy delivery. The rejected historical 38-frame second view remains removed. |
+| 5 — Inference runner | ✅ | **QA gate passed** for the 288-frame Pexels delivery and 246-frame left-handed Wikimedia delivery. |
 | 6 — 🔒 Freeze schema | ✅ | **Frozen.** `pipeline/joint_map.py` ↔ `web/src/types.ts`. |
 | 7 — Smoothing + export | ✅ | Savitzky–Golay. Proportions validated (§4). |
 | 11 — Web app scaffold | ✅ | React 19 + Vite 8 + r3f + Zustand. |
@@ -106,7 +103,7 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 | P1 — Human event correction | ✅ | Reviewers can apply the current frame to FC/MER/BR; analysis and WebMCP reads update together. |
 | P1 — Owner-review UX hierarchy | ✅ | Right inspector now reads as event anchors → measurements → shared notes; all four write-tool effects have prominent visible surfaces. |
 | P1 — Reference-view legibility | ✅ deployed | The synchronized 2D source is a resizable lower-right picture-in-picture surface; the 3D canvas retains the full stage, and long joint readouts/pins wrap with compact labels. The licensed portrait reference renders correctly locally and on Cloud Run. |
-| 17 — GCP deploy | ✅ candidate | Commit `06d048c` is live as revision `pitchlab-webmcp-00008-wfw` at 100% traffic; HTTPS, headers, licensed assets, cold render, and native WebMCP retest pass. It is not submission-final while the legacy clip remains. |
+| 17 — GCP deploy | 🟡 replacement pending | Revision `00008-wfw` remains live while the cleared two-session replacement and UI fixes complete local gates. Deploy and retest next. |
 | 18 — Submission package | 🟡 | README, license, and Devpost draft complete; legacy-footage disposition, ChatGPT final-revision repeat, screenshots, video, and final form answers remain. |
 
 The public UI intentionally shows only precomputed review sessions. The local CUDA upload panel is
@@ -215,23 +212,20 @@ centres do not move (< 1e-4°), yet the engine recovers the full 90°.
 2. **Branch-cut wrap.** atan2-derived angles jump ±360°. `metricSeries()` unwraps the six affected
    metrics. Do not remove.
 
-### Numerical truth-audit status (2026-08-31)
-`delivery-01` has three construct-compatible event readings inside the cited population ranges:
-lead-knee flexion 47.9° at FC [40–49], and lead-knee 37.8° [31.2–41] plus elbow flexion 37.8°
-[24–39] at release. Elbow flexion at FC is 39.8° [74–90], an observation below that range. The
-automatically nominated MER frame is intentionally `low` confidence, so its elbow comparison must
-be reviewed by a human before use.
+### Numerical truth-audit status (2026-09-01)
+The cleared left-handed `delivery-03` reconstruction returns FC f95 (medium), MER candidate f120
+(low; human review required), and ball release f127 (high). Its referenced observations are lead-knee
+64.7° and elbow 33.5° at FC, and lead-knee 64.0° plus elbow 77.1° at release. These are descriptive
+camera-frame observations; a deviation from a cited range is not a fault, diagnosis, or prescription.
 
-The usable four-segment KSA for `delivery-01` peaks at pelvis f639 (55.4%), thorax f667 (75.5%),
-upper arm f672 (79.1%), and forearm f685 (88.5%) of FC→BR. Consecutive gaps are 28 / 5 / 13 frames,
-or 20.1 / 3.6 / 9.4 percentage points. These are descriptive intervals, not ideal targets; absolute
-deg/s remains unavailable because the slow-motion factor is unknown.
+The partial four-segment KSA peaks pelvis, thorax, and upper arm together at f118, then forearm at
+f120. This is descriptive rather than an ideal sequence. At normal-rate 29.97 fps, rate units are
+available but medium-confidence because the fastest arm motion is undersampled.
 
-The previous 180° segment-frame branch jump is fixed by feeding `metricSeries()` the same
-continuity-corrected frames used by KSA. `delivery-01` now has no adjacent metric step ≥25°. The
-owner removed the 38-frame `delivery-02` because it was too short to support a useful review. The
-short-clip boundary refusal remains covered with an in-memory test fixture rather than shipped
-professional footage.
+The previous 180° segment-frame branch jump remains fixed by feeding `metricSeries()` the same
+continuity-corrected frames used by KSA. The new normal-rate source has genuine rapid-release steps
+up to 35°/frame, still far below a 180° branch flip; its numerical regression gate is <45°/frame.
+The short-clip boundary refusal remains covered with an in-memory fixture.
 
 **Known open items** (honest state, not hidden):
 - The automatic MER event is a peak in an unvalidated upper-arm axial-rotation proxy, not a clinical
@@ -239,9 +233,8 @@ professional footage.
 - Hip–shoulder separation, trunk tilts, shoulder rotation/plane values, and foot angle remain visible
   as low-confidence observational proxies. Their absolute values are never compared to clinical
   ranges until this landmark protocol and coordinate convention are externally validated.
-- `delivery-02` is now a bundled, sequence-capable licensed Pexels session and the default review.
-  `delivery-01` remains bundled only as a visibly provisional legacy session. They depict different
-  athletes and viewpoints, so cross-session differences are descriptive only and must never be
+- `delivery-02` and `delivery-03` are bundled, sequence-capable cleared sessions. They depict different
+  athletes, handedness, and viewpoints, so cross-session differences are descriptive only and must never be
   presented as improvement, regression, or a controlled comparison.
 
 ## 4c. The WebMCP tool surface — how it actually works
@@ -404,15 +397,13 @@ evals/pitch-analysis.md           ★ tool-surface verification record + prompt 
 The owner review is complete. Preserve the owner-review history and decisions in §4d; do not reopen
 product strategy or perform another redesign pass.
 
-1. **Task 16 — native final-candidate WebMCP validation: complete.** Chrome 154 passed the exact
-   13-tool set, every runtime call, visible writes, annotation revisit, corrected-event readback,
-   reload, and unsupported-torque refusal on revision `00008-wfw`. The owner must now repeat the
-   natural-language ChatGPT in-app-browser prompts on this revision.
-2. **Current blocker: remove or clear the retained legacy session.** `delivery-02` is cleared,
-   QA-passed, deployed, and the default judge path. `delivery-01` remains available only because the
-   owner requested it temporarily; its YouTube redistribution rights are unverified. Remove it from
-   the submission-final session index/bundle or record written permission.
-3. **Task 18 — submission assets.** After that evidence-set decision and the ChatGPT repeat, perform
+1. **Current gate: local verification, deployment, then supported-client retest.** The cleared
+   `delivery-03` replacement, UTF-8 upload fix, event confirmation feedback, and aspect-preserving
+   top-left reference resize control must pass the full suite and visual checks before deployment.
+2. **Task 16 — post-deploy WebMCP repeat.** Chrome 154 must repeat the exact 13-tool set, every
+   runtime call, visible writes, annotation revisit, corrected-event readback, reload, and refusal.
+   The owner must then repeat the natural-language ChatGPT in-app-browser prompts on that revision.
+3. **Task 18 — submission assets.** After the supported-client repeat, perform
    the clean-profile judge run, capture final screenshots, and record the public narrated demo under
    three minutes.
 4. **Task 18 — final form.** Reconcile [`devpost-submission.md`](devpost-submission.md) against the
@@ -421,6 +412,6 @@ product strategy or perform another redesign pass.
    argument in the submission. The line for the Devpost description: *4 of 13 tools are write tools
    that act on the human's live 3D view.*
 
-⚠️ Unresolved and blocking final submission: **the retained legacy session only** (§6 above). The
-Pexels `delivery-02` session is the cleared replacement. The YouTube-derived `delivery-01` source and
-synchronized 2D file must not remain in the final evidence bundle without documented permission.
+Both intended synchronized references now have recorded redistribution terms. Keep their Pexels and
+CC BY-SA attribution/modification notices aligned across the session cards, repository, screenshots,
+demo narration, and submission copy.

@@ -89,13 +89,9 @@ body {
   right: 14px;
   bottom: 14px;
   width: clamp(240px, 31%, 420px);
-  height: clamp(150px, 28%, 250px);
-  min-width: 220px;
-  min-height: 130px;
   max-width: calc(100% - 28px);
   max-height: calc(100% - 28px);
   overflow: hidden;
-  resize: both;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -108,21 +104,25 @@ body {
 .reference-resize-hint {
   position: absolute;
   z-index: 4;
-  right: 7px;
-  bottom: 5px;
+  top: 6px;
+  left: 6px;
   padding: 2px 5px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
   border-radius: 3px;
   background: rgba(7, 10, 14, 0.78);
   color: var(--fg-faint);
   font: 9px/1.2 var(--mono);
   letter-spacing: 0.02em;
-  pointer-events: none;
+  cursor: nwse-resize;
+  touch-action: none;
 }
+.reference-resize-hint:hover,
+.reference-resize-hint:focus-visible { color: var(--accent); border-color: rgba(56, 189, 248, 0.5); }
 .view-badge {
   position: absolute;
   z-index: 3;
   top: 10px;
-  left: 10px;
+  right: 10px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -357,6 +357,7 @@ body {
   border-radius: 7px;
   background: rgba(17, 22, 31, 0.55);
 }
+.event-row.confirmed { border-color: rgba(94, 234, 212, 0.45); background: rgba(45, 212, 191, 0.055); }
 .event-jump {
   min-width: 0;
   padding: 0;
@@ -373,6 +374,21 @@ body {
 .event-meta { display: flex; align-items: center; gap: 6px; margin-top: 2px; color: var(--fg-dim); }
 .event-meta .mono { font-size: 10px; }
 .event-actions { display: flex; flex-direction: column; align-items: stretch; gap: 4px; flex: none; }
+.btn.event-confirmed,
+.btn.event-confirmed:disabled {
+  border-color: rgba(94, 234, 212, 0.5);
+  background: rgba(45, 212, 191, 0.12);
+  color: var(--accent-2);
+  opacity: 1;
+}
+.event-confirmation {
+  margin: 8px 0 0;
+  padding: 7px 9px;
+  border: 1px solid rgba(94, 234, 212, 0.36);
+  border-radius: 6px;
+  background: rgba(45, 212, 191, 0.08);
+  color: var(--accent-2);
+}
 
 /* ── metadata + caveats ───────────────────────────────────────────────── */
 .session-details-section { padding-top: 0 !important; padding-bottom: 0 !important; }
@@ -925,9 +941,6 @@ body {
     right: 8px;
     bottom: 8px;
     width: min(52%, 260px);
-    height: 150px;
-    min-width: 180px;
-    min-height: 110px;
     max-width: calc(100% - 16px);
     max-height: calc(100% - 16px);
   }

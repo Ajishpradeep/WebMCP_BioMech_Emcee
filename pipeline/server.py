@@ -117,10 +117,17 @@ def _analyze(job_id: str, video_path: Path, session_id: str) -> None:
             session = run_clip(clip, m["estimator"], m["detector"], "cuda", stride, progress)
 
             OUT_DIR.mkdir(parents=True, exist_ok=True)
-            (OUT_DIR / f"{session_id}.json").write_text(json.dumps(session, separators=(",", ":")))
+            (OUT_DIR / f"{session_id}.json").write_text(
+                json.dumps(session, separators=(",", ":"), ensure_ascii=False),
+                encoding="utf-8",
+            )
 
             idx_path = OUT_DIR / "index.json"
-            existing = json.loads(idx_path.read_text())["sessions"] if idx_path.exists() else []
+            existing = (
+                json.loads(idx_path.read_text(encoding="utf-8"))["sessions"]
+                if idx_path.exists()
+                else []
+            )
             entry = {
                 "sessionId": session_id,
                 "label": clip["label"],
@@ -131,7 +138,10 @@ def _analyze(job_id: str, video_path: Path, session_id: str) -> None:
             }
             by_id = {s["sessionId"]: s for s in existing}
             by_id[session_id] = entry
-            idx_path.write_text(json.dumps({"sessions": list(by_id.values())}, indent=2))
+            idx_path.write_text(
+                json.dumps({"sessions": list(by_id.values())}, indent=2, ensure_ascii=False),
+                encoding="utf-8",
+            )
 
             job.update(status="done", stage="complete", progress=1.0, sessionId=session_id)
     except Exception as e:  # noqa: BLE001 - surface anything to the UI

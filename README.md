@@ -92,10 +92,10 @@ the public demo reproducible and makes WebMCP appropriate for the live, human-vi
 
 Biomech Emcee is not a marker-based motion-capture replacement, diagnostic system, injury-risk
 predictor, medical device, or autonomous pitching coach. It uses camera-frame reconstruction. The
-default synchronized source is licensed through Pexels; the retained legacy session has unresolved
-YouTube redistribution rights and must be removed before the submission-final deployment unless
-permission is documented. See [ATTRIBUTION.md](ATTRIBUTION.md). The demo data must not be used for
-clinical decisions. The project’s claim boundary and technical decisions are in
+two synchronized sources are cleared through the Pexels License and CC BY-SA 4.0 respectively.
+Their creator, source, license, and modification details are available from each session's `i` card
+and [ATTRIBUTION.md](ATTRIBUTION.md). The demo data must not be used for clinical decisions. The
+project’s claim boundary and technical decisions are in
 [SPEC.md](SPEC.md) and [HANDOFF.md](HANDOFF.md).
 
 ## Repository map

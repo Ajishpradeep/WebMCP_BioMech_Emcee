@@ -22,7 +22,7 @@ const sessionsDir = join(__dirname, '../../public/sessions')
 const read = (f: string) => JSON.parse(readFileSync(join(sessionsDir, f), 'utf8'))
 
 const index: SessionIndexEntry[] = read('index.json').sessions
-const active: Session = read('delivery-01.json')
+const active: Session = read('delivery-03.json')
 const other: Session = {
   ...active,
   sessionId: 'comparison-fixture',
@@ -182,16 +182,16 @@ describe('measurement tools', () => {
     expect(typeof res.peak.value).toBe('number')
   })
 
-  it('refuses absolute angular velocity while the slow-motion factor is unknown', async () => {
+  it('returns bounded angular-rate units for the normal-rate session', async () => {
     const res = (await call('get_kinematic_sequence')) as Result
     expect(res.available).toBe(true)
     expect(res.quality).toBe('medium')
     expect(res.observedOrder).toHaveLength(4)
     expect(res.literatureNote).toMatch(/not itself a fault/)
-    expect(res.rateUnitsAvailable).toBe(false)
-    for (const p of res.peaks) expect(p.peakAngularVelocityDegPerSec).toBeNull()
-    expect(res.peakAngularVelocityUnavailable).toMatch(/slow motion/i)
-    expect(res.separationUnits).toMatch(/percent/)
+    expect(res.rateUnitsAvailable).toBe(true)
+    for (const p of res.peaks) expect(p.peakAngularVelocityDegPerSec).toBeGreaterThan(0)
+    expect(res.peakAngularVelocityUnavailable).toBeUndefined()
+    expect(res.separationUnits).toMatch(/seconds/)
     expect(res.intervals).toHaveLength(3)
   })
 
@@ -199,7 +199,7 @@ describe('measurement tools', () => {
     const res = (await call('get_kinematic_sequence', { sessionId: 'short-clip-fixture' })) as Result
     expect(res.available).toBe(false)
     expect(res.quality).toBe('unavailable')
-    expect(res.unavailableReason).toMatch(/at least 12|edge of the clip/i)
+    expect(res.unavailableReason).toMatch(/at least 12|edge of the clip|valid delivery window/i)
     expect(res.observedOrder).toEqual([])
     expect(res.peaks).toEqual([])
     expect(res.intervals).toEqual([])
@@ -314,9 +314,9 @@ describe('viewer-control tools move the store the UI renders from', () => {
 
   it('focuses a joint, resolving handedness, and picks the readable plane', async () => {
     const res = (await call('focus_joint', { joint: 'front knee' })) as Result
-    // Right-handed pitcher strides onto the left leg.
-    expect(res.joint).toBe('l_knee')
-    expect(useAnalysis.getState().selectedJoint).toBe('l_knee')
+    // Left-handed pitcher strides onto the right leg.
+    expect(res.joint).toBe('r_knee')
+    expect(useAnalysis.getState().selectedJoint).toBe('r_knee')
     expect(useAnalysis.getState().cameraPlane).toBe('sagittal')
     expect(useAnalysis.getState().overlays.angle_readouts).toBe(true)
     expect(res.reason.length).toBeGreaterThan(20)
@@ -339,7 +339,7 @@ describe('viewer-control tools move the store the UI renders from', () => {
     })) as Result
     const anns = useAnalysis.getState().annotations
     expect(anns).toHaveLength(1)
-    expect(anns[0].joint).toBe('r_elbow')
+    expect(anns[0].joint).toBe('l_elbow')
     expect(anns[0].severity).toBe('attention')
     expect(res.truncated).toBe(true)
     expect(res.label.length).toBeLessThanOrEqual(80)

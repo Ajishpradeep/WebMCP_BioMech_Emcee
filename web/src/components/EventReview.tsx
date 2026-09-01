@@ -17,10 +17,21 @@ export function EventReview() {
   const setEventFrame = useAnalysis((s) => s.setEventFrame)
   const resetEventFrame = useAnalysis((s) => s.resetEventFrame)
   const [error, setError] = useState<string | null>(null)
+  const [confirmation, setConfirmation] = useState<{ name: EventName; frame: number } | null>(null)
 
   const apply = (name: EventName) => {
-    if (setEventFrame(name, currentFrame)) setError(null)
-    else setError('Events must stay in order: foot contact → MER → ball release.')
+    if (setEventFrame(name, currentFrame)) {
+      setError(null)
+      setConfirmation({ name, frame: currentFrame })
+    } else {
+      setConfirmation(null)
+      setError('Events must stay in order: foot contact → MER → ball release.')
+    }
+  }
+
+  const reset = (name: EventName) => {
+    resetEventFrame(name)
+    if (confirmation?.name === name) setConfirmation(null)
   }
 
   const canApply = (name: EventName) => {
@@ -43,8 +54,10 @@ export function EventReview() {
         <span>Corrections update measurements and agent reads.</span>
       </div>
       <div className="event-list">
-        {events.map((event) => (
-          <div className="event-row" key={event.name}>
+        {events.map((event) => {
+          const confirmed = event.manualOverride && currentFrame === event.frame
+          return (
+          <div className={`event-row ${confirmed ? 'confirmed' : ''}`} key={event.name}>
             <button className="event-jump" onClick={() => setFrame(event.frame)}>
               <span>
                 <strong>{LABEL[event.name]}</strong>
@@ -57,19 +70,25 @@ export function EventReview() {
             </button>
             <div className="event-actions">
               <button
-                className="btn tiny primary-soft"
+                className={`btn tiny ${confirmed ? 'event-confirmed' : 'primary-soft'}`}
                 onClick={() => apply(event.name)}
-                disabled={!canApply(event.name)}
-                title={canApply(event.name) ? 'Use the inspected frame for this event' : 'Scrub to a frame that preserves FC → MER → BR order'}
+                disabled={confirmed || !canApply(event.name)}
+                title={confirmed ? 'This reviewed event is confirmed at the inspected frame' : canApply(event.name) ? 'Use the inspected frame for this event' : 'Scrub to a frame that preserves FC → MER → BR order'}
               >
-                {currentFrame === event.frame ? `Confirm f${currentFrame}` : `Use f${currentFrame}`}
+                {confirmed ? `Confirmed f${currentFrame}` : currentFrame === event.frame ? `Confirm f${currentFrame}` : `Use f${currentFrame}`}
               </button>
-              {event.manualOverride && <button className="btn tiny" onClick={() => resetEventFrame(event.name)}>Reset</button>}
+              {event.manualOverride && <button className="btn tiny" onClick={() => reset(event.name)}>Reset</button>}
             </div>
           </div>
-        ))}
+          )
+        })}
       </div>
       {error && <p className="err small">{error}</p>}
+      {confirmation && currentFrame === confirmation.frame && (
+        <p className="event-confirmation small" role="status" aria-live="polite">
+          {LABEL[confirmation.name]} confirmed at <span className="mono">f{confirmation.frame}</span>. Measurements and agent reads updated.
+        </p>
+      )}
     </section>
   )
 }

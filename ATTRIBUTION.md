@@ -39,53 +39,21 @@
 
 ## Source footage
 
-> ### ⚠️ Mixed rights state — read before publishing
->
-> `delivery-02` now uses a Pexels-licensed source with recorded provenance. The legacy
-> `delivery-01` synchronized reference is a third-party YouTube-derived video and is **not** cleared
-> for redistribution on the available evidence. It remains a provisional review asset at the
-> owner's direction and must be removed before final submission unless permission is confirmed.
->
-> `.claude/steering/tech.md` §7 says "no scraped broadcast footage," and strictly these clips
-> violate that rule. The pragmatic position taken for the hackathon window:
->
-> | Artifact | Ships publicly? | Rationale |
-> |---|---|---|
-> | Original source `.mp4` files | ❌ **No** — git-ignored | Not ours to redistribute |
-> | Trimmed 2D reference `.mp4` file | ⚠️ **Temporary public review deployment** | Useful for synchronized review, but still uncleared and not submission-final |
-> | Derived `session.json` (3D joint coordinates) | ✅ Yes | Numerical measurements derived from observation, not a copy of the work |
-> | Rendered 2D overlays on source frames | ❌ No | Contains the source imagery |
-> | 3D skeleton renders (no source imagery) | ✅ Yes | Contains no copyrighted footage |
->
-> **Before submission, do one of:**
-> 1. Remove `delivery-01` and submit the licensed `delivery-02` session, or
-> 2. Obtain and record explicit permission for the legacy source, or
-> 3. Ship only the legacy derived `session.json` + 3D skeleton view, with no legacy source video.
->
-> The synchronized pane is useful for validating whether the reconstruction matches the source,
-> but it changes the rights posture. Do not treat the current deployment as final until the
-> provisional file is replaced, removed, or cleared.
+Both bundled sessions use sources with documented redistribution terms. Each public 2D reference
+has a session-level information card with creator, source, license, modification notice, and
+non-endorsement language. The source licenses apply to their respective video assets and do not
+replace the repository's MIT code license or Meta's separate model terms.
 
 ### Clips currently used for development
 
 | sessionId | Subject | Source file | Res / fps | Rights state |
 |---|---|---|---|---|
-| `delivery-02` | Anonymized in product UI | Pexels 5182923 full-body field view | 2160×3840 @ 25 fps | Pexels License; reconstruction QA pending |
-| `delivery-01` | Paul Skenes, anonymized in product UI | Elevated side-view delivery | 1920×1080 @ 29.97 fps | Provisional; no reusable license found |
+| `delivery-02` | Anonymized in product UI | Pexels 5182923 full-body field view | 2160×3840 @ 25 fps | Pexels License; QA passed |
+| `delivery-03` | Hyun-jin Ryu | Wikimedia Commons center-field view | 1920×1080 @ 29.97 fps | CC BY-SA 4.0; QA passed |
 
 Manifest: [`pipeline/clips.json`](pipeline/clips.json)
 
-The `delivery-01` source was identified on 2026-09-01 as
-[`Paul Skenes Slow Motion Pitching Mechanics Throwing Motion Pitcher Video Instruction Skeens Skeenes`](https://www.youtube.com/watch?v=EwNLz21D4Uw),
-uploaded by **PastimeAthletics**. The public description promotes the channel's subscription video
-library but does not state a Creative Commons license or grant redistribution permission. YouTube
-documents that its default is the Standard YouTube license and that permission must come from the
-rightsholder unless an upload is expressly marked Creative Commons. Therefore `delivery-01` is not
-open source on the available evidence. It may remain in a clearly provisional review deployment,
-but it must be removed from the submission-final deployment unless permission or an express
-reusable license is documented.
-
-### Cleared replacement candidates — licenses verified, reconstruction pending
+### Cleared bundled sessions
 
 #### Selected clear demo candidate: Pexels 5182923
 
@@ -105,10 +73,10 @@ by **Tima Miroshnichenko** was selected after visual inspection on 2026-09-01.
   0.00–6.75 seconds with audio omitted (2160×3840, 25 fps, 169 frames).
 - Both files decoded end-to-end and produced no >=0.5-second `freezedetect` warning.
 
-The source and derivative are cleared candidates, not yet final evidence. The 25 fps timebase limits
-fast-event precision, and the clip still must pass person detection, SAM 3D Body reconstruction,
-overlay inspection, event review, and numerical gates. Do not imply that the depicted person or any
-uniform mark endorses Biomech Emcee.
+The full source is the synchronized public reference for `delivery-02`. Person detection, SAM 3D
+Body reconstruction, overlay inspection, event review, numerical gates, and public asset delivery
+passed. The 25 fps timebase still limits fast-event precision. Do not imply that the depicted person
+or any uniform mark endorses Biomech Emcee.
 
 SHA-256:
 
@@ -117,60 +85,29 @@ SHA-256:
 a5c1c447c3e8bb86d9d3ca1ac0ed10cfa68a272493ef0f0a66461a72b751500d  pexels_5182923_demo_pitch_cut.mp4
 ```
 
-#### Rejected Wikimedia fallback set
+#### Wikimedia Commons: Hyun-jin Ryu pitching motion
 
-The first replacement candidate was
-[`Gant Windup.webm`](https://commons.wikimedia.org/wiki/File:Gant_Windup.webm) from Wikimedia
-Commons:
+[`Hyun-jin Ryu Pitching motion`](https://commons.wikimedia.org/wiki/File:Hyun-jin_Ryu_Pitching_motion.webm)
+was created and uploaded as the creator's own work by **Johnmaxmena2**. Wikimedia records the
+capture date as 8 April 2019 and the license as
+[Creative Commons Attribution-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/).
 
-- Creator/rightsholder: **D. Benjamin Miller**; Commons records it as the creator's own work.
-- License: **[CC0 1.0 public-domain dedication](https://creativecommons.org/publicdomain/zero/1.0/)**.
-- Source metadata observed 2026-09-01: 1920×1080 VP8, 23.976 fps, 14.223 seconds.
-- Evidence suitability: one complete delivery and the whole body remain in frame, but the athlete
-  occupies a relatively small part of the image. It is a candidate, not a retained session, until
-  person detection, SAM 3D Body reconstruction, overlay review, event review, and numerical gates
-  pass.
-- Local review copy: `/tmp/gant-windup.webm`; temporary only and not committed.
+- Original Commons media: 1920×1080 VP8/Vorbis WebM, approximately 15 seconds.
+- Public derivative: `delivery-03.mp4`, 1920×1080 H.264/AAC, 29.970 fps, 8.25 seconds, 246 frames.
+- Changes: trimmed to the retained pitching sequence and transcoded to MP4 for browser delivery.
+- SHA-256 of the derivative:
+  `5b0a2169e9d16788bdde2ebe74719ccdd81e11a48e853177b26fa25a9ae0afef`.
+- License notice: the derivative is distributed under CC BY-SA 4.0. Preserve the creator credit,
+  source link, license link, change notice, and ShareAlike terms with any redistributed copy.
+- No endorsement by the creator, depicted athlete, team, or Wikimedia is stated or implied.
 
-The WebMCP Challenge does not whitelist particular datasets. Its official rule is that third-party
-data must be used in accordance with its terms and licensing requirements. CC0 clears the source
-video's copyright license for copying, modification, and redistribution. The footage still depicts
-a named professional athlete and a team uniform; CC0 does not independently grant trademark or
-publicity rights. If this candidate passes reconstruction QA, remove or obscure identifiable team
-marks in the judge-facing 2D reference and avoid any claim of athlete/team endorsement before it is
-eligible for the final deployment.
+The exact derivative completed all 246 person-detection and SAM 3D Body frames. QA passed through
+the full left-handed delivery despite protective netting. Automatic candidates are FC f95 (medium),
+MER f120 (low; human review required), and ball release f127 (high). At 29.97 fps, fast arm motion is
+undersampled; rate-derived observations remain medium-confidence rather than laboratory-validated.
 
-Six more expressly licensed/public-domain candidates were downloaded on 2026-09-01. Exact source
-pages, creators, license versions, media properties, SHA-256 hashes, visual preflight notes, and test
-order are recorded in `input_baseball/licensed_candidates/README.md`. The local media directory is
-git-ignored; provenance remains summarized here so it is not lost:
-
-| Candidate | License | Current assessment |
-|---|---|---|
-| Gant windup | CC0 1.0 | Copyright-simple; complete delivery, but small subject |
-| Steven Brault delivery | CC0 1.0 | Complete but only 400×300 and obstructed by netting |
-| Tim Peterson delivery | CC0 1.0 | Complete 600×450 fallback; small subject/netting |
-| Walter Johnson pitching | Public domain | Historical multi-shot footage; poor fit for the current single-take pipeline |
-| Kenta Maeda pitching | CC BY-SA 3.0 | Large full-body subject; vignette/stabilization and marks need review |
-| Hyun-jin Ryu pitching | CC BY-SA 4.0 | Best initial reconstruction candidate; large subject, net/background players |
-| Kyle Harrison delivery | CC BY 4.0 | Clean single rear-view delivery; high resolution but small subject |
-
-All seven decoded end-to-end and produced no ≥0.5-second freeze warning in the initial ffmpeg
-preflight. The owner rejected this entire set for demo use on 2026-09-01 because of subject scale,
-obstruction, noise, or distracting context. Do not spend pipeline time on them unless the Pexels
-candidate fails and the fallback decision is explicitly reopened. CC BY and CC BY-SA derivatives
-must retain their attribution and applicable share-alike notices; the repository's MIT license does
-not replace those asset licenses.
-
-Two generic Mixkit Free-License alternatives (`Baseball pitcher` #881 and `Baseball player pitching
-the ball` #856) were inspected and rejected before pipeline work because both crop out the lower
-legs during the delivery. Their licenses were adequate, but their evidence coverage was not.
-
-> **The bundled clip is a slow-motion recording at an unknown slowdown factor.** This is recorded as
-> `slowMotion: true` / `realTimeScale: null` in the manifest and carried into `session.json`.
-> Consequence: kinematic-sequence **order** and **normalized timing** remain valid, but **absolute
-> angular velocities in °/s are not derivable** and are reported as `unavailable`. See
-> `.claude/steering/tech.md` §3.2.
+The other locally reviewed candidates and their provenance remain recorded in
+`input_baseball/README.md`; they are not bundled or judge-facing assets.
 
 ---
 

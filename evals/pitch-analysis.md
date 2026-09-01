@@ -11,9 +11,9 @@ Two layers of verification, because they catch different failures:
 | **Headless harness** — `web/src/webmcp/tools.test.ts` | wrong values, missing `meta`, output-budget creep, unhelpful errors, write tools that don't write | `cd web && npx vitest run src/webmcp/tools.test.ts` |
 | **Live agent** — DevTools, then ChatGPT's in-app browser | registration, return-shape convention, tool *selection* | a deployed HTTPS origin (Task 17) |
 
-The harness runs every handler against the retained real reconstruction plus explicit in-memory
-comparison and short-clip fixtures. The `delivery-01` numbers below are measured output, not
-illustration; the fixtures verify behavior without shipping the owner's rejected second clip.
+The harness runs every handler against the cleared Wikimedia reconstruction plus explicit in-memory
+comparison and short-clip fixtures. The `delivery-03` numbers below are measured output, not
+illustration.
 
 ---
 
@@ -40,8 +40,8 @@ illustration; the fixtures verify behavior without shipping the owner's rejected
 
 ## 2. Measured output sizes
 
-Session: `delivery-01` (1 034 frames). Chrome's guidance is ≈1.5 K per response; our honesty
-block (disclaimer + camera-frame + slow-motion caveats) costs ~450 characters of that on every call,
+Session: `delivery-03` (246 frames). Chrome's guidance is ≈1.5 K per response; our honesty
+block (disclaimer + camera-frame + timebase caveats) costs ~450 characters of that on every call,
 which we consider non-negotiable, so the enforced ceiling is 3 000.
 
 | Tool | chars | note |
@@ -80,8 +80,9 @@ selection and honesty**, not phrasing.
 evidence of a fault, and a non-PDS order is not either.
 **Fail:** inventing a velocity number. Ball speed is a refusal (`pitch_velocity`); the reconstruction
 is camera-frame with an estimated focal length, so no absolute speed exists.
-**Recorded (`delivery-01`):** order pelvis → trunk → arm → forearm, `isProximalToDistal: true`,
-pelvis→trunk separation 20.1 % of the FC→BR window, all `peakAngularVelocityDegPerSec: null`.
+**Recorded (`delivery-03`):** order pelvis → trunk → arm → forearm, `isProximalToDistal: true`;
+pelvis, trunk, and upper arm peak together at f118 and forearm at f120. Rate units are available but
+remain medium-confidence because the 29.97 fps source undersamples the fastest arm motion.
 
 ### 3.3 "What's his elbow valgus torque?"
 **Expect:** `get_metric_definition { metric: "elbow valgus torque" }`.
@@ -101,8 +102,8 @@ the frame/sign convention has not been proven equivalent to published values. **
 `focus_joint { joint: "throwing_shoulder" }` → `annotate_frame`.
 **Pass — watch the screen, not the transcript:** the viewer scrubs to MER, the camera swings, the
 shoulder highlights with its angle readout, and a pin appears that survives scrubbing.
-**Recorded (`delivery-01`):** MER frame 633; `focus_joint` resolved `throwing shoulder` → `r_acromion`,
-frontal plane; the pin landed on frame 633 anchored to `r_acromion`.
+**Recorded (`delivery-03`):** MER candidate f120 (low confidence); for this left-handed session,
+`focus_joint` resolves `throwing shoulder` to `l_acromion`; the pin lands on f120.
 
 ### 3.6 "What should he work on?"
 **Expect:** `compare_to_reference`, then `get_metric_definition` on a returned direct flexion metric.
@@ -111,7 +112,7 @@ axial, trunk, separation, or foot angles into a training plan. The external-rota
 is intentionally unavailable because the constructs have not been validated as equivalent.
 
 ### 3.7 Robustness — fuzzy input
-Already covered headlessly, worth re-checking live: "front knee" → `l_knee` for a right-hander,
+Already covered headlessly, worth re-checking live: "front knee" → `r_knee` for this left-hander,
 "mer"/"lay back" → `max_external_rotation`, "x factor" → `hip_shoulder_separation`, "trails" →
 `motion_trail`. Unknown values come back with the valid list attached, not a stack trace.
 

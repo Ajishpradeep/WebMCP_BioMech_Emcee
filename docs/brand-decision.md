@@ -92,7 +92,7 @@ The durable pitch is:
 - [ ] Review any GitHub profile display-name preference separately; it is account-wide and was not
       changed as part of this repository decision.
 - [x] Keep the stable legacy Cloud Run URL; it now serves the current Biomech Emcee build.
-- [ ] Replace or clear the provisional professional-player footage before final screenshots/video.
+- [x] Replace the provisional footage with cleared Pexels and CC BY-SA 4.0 sources before final screenshots/video.
 - [ ] Run the live WebMCP host checklist only after the desired manual application changes are made.
 
 When the owner declares the app review complete, follow [`devpost-resume.md`](devpost-resume.md).

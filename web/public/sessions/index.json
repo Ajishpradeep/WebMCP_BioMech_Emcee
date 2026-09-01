@@ -18,20 +18,20 @@
       }
     },
     {
-      "sessionId": "delivery-01",
-      "label": "Pitch — elevated side view",
-      "handedness": "right",
-      "view": "elevated third-base side",
-      "frameCount": 1034,
-      "file": "delivery-01.json",
+      "sessionId": "delivery-03",
+      "label": "Pitch — left-handed center-field view",
+      "handedness": "left",
+      "view": "center-field full-body game view through protective netting",
+      "frameCount": 246,
+      "file": "delivery-03.json",
       "rights": {
-        "status": "unverified",
-        "creator": "Uploader: PastimeAthletics; underlying footage rights not verified",
-        "sourceLabel": "Paul Skenes Slow Motion Pitching Mechanics Throwing Motion Pitcher Video Instruction Skeens Skeenes",
-        "sourceUrl": "https://www.youtube.com/watch?v=EwNLz21D4Uw",
-        "licenseLabel": "No Creative Commons or redistribution grant found; Standard YouTube license assumed",
-        "licenseUrl": "https://support.google.com/youtube/answer/2797468",
-        "note": "This session remains provisional. A clean image and lack of broadcast marks do not grant redistribution rights. Remove it from the submission-final deployment unless permission or a reusable license is documented."
+        "status": "licensed",
+        "creator": "Johnmaxmena2",
+        "sourceLabel": "Hyun-jin Ryu Pitching motion — Wikimedia Commons",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Hyun-jin_Ryu_Pitching_motion.webm",
+        "licenseLabel": "Creative Commons Attribution-ShareAlike 4.0 International",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "note": "The Commons source is the creator's own work. This 8.25-second MP4 is a trimmed and transcoded derivative of the 15-second WebM source. Credit, license link, change notice, and ShareAlike are preserved; no endorsement is implied."
       }
     }
   ]

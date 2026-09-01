@@ -71,9 +71,9 @@ stops later submission work until the smallest fix is deployed and retested.
 - The public build presents precomputed review sessions; local CUDA upload is development tooling.
 - Future before/after comparison data should be the same athlete and camera setup, using
   self-recorded or clearly licensed footage. The short cross-view second session was removed during
-  owner review. A new licensed Pexels full-body reconstruction now occupies `delivery-02` and is the
-  default review session; the legacy `delivery-01` remains provisional at the owner's direction.
-  These two sessions depict different athletes and viewpoints, so any tool comparison is
+  owner review. Cleared Pexels `delivery-02` and CC BY-SA 4.0 Wikimedia `delivery-03`
+  reconstructions are now the intended review sessions. They depict different athletes, handedness,
+  and viewpoints, so any tool comparison is
   descriptive only and cannot support improvement/regression claims.
 - **Completed 2026-08-31:** `compare_pitches` now labels every result `descriptive_only` and refuses
   to imply improvement/regression without independently established athlete identity and protocol.
@@ -179,7 +179,8 @@ original frame.
 ---
 
 ### Task 5 — Per-frame SAM 3D Body inference runner
-> ✅ **DONE** — `pipeline/run.py`. Sanity gate passed: `pipeline/out/qa_scherzer-delivery-01.mp4` tracks the pitcher through the whole delivery.
+> ✅ **DONE** — `pipeline/run.py`. Sanity gates passed for both cleared bundled reconstructions;
+> their QA overlays track the pitcher through the whole delivery.
 **Goal:** raw model output for every frame.
 **Do:** Batch over the frame folder, persist per-frame `pred_keypoints_3d`, `pred_keypoints_2d`,
 `pred_cam_t`, `focal_length`, `shape_params`. Cache to disk so reruns are free.

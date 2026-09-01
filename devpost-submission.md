@@ -95,10 +95,10 @@ offline; session review and WebMCP execution are browser-local.
 
 1. Open <https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app> in ChatGPT's in-app browser or Chrome
    149+ with `chrome://flags/#enable-webmcp-testing` enabled.
-2. Confirm the single precomputed review session appears and the header reports all 13 WebMCP tools. No login is
-   required.
+2. Confirm the cleared Pexels and Wikimedia review sessions appear and the header reports all 13
+   WebMCP tools. No login is required.
 3. Ask: “What am I looking at?” The agent should call `get_session_overview` and mention the
-   camera-frame and slow-motion limitations.
+   camera-frame and timebase limitations.
 4. Ask: “Show maximum layback and leave a note for the reviewer.” The agent should seek to MER,
    focus the throwing shoulder, and pin a visible annotation.
 5. Scrub to a nearby frame and select **Use f123** (with the displayed frame number) for an event
@@ -172,8 +172,6 @@ Suggested outline:
 
 ### Required before submission
 
-- Replace final demo data with self-recorded or clearly licensed footage and remove professional
-  player names if the cleared dataset does not support them.
 - Repeat the critical WebMCP flow in ChatGPT's in-app browser and Chrome after the cleared-evidence
   revision is deployed; the provisional-origin run is recorded in `evals/webmcp-live-checklist.md`.
 - Capture 3–5 final screenshots from the cleared-data build.
@@ -183,12 +181,11 @@ Suggested outline:
 
 ## Known Limitations
 
-- Current professional-player sessions are provisional internal validation data derived from
-  uncleared broadcast/YouTube footage. Source video is excluded from the repository, but final
-  submission/demo assets will use cleared footage.
+- Both bundled sources have documented redistribution terms: Pexels License for `delivery-02` and
+  CC BY-SA 4.0 for the attributed, modified Wikimedia derivative in `delivery-03`.
 - Monocular reconstruction is camera-frame with an estimated focal length; distances are not metric.
-- The demo clips use slow motion with an unknown time factor, so absolute angular velocities are
-  unavailable.
+- The 25 and 29.97 fps demo clips undersample fast arm motion, so event timing and rate-derived
+  observations are bounded rather than treated as laboratory-grade.
 - Only direct two-segment elbow and lead-knee flexion measurements are compared with published
   ranges. Other measurements are exploratory until their constructs and conventions are validated.
 - The kinematic display is a partial four-segment order, not a complete published five-segment

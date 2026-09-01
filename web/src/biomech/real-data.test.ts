@@ -15,7 +15,7 @@ import { analyze } from './analyze'
 import { metricSeries } from './angles'
 
 const session: Session = JSON.parse(
-  readFileSync(join(__dirname, '../../public/sessions/delivery-01.json'), 'utf8'),
+  readFileSync(join(__dirname, '../../public/sessions/delivery-03.json'), 'utf8'),
 )
 
 const finite = (xs: (number | null)[]) => xs.filter((v): v is number => v !== null && Number.isFinite(v))
@@ -26,11 +26,12 @@ const range = (xs: (number | null)[]) => {
 
 describe('real session integrity', () => {
   it('loads a well-formed session', () => {
-    expect(session.frames.length).toBeGreaterThan(1000)
+    expect(session.frames.length).toBe(246)
     expect(session.joints).toHaveLength(24)
     expect(session.capture.cameraFrame).toBe(true)
-    expect(session.timebase.slowMotion).toBe(true)
-    expect(session.timebase.realTimeScale).toBeNull()
+    expect(session.subject.handedness).toBe('left')
+    expect(session.timebase.slowMotion).toBe(false)
+    expect(session.timebase.realTimeScale).toBe(1)
   })
 })
 
@@ -112,10 +113,10 @@ describe('analysis output contract', () => {
     expect(result.series.shoulder_external_rotation.some((v) => v !== null)).toBe(true)
   })
 
-  it('refuses rate units because the clip is slow motion at an unknown factor', () => {
-    expect(result.rateConfidence).toBe('unavailable')
-    expect(result.sequence.rateUnitsAvailable).toBe(false)
-    for (const p of result.sequence.peaks) expect(p.peakAngularVelocity).toBeNull()
+  it('reports bounded rate units for the normal-rate source', () => {
+    expect(result.rateConfidence).toBe('medium')
+    expect(result.sequence.rateUnitsAvailable).toBe(true)
+    for (const p of result.sequence.peaks) expect(p.peakAngularVelocity).toBeGreaterThan(0)
   })
 
   it('reports a kinematic sequence with the literature caveat attached', () => {

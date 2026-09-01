@@ -9,7 +9,7 @@ pipeline/requirements.txt.
 
 Usage:
     .venv/bin/python pipeline/run.py                       # all clips in clips.json
-    .venv/bin/python pipeline/run.py delivery-01             # one clip
+    .venv/bin/python pipeline/run.py delivery-03             # one clip
     .venv/bin/python pipeline/run.py --stride 4            # every 4th frame (fast preview)
 """
 
@@ -54,8 +54,7 @@ def detect_person(model, img_rgb: np.ndarray, device: str, score_thr: float = 0.
     """Return the most plausible pitcher box [x1,y1,x2,y2], or None.
 
     Selection rule: among confident person detections, maximise area weighted by
-    closeness to frame centre. The Scherzer clip has a second player near the
-    outfield wall that must never win.
+    closeness to frame centre. This prevents smaller background players from winning.
     """
     h, w = img_rgb.shape[:2]
     t = torch.from_numpy(img_rgb).permute(2, 0, 1).float().div(255).to(device)
@@ -293,7 +292,7 @@ def main() -> None:
     ap.add_argument("--stride", type=int, default=1, help="process every Nth frame")
     args = ap.parse_args()
 
-    clips = json.loads((REPO / "pipeline" / "clips.json").read_text())["clips"]
+    clips = json.loads((REPO / "pipeline" / "clips.json").read_text(encoding="utf-8"))["clips"]
     if args.sessionId:
         clips = [c for c in clips if c["sessionId"] == args.sessionId]
         if not clips:
@@ -316,7 +315,10 @@ def main() -> None:
     for clip in clips:
         session = run_clip(clip, estimator, detector, device, args.stride)
         out = OUT_DIR / f"{clip['sessionId']}.json"
-        out.write_text(json.dumps(session, separators=(",", ":")))
+        out.write_text(
+            json.dumps(session, separators=(",", ":"), ensure_ascii=False),
+            encoding="utf-8",
+        )
         size_kb = out.stat().st_size / 1024
         print(f"    -> {out.relative_to(REPO)}  ({size_kb:.0f} KB, {session['source']['frameCount']} frames)")
         index.append({
@@ -330,10 +332,17 @@ def main() -> None:
 
     # merge into the session index so the web app can enumerate what's available
     idx_path = OUT_DIR / "index.json"
-    existing = json.loads(idx_path.read_text())["sessions"] if idx_path.exists() else []
+    existing = (
+        json.loads(idx_path.read_text(encoding="utf-8"))["sessions"]
+        if idx_path.exists()
+        else []
+    )
     by_id = {s["sessionId"]: s for s in existing}
     by_id.update({s["sessionId"]: s for s in index})
-    idx_path.write_text(json.dumps({"sessions": list(by_id.values())}, indent=2))
+    idx_path.write_text(
+        json.dumps({"sessions": list(by_id.values())}, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
     print(f"\nwrote {idx_path.relative_to(REPO)}  ({len(by_id)} sessions)")
 
 
