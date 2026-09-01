@@ -23,7 +23,9 @@ direction, not a current feature.
 
 - Interactive in-browser 3D skeleton review, timeline scrubbing, camera presets, overlays, and
   persistent annotations.
-- One committed, precomputed review session that cold-loads without a GPU or backend.
+- Two committed, precomputed review sessions that cold-load without a GPU or backend. The licensed
+  Pexels full-body session is the default; the legacy YouTube-derived session remains visibly
+  provisional while its redistribution rights are unresolved.
 - Thirteen WebMCP tools: nine read tools for session, measurement, and evidence context; four write
   tools that visibly navigate and annotate the shared review surface.
 - Published-range comparisons only for construct-compatible direct two-segment elbow and lead-knee
@@ -89,10 +91,11 @@ the public demo reproducible and makes WebMCP appropriate for the live, human-vi
 ## Important boundaries
 
 Biomech Emcee is not a marker-based motion-capture replacement, diagnostic system, injury-risk
-predictor, medical device, or autonomous pitching coach. It uses camera-frame reconstruction and
-the synchronized demo source footage has unresolved broadcast rights; see [ATTRIBUTION.md](ATTRIBUTION.md).
-The footage must be replaced or removed before the final submission, and the demo data must not be
-used for clinical decisions. The project’s claim boundary and technical decisions are in
+predictor, medical device, or autonomous pitching coach. It uses camera-frame reconstruction. The
+default synchronized source is licensed through Pexels; the retained legacy session has unresolved
+YouTube redistribution rights and must be removed before the submission-final deployment unless
+permission is documented. See [ATTRIBUTION.md](ATTRIBUTION.md). The demo data must not be used for
+clinical decisions. The project’s claim boundary and technical decisions are in
 [SPEC.md](SPEC.md) and [HANDOFF.md](HANDOFF.md).
 
 ## Repository map

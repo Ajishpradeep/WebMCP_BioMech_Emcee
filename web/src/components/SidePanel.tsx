@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import { useAnalysis } from '../store'
 import type { Session } from '../types'
 import { MetricsPanel } from './MetricsPanel'
@@ -11,7 +13,7 @@ function SessionDetails({ session }: { session: Session }) {
       <details className="session-details">
         <summary>
           <span>Session & measurement limits</span>
-          <span className="summary-flags">camera-frame · slow-mo</span>
+          <span className="summary-flags">camera-frame · {tb.slowMotion ? 'slow-mo' : 'normal-rate'}</span>
         </summary>
         <div className="meta">
           <dl>
@@ -38,6 +40,15 @@ function SessionDetails({ session }: { session: Session }) {
                   <strong>Slow-motion source, unknown factor.</strong> Sequence <em>order</em> and
                   normalised timing stay valid; absolute angular velocity is{' '}
                   <span className="mono">unavailable</span>.
+                </div>
+              </div>
+            )}
+            {!tb.slowMotion && tb.scaleSource === 'estimated' && (
+              <div className="caveat">
+                <span className="dot amber" />
+                <div>
+                  <strong>Normal-rate playback inferred from the source.</strong> Video time is
+                  treated as real time, but rate-derived measurements remain medium-confidence.
                 </div>
               </div>
             )}
@@ -97,6 +108,7 @@ function AgentNotes() {
 }
 
 export function SidePanel({ session }: { session: Session | null }) {
+  const [rightsOpen, setRightsOpen] = useState<string | null>(null)
   const analysis = useAnalysis((s) => s.analysis)
   const index = useAnalysis((s) => s.index)
   const loadSession = useAnalysis((s) => s.loadSession)
@@ -110,16 +122,53 @@ export function SidePanel({ session }: { session: Session | null }) {
         <h2>Evidence session</h2>
         <div className="session-list">
           {index.length === 0 && <p className="dim small">No analysed sessions yet.</p>}
-          {index.map((item) => (
-            <button
-              key={item.sessionId}
-              className={`session-item ${session?.sessionId === item.sessionId ? 'on' : ''}`}
-              onClick={() => loadSession(item.sessionId)}
-            >
-              <span className="si-label">{item.label}</span>
-              <span className="si-meta mono">{item.frameCount} frames · {item.handedness}</span>
-            </button>
-          ))}
+          {index.map((item) => {
+            const open = rightsOpen === item.sessionId
+            return (
+              <div
+                key={item.sessionId}
+                className={`session-entry ${session?.sessionId === item.sessionId ? 'on' : ''}`}
+              >
+                <button className="session-item" onClick={() => loadSession(item.sessionId)}>
+                  <span className="si-label">{item.label}</span>
+                  <span className="si-meta mono">{item.frameCount} frames · {item.handedness}</span>
+                </button>
+                {item.rights && (
+                  <button
+                    className="info-button session-rights-button"
+                    type="button"
+                    aria-label={`Copyright and license information for ${item.label}`}
+                    aria-expanded={open}
+                    aria-controls={`rights-${item.sessionId}`}
+                    onClick={() => setRightsOpen(open ? null : item.sessionId)}
+                  >
+                    i
+                  </button>
+                )}
+                {open && item.rights && (
+                  <div id={`rights-${item.sessionId}`} className={`session-rights-card ${item.rights.status}`}>
+                    <strong>{item.rights.status === 'licensed' ? 'Licensed source' : 'Rights unverified'}</strong>
+                    <dl>
+                      <div><dt>Creator</dt><dd>{item.rights.creator}</dd></div>
+                      <div>
+                        <dt>Source</dt>
+                        <dd><a href={item.rights.sourceUrl} target="_blank" rel="noreferrer">{item.rights.sourceLabel}</a></dd>
+                      </div>
+                      <div>
+                        <dt>License</dt>
+                        <dd>
+                          {item.rights.licenseUrl ? (
+                            <a href={item.rights.licenseUrl} target="_blank" rel="noreferrer">{item.rights.licenseLabel}</a>
+                          ) : item.rights.licenseLabel}
+                        </dd>
+                      </div>
+                    </dl>
+                    <p>{item.rights.note}</p>
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </div>
       </section>
 

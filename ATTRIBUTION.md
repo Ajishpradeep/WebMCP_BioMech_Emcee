@@ -39,13 +39,12 @@
 
 ## Source footage
 
-> ### ⚠️ Unresolved licensing — read before publishing
+> ### ⚠️ Mixed rights state — read before publishing
 >
-> The clips in `input_baseball/` are **third-party MLB/broadcast-derived videos** obtained from
-> YouTube. They are **not** cleared for redistribution. The owner-review build includes one
-> trimmed, synchronized 2D reference file under `web/public/sessions/`. It is a **provisional review
-> asset** in the current public deployment and must be replaced or removed before final submission
-> unless permission is confirmed.
+> `delivery-02` now uses a Pexels-licensed source with recorded provenance. The legacy
+> `delivery-01` synchronized reference is a third-party YouTube-derived video and is **not** cleared
+> for redistribution on the available evidence. It remains a provisional review asset at the
+> owner's direction and must be removed before final submission unless permission is confirmed.
 >
 > `.claude/steering/tech.md` §7 says "no scraped broadcast footage," and strictly these clips
 > violate that rule. The pragmatic position taken for the hackathon window:
@@ -59,10 +58,9 @@
 > | 3D skeleton renders (no source imagery) | ✅ Yes | Contains no copyrighted footage |
 >
 > **Before submission, do one of:**
-> 1. **Self-record** a pitch (best — fully clean, and removes the question entirely), or
-> 2. Ship only the derived `session.json` + 3D skeleton view, with **no source video** in the repo
->    or the demo video, or
-> 3. Source a Creative Commons / public-domain pitching clip and re-run the pipeline.
+> 1. Remove `delivery-01` and submit the licensed `delivery-02` session, or
+> 2. Obtain and record explicit permission for the legacy source, or
+> 3. Ship only the legacy derived `session.json` + 3D skeleton view, with no legacy source video.
 >
 > The synchronized pane is useful for validating whether the reconstruction matches the source,
 > but it changes the rights posture. Do not treat the current deployment as final until the
@@ -70,11 +68,22 @@
 
 ### Clips currently used for development
 
-| sessionId | Subject | Source file | Res / fps |
-|---|---|---|---|
-| `delivery-01` | Anonymized in product UI | Elevated side-view delivery | 1920×1080 @ 29.97 fps |
+| sessionId | Subject | Source file | Res / fps | Rights state |
+|---|---|---|---|---|
+| `delivery-02` | Anonymized in product UI | Pexels 5182923 full-body field view | 2160×3840 @ 25 fps | Pexels License; reconstruction QA pending |
+| `delivery-01` | Paul Skenes, anonymized in product UI | Elevated side-view delivery | 1920×1080 @ 29.97 fps | Provisional; no reusable license found |
 
 Manifest: [`pipeline/clips.json`](pipeline/clips.json)
+
+The `delivery-01` source was identified on 2026-09-01 as
+[`Paul Skenes Slow Motion Pitching Mechanics Throwing Motion Pitcher Video Instruction Skeens Skeenes`](https://www.youtube.com/watch?v=EwNLz21D4Uw),
+uploaded by **PastimeAthletics**. The public description promotes the channel's subscription video
+library but does not state a Creative Commons license or grant redistribution permission. YouTube
+documents that its default is the Standard YouTube license and that permission must come from the
+rightsholder unless an upload is expressly marked Creative Commons. Therefore `delivery-01` is not
+open source on the available evidence. It may remain in a clearly provisional review deployment,
+but it must be removed from the submission-final deployment unless permission or an express
+reusable license is documented.
 
 ### Cleared replacement candidates — licenses verified, reconstruction pending
 

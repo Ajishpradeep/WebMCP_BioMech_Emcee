@@ -266,7 +266,7 @@ describe('evidence tools', () => {
 
   it('explains when the bundled workspace has no second pitch to compare', async () => {
     useAnalysis.setState({
-      index,
+      index: index.filter((entry) => entry.sessionId === active.sessionId),
       cache: { [active.sessionId]: useAnalysis.getState().cache[active.sessionId] },
     })
     const res = (await call('compare_pitches')) as Result

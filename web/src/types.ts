@@ -82,6 +82,15 @@ export interface SessionIndexEntry {
   view: string
   frameCount: number
   file: string
+  rights?: {
+    status: 'licensed' | 'unverified'
+    creator: string
+    sourceLabel: string
+    sourceUrl: string
+    licenseLabel: string
+    licenseUrl?: string
+    note: string
+  }
 }
 
 /** Named pitching events. Detection lands in Task 9. */

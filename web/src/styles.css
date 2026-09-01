@@ -264,6 +264,8 @@ body {
 /* ── sessions ─────────────────────────────────────────────────────────── */
 .session-list { display: flex; flex-direction: column; gap: 6px; }
 
+.session-entry { position: relative; }
+
 .session-item {
   display: flex;
   flex-direction: column;
@@ -272,15 +274,37 @@ body {
   background: var(--bg-2);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  padding: 9px 11px;
+  width: 100%;
+  padding: 9px 40px 9px 11px;
   cursor: pointer;
   font: inherit;
   color: var(--fg);
 }
 .session-item:hover { border-color: var(--line-2); }
-.session-item.on { border-color: var(--accent); background: rgba(56, 189, 248, 0.08); }
+.session-entry.on .session-item { border-color: var(--accent); background: rgba(56, 189, 248, 0.08); }
 .si-label { font-size: 13px; }
 .si-meta { font-size: 11px; color: var(--fg-faint); }
+.session-rights-button { position: absolute; top: 10px; right: 10px; }
+.session-rights-card {
+  margin-top: 5px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--accent-2);
+  border-radius: var(--radius);
+  background: var(--bg-2);
+  color: var(--fg-dim);
+  font-size: 10.5px;
+  line-height: 1.4;
+}
+.session-rights-card.unverified { border-left-color: var(--amber); }
+.session-rights-card > strong { display: block; margin-bottom: 7px; color: var(--fg); font-size: 11px; }
+.session-rights-card.unverified > strong { color: var(--amber); }
+.session-rights-card dl { display: grid; gap: 6px; margin: 0; }
+.session-rights-card dl > div { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 7px; }
+.session-rights-card dt { color: var(--fg-faint); }
+.session-rights-card dd { margin: 0; overflow-wrap: anywhere; }
+.session-rights-card a { color: var(--accent); }
+.session-rights-card p { margin: 8px 0 0; color: var(--fg-dim); }
 
 /* ── event review ─────────────────────────────────────────────────────── */
 .review-instruction {

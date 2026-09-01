@@ -1,12 +1,38 @@
 {
   "sessions": [
     {
+      "sessionId": "delivery-02",
+      "label": "Pitch — full-body field view",
+      "handedness": "right",
+      "view": "front-side full-body field view",
+      "frameCount": 288,
+      "file": "delivery-02.json",
+      "rights": {
+        "status": "licensed",
+        "creator": "Tima Miroshnichenko",
+        "sourceLabel": "Baseball Player Pitching a Baseball — Pexels 5182923",
+        "sourceUrl": "https://www.pexels.com/video/baseball-player-pitching-a-baseball-5182923/",
+        "licenseLabel": "Pexels License",
+        "licenseUrl": "https://www.pexels.com/license/",
+        "note": "Pexels permits free use and modification in websites and apps. Attribution is not required, but is preserved here for provenance. Do not imply endorsement by the depicted person or uniform brand."
+      }
+    },
+    {
       "sessionId": "delivery-01",
-      "label": "Pitch \u2014 elevated side view",
+      "label": "Pitch — elevated side view",
       "handedness": "right",
       "view": "elevated third-base side",
       "frameCount": 1034,
-      "file": "delivery-01.json"
+      "file": "delivery-01.json",
+      "rights": {
+        "status": "unverified",
+        "creator": "Uploader: PastimeAthletics; underlying footage rights not verified",
+        "sourceLabel": "Paul Skenes Slow Motion Pitching Mechanics Throwing Motion Pitcher Video Instruction Skeens Skeenes",
+        "sourceUrl": "https://www.youtube.com/watch?v=EwNLz21D4Uw",
+        "licenseLabel": "No Creative Commons or redistribution grant found; Standard YouTube license assumed",
+        "licenseUrl": "https://support.google.com/youtube/answer/2797468",
+        "note": "This session remains provisional. A clean image and lack of broadcast marks do not grant redistribution rights. Remove it from the submission-final deployment unless permission or a reusable license is documented."
+      }
     }
   ]
 }

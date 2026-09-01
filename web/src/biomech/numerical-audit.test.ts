@@ -20,6 +20,8 @@ const load = (id: string): Session => JSON.parse(
 )
 const fullSession = load('delivery-01')
 const full = analyze(fullSession)
+const clearedSession = load('delivery-02')
+const cleared = analyze(clearedSession)
 const cutSession: Session = {
   ...fullSession,
   sessionId: 'short-clip-fixture',
@@ -41,6 +43,7 @@ const REFERENCED = new Set<MetricName>(['lead_knee_flexion', 'elbow_flexion'])
 
 describe.each([
   ['delivery-01', fullSession, full],
+  ['delivery-02', clearedSession, cleared],
   ['short-clip fixture', cutSession, cut],
 ] as const)('%s complete numerical contract', (_id, session, result) => {
   it('returns one finite-or-null value per frame for every metric', () => {
@@ -83,6 +86,26 @@ describe.each([
     const byName = Object.fromEntries(result.events.map((event) => [event.name, event]))
     expect(byName.foot_contact.frame).toBeLessThan(byName.max_external_rotation.frame)
     expect(byName.max_external_rotation.frame).toBeLessThan(byName.ball_release.frame)
+  })
+})
+
+describe('cleared Pexels session contract', () => {
+  it('keeps the reconstructed frames aligned to the synchronized source video', () => {
+    expect(clearedSession.sessionId).toBe('delivery-02')
+    expect(clearedSession.source.videoFile).toBe('delivery-02.mp4')
+    expect(clearedSession.source.frameCount).toBe(288)
+    expect(clearedSession.frames).toHaveLength(288)
+    expect(clearedSession.frames[0].sourceFrame).toBe(0)
+    expect(clearedSession.frames.at(-1)?.sourceFrame).toBe(287)
+    expect(clearedSession.timebase.videoFps).toBe(25)
+    expect(clearedSession.timebase.slowMotion).toBe(false)
+  })
+
+  it('exposes the normal-rate sequence without overstating its quality', () => {
+    expect(cleared.sequence.available).toBe(true)
+    expect(['low', 'medium']).toContain(cleared.sequence.quality)
+    expect(cleared.rateConfidence).toBe('medium')
+    expect(cleared.sequence.rateUnitsAvailable).toBe(true)
   })
 })
 

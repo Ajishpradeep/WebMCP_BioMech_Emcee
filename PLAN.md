@@ -69,9 +69,12 @@ stops later submission work until the smallest fix is deployed and retested.
   reviewed event. A manually labelled benchmark for the committed clips is still required before
   claiming event-detection accuracy.
 - The public build presents precomputed review sessions; local CUDA upload is development tooling.
-- Future demo comparison data should be the same athlete and camera setup, using self-recorded or
-  clearly licensed footage. The short cross-view second session was removed during owner review;
-  the bundled product currently contains one review session.
+- Future before/after comparison data should be the same athlete and camera setup, using
+  self-recorded or clearly licensed footage. The short cross-view second session was removed during
+  owner review. A new licensed Pexels full-body reconstruction now occupies `delivery-02` and is the
+  default review session; the legacy `delivery-01` remains provisional at the owner's direction.
+  These two sessions depict different athletes and viewpoints, so any tool comparison is
+  descriptive only and cannot support improvement/regression claims.
 - **Completed 2026-08-31:** `compare_pitches` now labels every result `descriptive_only` and refuses
   to imply improvement/regression without independently established athlete identity and protocol.
 

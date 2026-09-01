@@ -3,14 +3,15 @@
 > **New session? Read this file first, then [`CLAUDE.md`](CLAUDE.md).** This is the live log of what
 > is done, what was learned, and what to do next. Updated at the end of every completed task.
 
-**Last updated:** 2026-09-01, after provisional-origin WebMCP validation
+**Last updated:** 2026-09-01, after licensed-session integration and local verification
 **Current state:** **CLEARED EVIDENCE GATE.** The owner application review is complete;
 its product, UX, and scientific decisions remain preserved below. Tasks 16–18 now advance through
 the ordered release gates in [`docs/devpost-resume.md`](docs/devpost-resume.md): live WebMCP proof,
 cleared evidence, final deployment reconciliation, then judge-experience validation. The current
 Cloud Run build is a provisional validation origin, not submission-final. Native Chrome 154 and an
-owner-observed ChatGPT in-app-browser run have now cleared live supported-host validation on this
-revision; source-video rights remain unresolved. Do not capture final assets or claim final-build client
+owner-observed ChatGPT in-app-browser run have now cleared live supported-host validation on the
+prior revision. A licensed Pexels session is locally integrated and visually verified; the retained
+legacy session's redistribution rights remain unresolved. Do not capture final assets or claim final-build client
 compatibility until the corresponding ledger items in
 [`evals/webmcp-live-checklist.md`](evals/webmcp-live-checklist.md) are backed by observed evidence.
 
@@ -88,21 +89,21 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 |---|---|---|
 | 1 — SAM 3D Body access | ✅ | Approved. Checkpoints local (2.7 GB, git-ignored). |
 | 2 — Env + smoke test | ✅ | torch 2.6.0+cu124, RTX A6000. |
-| 3 — Demo footage | 🟡 | One professional delivery, anonymized in the UI. Its synchronized 2D asset is provisional; **rights unresolved — §6.** |
+| 3 — Demo footage | 🟡 | Licensed Pexels full-body source integrated as default `delivery-02`; legacy `delivery-01` remains provisional with unresolved YouTube redistribution rights. |
 | 4 — Frame extraction + detection | ✅ | `pipeline/run.py`, torchvision Faster R-CNN. |
-| 5 — Inference runner | ✅ | **QA gate passed** for the retained delivery. The rejected 38-frame second view and its QA output were removed during owner review. |
+| 5 — Inference runner | ✅ | **QA gate passed** for the licensed 288-frame Pexels delivery and the retained legacy delivery. The rejected historical 38-frame second view remains removed. |
 | 6 — 🔒 Freeze schema | ✅ | **Frozen.** `pipeline/joint_map.py` ↔ `web/src/types.ts`. |
 | 7 — Smoothing + export | ✅ | Savitzky–Golay. Proportions validated (§4). |
 | 11 — Web app scaffold | ✅ | React 19 + Vite 8 + r3f + Zustand. |
 | 12 — 2D/3D viewer + timeline | ✅ | Frame-synchronized source reference beside the 3D reconstruction; playback, scrub, annotation pins, and camera/focus/evidence controls integrated into one transport toolbar. |
-| 8–10 — Biomechanics engine | ✅ | `web/src/biomech/`; complete suite currently 79 tests green, including the retained real-session numerical audit and synthetic short-clip refusal. |
+| 8–10 — Biomechanics engine | ✅ | `web/src/biomech/`; complete suite currently 85 tests green, including both real-session numerical contracts and synthetic short-clip refusal. |
 | 12b — Metrics panel | ✅ | Stable event/live tile grids, confidence/status color, and `i` disclosures for ranges, methods, limitations, and citations. |
 | **13–15 — WebMCP tools ★** | ✅ code / ✅ provisional live | Chrome 154 passed all 13 handlers and visible writes; ChatGPT natural-language discovery, navigation, focus, annotation, correction readback, and refusal also passed. |
 | 16 — Verification + evals | ✅ provisional origin / 🟡 final retest | Supported-client evidence is recorded in [`evals/webmcp-live-checklist.md`](evals/webmcp-live-checklist.md). Repeat the critical flow after cleared evidence is deployed. |
 | 16b — Scientific truth gate | 🟡 phase 2 | Incompatible comparisons removed; branch flips fixed; short-clip event/KSA gates implemented. Human MER review and external validation remain. |
 | P1 — Human event correction | ✅ | Reviewers can apply the current frame to FC/MER/BR; analysis and WebMCP reads update together. |
 | P1 — Owner-review UX hierarchy | ✅ | Right inspector now reads as event anchors → measurements → shared notes; all four write-tool effects have prominent visible surfaces. |
-| P1 — Reference-view legibility | ✅ local | The synchronized 2D source is now a resizable lower-right picture-in-picture surface; the 3D canvas retains the full stage, and long joint readouts/pins wrap with compact labels. 79 tests, typecheck, build, and desktop/narrow renders pass. |
+| P1 — Reference-view legibility | ✅ local | The synchronized 2D source is a resizable lower-right picture-in-picture surface; the 3D canvas retains the full stage, and long joint readouts/pins wrap with compact labels. The licensed portrait reference also renders correctly. 85 tests, typecheck, build, and desktop render pass. |
 | 17 — GCP deploy | ✅ | Public Cloud Run origin verified; see [`docs/deployment.md`](docs/deployment.md). |
 | 18 — Submission package | 🟡 | README, license, and Devpost draft complete; cleared footage, live-host verification, screenshots, video, and final form answers remain. |
 
@@ -236,8 +237,10 @@ professional footage.
 - Hip–shoulder separation, trunk tilts, shoulder rotation/plane values, and foot angle remain visible
   as low-confidence observational proxies. Their absolute values are never compared to clinical
   ranges until this landmark protocol and coordinate convention are externally validated.
-- `delivery-01` is the only bundled and sequence-capable session. A future second session must be
-  long enough for event review and use cleared footage before it supports judge-facing comparison.
+- `delivery-02` is now a bundled, sequence-capable licensed Pexels session and the default review.
+  `delivery-01` remains bundled only as a visibly provisional legacy session. They depict different
+  athletes and viewpoints, so cross-session differences are descriptive only and must never be
+  presented as improvement, regression, or a controlled comparison.
 
 ## 4c. The WebMCP tool surface — how it actually works
 
@@ -269,8 +272,8 @@ professional footage.
   trimmed; see `evals/pitch-analysis.md` §2 before adding a field to any response.
 - **`compare_pitches` analyses a second pitch off-screen when one is available** via
   `store.analysisFor()`, which caches into `store.cache`. It never yanks the human's view to the
-  other session. With the current single-session bundle it returns a structured, retryable
-  explanation that no second analysis is available.
+  other session. The current two-session bundle returns descriptive differences plus explicit
+  different-athlete/camera caveats; the single-session structured refusal remains covered by test.
 - **`angle_readouts` now does something.** It was a dead toggle; `focus_joint` turns it on and
   `SkeletonViewer` renders the focused joint's angles in 3D. Without that, two write tools would
   have had no visible effect — which would have undermined the whole submission claim.
