@@ -76,9 +76,9 @@
 
 Manifest: [`pipeline/clips.json`](pipeline/clips.json)
 
-### Cleared replacement candidate — license verified, reconstruction pending
+### Cleared replacement candidates — licenses verified, reconstruction pending
 
-The first replacement candidate is
+The first replacement candidate was
 [`Gant Windup.webm`](https://commons.wikimedia.org/wiki/File:Gant_Windup.webm) from Wikimedia
 Commons:
 
@@ -98,6 +98,27 @@ a named professional athlete and a team uniform; CC0 does not independently gran
 publicity rights. If this candidate passes reconstruction QA, remove or obscure identifiable team
 marks in the judge-facing 2D reference and avoid any claim of athlete/team endorsement before it is
 eligible for the final deployment.
+
+Six more expressly licensed/public-domain candidates were downloaded on 2026-09-01. Exact source
+pages, creators, license versions, media properties, SHA-256 hashes, visual preflight notes, and test
+order are recorded in `input_baseball/licensed_candidates/README.md`. The local media directory is
+git-ignored; provenance remains summarized here so it is not lost:
+
+| Candidate | License | Current assessment |
+|---|---|---|
+| Gant windup | CC0 1.0 | Copyright-simple; complete delivery, but small subject |
+| Steven Brault delivery | CC0 1.0 | Complete but only 400×300 and obstructed by netting |
+| Tim Peterson delivery | CC0 1.0 | Complete 600×450 fallback; small subject/netting |
+| Walter Johnson pitching | Public domain | Historical multi-shot footage; poor fit for the current single-take pipeline |
+| Kenta Maeda pitching | CC BY-SA 3.0 | Large full-body subject; vignette/stabilization and marks need review |
+| Hyun-jin Ryu pitching | CC BY-SA 4.0 | Best initial reconstruction candidate; large subject, net/background players |
+| Kyle Harrison delivery | CC BY 4.0 | Clean single rear-view delivery; high resolution but small subject |
+
+All seven decoded end-to-end and produced no ≥0.5-second freeze warning in the initial ffmpeg
+preflight. None is final evidence until person detection, reconstruction overlay, events, numerical
+gates, and trademark/identity treatment pass. CC BY and CC BY-SA derivatives must retain their
+attribution and applicable share-alike notices; the repository's MIT license does not replace those
+asset licenses.
 
 Two generic Mixkit Free-License alternatives (`Baseball pitcher` #881 and `Baseball player pitching
 the ball` #856) were inspected and rejected before pipeline work because both crop out the lower

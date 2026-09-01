@@ -23,9 +23,13 @@ pipeline/data/frames/
 pipeline/data/raw/
 pipeline/out/
 
-# ── Source footage: third-party video, not redistributable ──────
-# See ATTRIBUTION.md. Derived session.json IS committed; video is not.
-input_baseball/
+# ── Source footage: local inputs, not committed ─────────────────
+# See ATTRIBUTION.md. Keep even expressly licensed candidate binaries local until one passes QA;
+# retain the small provenance/readme record so source and license details are not lost.
+input_baseball/*
+!input_baseball/licensed_candidates/
+input_baseball/licensed_candidates/*
+!input_baseball/licensed_candidates/README.md
 
 # OS noise
 .DS_Store
