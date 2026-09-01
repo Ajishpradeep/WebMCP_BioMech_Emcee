@@ -119,5 +119,17 @@ by the language model.
   `pitchlab-webmcp-00011-26x` (100% traffic).
 - [x] Post-deploy WebMCP registration/runtime/visible-focus smoke on that revision: Chrome 154
   exposed exactly 13 tools, all completed, elbow geometry was visible, and no browser errors occurred.
+- [ ] Resolve or explicitly accept the recovered Cloud Run scale-to-zero availability incident.
+  Preferred safeguard: one minimum instance followed by exact-revision HTTPS/assets/WebMCP smoke.
 - [ ] Owner-observed ChatGPT natural-language repeat and two comparison prompts on that revision.
 - [ ] Clean judge-experience pass, then engineering freeze.
+
+## Post-qualification deployment incident
+
+After the successful native run, the service's two idle containers scaled to zero. The next public
+requests received Cloud Run platform HTTP 429 responses for about 2½ minutes before an autoscaled
+instance started and passed its first health probe. The app is serving normally again. Logs show no
+application crash, memory failure, traffic saturation, or failed probe; service capacity is max 100
+instances at concurrency 80. This is a genuine judge-availability risk even though it did not
+invalidate the qualified application artifact. Full timestamps and diagnosis are in
+`docs/deployment.md`.

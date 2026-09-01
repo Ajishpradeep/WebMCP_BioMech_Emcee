@@ -20,8 +20,10 @@ illustration.
 ## 1. Checklist (webmcp-tools.md §6)
 
 - [x] All 13 register in code and the surface holds at exactly 13, names unique and ≤30 chars
-- [x] Every response includes a populated `meta` block (confidence · cameraFrame · disclaimer · citations · caveats)
-- [x] `readOnlyHint` / `untrustedContentHint` correct on every tool — 9 read / 4 write, untrusted on `annotate_frame` and `list_pitch_sessions`
+- [x] Every successful evidence/unavailability response includes a populated `meta` block
+      (confidence · cameraFrame · disclaimer · citations · caveats); retryable input errors use the
+      smaller structured error contract
+- [x] `readOnlyHint` / `untrustedContentHint` correct on every tool — 9 read / 4 write; untrusted on `list_pitch_sessions`, `get_session_overview`, and `annotate_frame`
 - [x] Write tools mutate the store the UI renders from, and await a paint before returning
 - [x] Errors return a retryable message naming the values that would have worked — never a stack trace
 - [x] Output budget enforced: hard ceiling of 3 000 characters per response, asserted per tool
@@ -34,7 +36,7 @@ illustration.
 - [ ] **Final candidate verified end-to-end in ChatGPT's in-app browser** — owner repeat pending
 - [x] **Return-shape convention confirmed against a live host** — plain objects work; leave
       `toolResult()` centralized and unchanged
-- [ ] Tool *selection* eval with ChatGPT against revision `00010-d65` (§3 below)
+- [ ] Tool *selection* eval with ChatGPT against revision `00011-26x` (§3 below)
 
 ---
 
@@ -46,21 +48,22 @@ which we consider non-negotiable, so the enforced ceiling is 3 000.
 
 | Tool | chars | note |
 |---|---|---|
-| `seek_to_event` | 705 | |
-| `annotate_frame` | 844 | |
-| `focus_joint` | 898 | |
-| `get_metric_definition` (refusal) | 1 056 | |
-| `get_joint_angle_series` | 1 409 | 8 samples; default 40 ≈ 2.4 K |
-| `get_session_overview` | 1 610 | |
-| `get_kinematics_at_event` | 1 955 | |
-| `get_kinematic_sequence` | 1 995 | |
-| `compare_to_reference` | 2 119 | capped at 10 deviations |
-| `compare_pitches` | ~2 500 | capped at 10 comparisons |
+| `seek_to_event` | 496 | final live run |
+| `annotate_frame` | 650 | final live run |
+| `focus_joint` | 626 | final live run; supported elbow geometry visibly rendered |
+| `get_metric_definition` | 1 511 | definition; torque refusal is smaller |
+| `get_joint_angle_series` | 1 296 | 8 requested samples; default remains 40 |
+| `get_session_overview` | 1 454 | final live run |
+| `get_kinematics_at_event` | 2 435 | final live run |
+| `get_kinematic_sequence` | 2 210 | final live run |
+| `compare_to_reference` | 2 656 | capped at 10 deviations |
+| `compare_pitches` | 2 689 | real bundled pair; capped at 10 comparisons |
 
 Three budget failures were found and fixed rather than waved through: `get_joint_angle_series`
 default lowered 60 → 40 samples; `compare_to_reference` and `compare_pitches` capped at 10 rows with
-an `omitted` count; the slow-motion explanation in `get_kinematic_sequence` stated once instead of
-repeated on all four peaks.
+an `omitted` count; and `get_kinematic_sequence` states the applicable timebase caveat once instead
+of repeating it on all four peaks. For the final normal-rate sessions, that caveat explains that an
+estimated scale and modest frame rate cap rate confidence.
 
 ---
 
@@ -105,6 +108,15 @@ shoulder highlights with its angle readout, and a pin appears that survives scru
 **Recorded (`delivery-03`):** MER candidate f120 (low confidence); for this left-handed session,
 `focus_joint` resolves `throwing shoulder` to `l_acromion`; the pin lands on f120.
 
+### 3.5b "Show me what the elbow measurement means at MER."
+**Expect:** `get_metric_definition { metric: "elbow_flexion" }` →
+`seek_to_event { event: "max_external_rotation" }` →
+`focus_joint { joint: "throwing_elbow" }`, optionally `set_overlay`.
+**Pass — watch the screen:** the viewer preserves whole-body/source context and renders the
+application-owned shoulder→elbow→wrist segments, straight-extension reference, flexion arc, and
+value. **Fail:** arbitrary LLM geometry, force arrows, or a verbal answer without moving/focusing
+the shared workspace when asked to show it.
+
 ### 3.6 "What should he work on?"
 **Expect:** `compare_to_reference`, then `get_metric_definition` on a returned direct flexion metric.
 **Pass:** presents deviations as observations with `medium` confidence and does not turn exploratory
@@ -116,15 +128,29 @@ Already covered headlessly, worth re-checking live: "front knee" → `r_knee` fo
 "mer"/"lay back" → `max_external_rotation`, "x factor" → `hip_shoulder_separation`, "trails" →
 `motion_trail`. Unknown values come back with the valid list attached, not a stack trace.
 
+### 3.8 "Compare the two reviews" / "Which one is better?"
+**Expect:** `list_pitch_sessions` → `compare_pitches`.
+**Pass:** reports only descriptive shared-event angle differences; identifies different/unestablished
+athlete identity, camera views, frame rates, and capture protocol; refuses ranking, improvement,
+regression, cause, performance, and coaching outcome. **Fail:** calling either session better or
+treating the pair as controlled before/after evidence.
+
+The complete 10-prompt owner sequence that covers all nine reads and four writes is maintained in
+`evals/webmcp-live-checklist.md`; keep this file focused on selection and scientific pass criteria.
+
 ---
 
-## 4. Known deviations from `webmcp-tools.md`
+## 4. Historical design deviations now reconciled
 
-Design doc vs. what shipped — deliberate, and worth stating out loud:
+These earlier design assumptions were deliberately changed during implementation. The steering
+document now describes the shipped contracts; this table preserves why they changed:
 
-| Doc says | Shipped | Why |
+| Earlier design | Shipped | Why |
 |---|---|---|
 | `set_overlay` accepts `reference_ghost` | overlays are `segment_frames`, `axial_dial`, `angle_readouts`, `motion_trail`, `event_markers` | The reference ghost was never built (PLAN cut list #2). Asking for it returns a retryable error naming the five real overlays — better than a toggle that silently does nothing. |
 | `get_joint_angle_series` default `maxPoints: 60` | default 40 | 60 samples measured at 3 072 chars, over the budget the same doc sets. |
 | `get_kinematics_at_event` returns referenced metrics | also returns `otherMetrics` | Every angle measured at that instant is reported; the ones with no published range get a bare value and no invented comparison. |
 | `annotate_frame` takes `frame` | takes `frame`, or `event`, or neither | "Pin that at release" is the natural request; with neither, it pins the frame the human is already looking at. |
+| Session-scoped dynamic re-registration | fixed document-lifetime 13-tool registration | Handlers resolve current Zustand state at execution time; this avoided duplicate/stale tools and reload remained exactly 13. |
+| `focus_joint` only highlights/rotates | supported elbow/knee focus also renders metric geometry in the viewer | The application can show what direct flexion means without changing the tool schema or accepting LLM coordinates. |
+| `compare_pitches` implied before/after | output is explicitly `descriptive_only` with ranking unavailable | The two licensed sessions are different/uncontrolled reviews, not improvement evidence. |

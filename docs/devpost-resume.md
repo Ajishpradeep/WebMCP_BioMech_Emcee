@@ -62,12 +62,15 @@ infrastructure identifiers rather than product branding.
 3. Deploy the reviewed source only after the owner approves the app changes.
 4. Verify the public origin has HTTPS, no disabling `Origin-Agent-Cluster: ?0` header, no auth gate,
    no dead upload path, and all required static sessions/assets.
-5. Complete `evals/webmcp-live-checklist.md` in an exact supported host and record the host/version.
-6. Re-run the prompt/tool evals against the live build, including reads, visible writes, human event
+5. Verify judge-facing availability after an idle period. The final candidate exposed a transient
+   Cloud Run scale-from-zero 429 window; prefer one minimum instance and smoke-test the resulting
+   configuration revision before freezing.
+6. Complete `evals/webmcp-live-checklist.md` in an exact supported host and record the host/version.
+7. Re-run the prompt/tool evals against the live build, including reads, visible writes, human event
    correction, structured refusals, and tool-result shape.
-7. Validate final cleared footage and manually reviewed event frames before making accuracy claims.
-8. Capture 3–5 screenshots only after the deployed build and data are frozen.
-9. Record a public narrated YouTube demo shorter than three minutes; show the same build and claims
+8. Validate final cleared footage and manually reviewed event frames before making accuracy claims.
+9. Capture 3–5 screenshots only after the deployed build and data are frozen.
+10. Record a public narrated YouTube demo shorter than three minutes; show the same build and claims
    that appear in the repository and Devpost draft.
 
 ## Devpost reconciliation

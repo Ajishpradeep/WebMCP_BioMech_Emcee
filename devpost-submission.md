@@ -94,8 +94,10 @@ offline; session review and WebMCP execution are browser-local.
 
 ## Testing Instructions
 
-1. Open <https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app> in ChatGPT's in-app browser or Chrome
-   149+ with `chrome://flags/#enable-webmcp-testing` enabled.
+1. Open <https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app> in ChatGPT's in-app browser. For the
+   independently verified native path, use Google Chrome for Testing 154.0.8035.0 with native
+   WebMCP enabled; do not treat the unsuccessful Chrome 149 feature-switch check as a compatibility
+   claim.
 2. Confirm the cleared Pexels and Wikimedia review sessions appear and the header reports all 13
    WebMCP tools. No login is required.
 3. Ask: “What am I looking at?” The agent should call `get_session_overview` and mention the
@@ -176,12 +178,21 @@ Suggested outline:
 - Static deployment loads committed sessions without the optional local GPU backend.
 - Tool handlers, error contracts, output budgets, write-state integration, and event correction are
   covered by automated tests.
+- Exact application commit `7e0561d` is deployed as Cloud Run revision `00011-26x`; native Chrome
+  154 discovered exactly 13 unique tools, executed all 13, showed all four write effects and the
+  supported elbow geometry, preserved registration on reload, and produced no browser errors.
+- Both final sessions passed rights, decode/freeze, reconstruction, event-order, coverage, timebase,
+  series and partial-sequence qualification. `compare_pitches` reports `descriptive_only` and makes
+  better/worse ranking unavailable.
 
 ### Required before submission
 
+- Configure one minimum Cloud Run instance and smoke-test the resulting configuration revision, or
+  explicitly accept the observed scale-from-zero 429 risk. The current service recovered and is
+  serving, but judge-facing availability is not frozen.
 - Repeat the critical natural-language WebMCP flow in ChatGPT's in-app browser against deployed
-  revision `00010-d65`; the native Chrome retest already passes and is recorded in
-  `evals/webmcp-live-checklist.md`.
+  application artifact `7e0561d` (currently revision `00011-26x`); the native Chrome retest passes
+  and is recorded in `evals/webmcp-live-checklist.md`.
 - Capture 3–5 final screenshots from the cleared-data build.
 - Record and publish the narrated under-three-minute YouTube demo.
 - Confirm the official form answers listed below.
@@ -202,8 +213,11 @@ Suggested outline:
   benchmark for the final dataset remains required.
 - The cleared-evidence revision passed native Chrome 154 registration and all 13 executions,
   including visible writes. An earlier revision passed owner-observed ChatGPT in-app-browser tool
-  selection; the exact ChatGPT build was not captured, and revision `00010-d65` requires the same
+  selection; the exact ChatGPT build was not captured, and application artifact `7e0561d` requires the same
   owner-observed natural-language repeat.
+- The current Cloud Run configuration permits scale-to-zero. One transient 429/no-available-instance
+  window occurred after idle shutdown and recovered automatically; configure a one-instance floor
+  and retest, or explicitly accept the availability risk before freeze.
 - Baseball pitching is the only implemented domain workflow. The WebMCP interaction pattern is
   designed for reuse, but no other sport is represented as implemented or validated.
 

@@ -20,6 +20,7 @@ proof.
 | EVIDENCE | Reconstruction QA / event review / bundle | PASS | 288-frame Pexels and 246-frame Wikimedia sessions passed QA and numerical gates |
 | FINAL DEPLOYMENT | Exact revision / HTTPS / cold load | PASS | Commit `7e0561d`; revision `00011-26x`; 100% traffic; current session set and assets verified |
 | FINAL DEPLOYMENT | Post-deploy WebMCP critical flow | PASS | Chrome 154: inspect → navigate → focus → overlay → annotate/revisit |
+| FINAL DEPLOYMENT | Judge-facing availability | BLOCKED | Recovered scale-from-zero 429 window; configure one minimum instance and retest, or explicitly accept risk |
 | JUDGE EXPERIENCE | Clean-profile and human-only usability | PASS | Cleared 2D/3D sync, aspect-ratio resize, event confirmation and rights cards observed without errors |
 | JUDGE EXPERIENCE | ChatGPT agent journey and refusal | PENDING | Repeat the prompt set below against the exact final candidate |
 | SUBMISSION | README/repo/license consistency | PASS | Two cleared sessions and current limitations reconciled locally |
@@ -49,7 +50,7 @@ specified. Reload exposed the same 13 unique tools with no stale or duplicate re
 
 | Tool | Status | Output / boundary notes |
 |---|---|---|
-| `list_pitch_sessions` | PASS | 952 chars; both cleared sessions and rights state |
+| `list_pitch_sessions` | PASS | 952 chars; both cleared sessions, active id, and analysis/quality state |
 | `get_session_overview` | PASS | 1,454 chars; live frame, view, focus, layers and capture caveats |
 | `get_phase_events` | PASS | 1,341 chars; FC/MER/BR; correction retest returned MER f121 with `manualOverride: true` |
 | `get_kinematics_at_event` | PASS | 2,435 chars; event readings, other metrics, confidence and `meta` |
@@ -116,8 +117,9 @@ Run these in order. Before the first prompt, tell ChatGPT: “Use the connected 
 and act on the shared workspace when I ask you to show something; do not merely describe the UI.”
 
 1. “First tell me exactly which Biomech Emcee WebMCP tools you can access. Then discover every
-   available evidence review, including its source/licensing status, and tell me which review is
-   active.”
+   available evidence review and tell me which review is active.” Verify source/license details
+   separately from the human-visible session `i` cards; the session-list tool does not duplicate
+   the full rights record.
 2. “What am I looking at right now? Give me the active-session overview, camera and reconstruction
    caveats, and the detected phase events with frame numbers and confidence. Do not judge the
    athlete.”
@@ -153,5 +155,7 @@ shared viewer changing and the annotation remaining revisitable.
 
 - [x] Native 13-definition/runtime extraction and temporary validation captures.
 - [x] Browser/client version, deployed revision, output sizes, writes and caveats recorded here.
+- [ ] One minimum Cloud Run instance configured and resulting revision smoke-tested, or risk
+      explicitly accepted by the owner.
 - [ ] Owner-observed ChatGPT repeat against revision `00011-26x`.
 - [ ] Final screenshot set and short screen recording of the critical write chain.

@@ -37,9 +37,10 @@ reference constructs, and validation are not automatically sport-agnostic.
 
 **Why this split is non-negotiable:**
 
-1. **The judged artifact never depends on a GPU.** The live URL must work instantly for a judge in
-   ChatGPT's in-app browser, and must stay up through **Sep 21**. A static build on Vercel/Netlify
-   does that for free and cannot fall over.
+1. **The judged artifact never depends on a GPU.** The live URL must work for a judge in ChatGPT's
+   in-app browser and stay up through **Sep 21**. The static nginx/Cloud Run artifact has no
+   inference backend in its request path. Hosting availability remains an operational concern;
+   §8 records the observed scale-from-zero incident rather than claiming static hosting cannot fail.
 2. **It makes the WebMCP story true.** Because the biomechanics engine runs *in the browser*, the
    derived analysis state has no server representation — which is exactly what makes WebMCP the right
    choice over a backend MCP server (SPEC §3). This is an architectural commitment, not a convenience.
@@ -79,9 +80,10 @@ Source: [model card](https://huggingface.co/facebook/sam-3d-body-dinov3),
   This is the single longest-lead-time item in the project. **Request it first (Task 1).**
 - License: **SAM License** (`license:other`), not Apache/MIT. Our code can be MIT; the *model weights*
   stay under Meta's terms and **must not be redistributed in our repo**. Attribute clearly.
-- Install: Python 3.11, PyTorch, `detectron2` (pinned commit `a1ce2f9`, `--no-build-isolation
-  --no-deps`), plus pytorch-lightning, pyrender, opencv-python, yacs, timm, hydra-core, roma, and
-  others. Optional: MoGe (relative depth), SAM3 (mask prompts). **No CPU-only path is documented.**
+- Install: Python 3.12 in the current `.venv`, PyTorch, torchvision, pytorch-lightning, pyrender,
+  opencv-python, yacs, timm, hydra-core, roma, and the vendored SAM 3D Body requirements. The app's
+  person detector is torchvision Faster R-CNN; detectron2 is not installed or required for the
+  explicit-bbox path. Optional: MoGe (relative depth), SAM3 (mask prompts). **No CPU-only path is documented.**
 - Promptable: accepts 2D keypoints and masks as auxiliary prompts, SAM-family style.
 
 **Inference call:**
@@ -131,10 +133,14 @@ Consequences, which are already baked into SPEC §6 and must be respected in cod
 If a task tempts you to output a number in newtons, metres, or N·m — stop. It is out of scope by
 construction.
 
-### 3.2b ⚠️ Slow motion breaks absolute timing
+### 3.2b ⚠️ Timebase controls rate validity
 
-**The bundled demo clip is a slow-motion recording at an unknown slowdown factor** (verified 2026-08-30;
-see `pipeline/clips.json`). Frame timestamps are therefore in *video* seconds, not real seconds.
+Both final bundled sessions are marked normal-rate with `realTimeScale: 1` and
+`scaleSource: estimated`: `delivery-02` is 25 fps and `delivery-03` is 29.97 fps. Their frame
+timestamps may therefore support real-time rate output, but the modest capture rates undersample
+fast arm motion, so rate confidence is capped at `medium`. This is not laboratory timing
+validation. Unknown or slow-motion sources remain supported by the contract and must withhold
+absolute rates.
 
 | Quantity | Valid under unknown slow motion? |
 |---|---|
@@ -145,8 +151,8 @@ see `pipeline/clips.json`). Frame timestamps are therefore in *video* seconds, n
 | Pelvis→trunk separation time in **seconds** | ❌ **No** — report as **% of the FC→BR window** |
 
 `session.json.timebase.realTimeScale` is the single switch. When it is `null`, `confidence.ts` must
-force every rate-derived metric to `unavailable`. When a user supplies it, those metrics unlock at
-`low` confidence (a user estimate is not a measurement).
+force every rate-derived metric to `unavailable`. An estimated known scale can unlock rates only at
+bounded confidence; it is not a direct timing measurement.
 
 This is another real limit the tools *declare* rather than paper over — it strengthens the honesty
 contract rather than weakening it.
@@ -175,7 +181,7 @@ filtering) to pose and hand parameters to reduce jitter**.
 |---|---|---|
 | Trim + normalize | `ffmpeg` | Target ~2 s around the pitch, ≤60 fps |
 | Frame extraction | `ffmpeg` | Record true fps in metadata — all timing depends on it |
-| Person crop | detectron2 (already a dependency) | One pitcher per clip |
+| Person crop | torchvision Faster R-CNN (COCO-pretrained) | One pitcher per clip |
 | Inference | SAM 3D Body | Batch the folder; ~2 s clip @ 60 fps = ~120 frames |
 | Smoothing | scipy | §3.3 |
 | Export | Python | `session.json` per §4 |
@@ -192,16 +198,17 @@ Frozen in **Task 6**. Both tiers depend on it; changing it later is expensive.
 ```jsonc
 {
   "schemaVersion": "1.0",
-  "sessionId": "demo-fastball-01",
+  "sessionId": "delivery-03",
   "source": {
-    "label": "Right-handed fastball, side view",
-    "fps": 60,
-    "frameCount": 118,
+    "label": "Pitch — left-handed center-field view",
+    "view": "center-field full-body game view through protective netting",
+    "frameCount": 246,
     "resolution": [1920, 1080],
-    "attribution": "…license + origin of the clip…"
+    "attribution": "…license + origin of the clip…",
+    "videoFile": "delivery-03.mp4"
   },
   "subject": {
-    "handedness": "right",
+    "handedness": "left",
     "heightMeters": null,          // null unless user-supplied; drives % -height normalization
     "heightSource": "unknown"
   },
@@ -209,17 +216,17 @@ Frozen in **Task 6**. Both tiers depend on it; changing it later is expensive.
     "model": "sam-3d-body-dinov3",
     "cameraFrame": true,           // ALWAYS true — a permanent reminder of §3.2
     "focalLengthEstimated": true,
+    "focalLengthMedian": 2202.91,
     "smoothing": { "method": "savgol", "window": 9, "polyorder": 3 }
   },
-  // ── TIMEBASE ── the bundled demo clip is slow-motion at an unknown factor.
-  // See §3.2b. This block decides which timing metrics are legal.
+  // ── TIMEBASE ── this block decides which timing metrics are legal.
   "timebase": {
-    "videoFps": 60.0,
-    "slowMotion": true,
-    "realTimeScale": null,         // video seconds x this = real seconds; null = unknown
-    "scaleSource": "unknown"       // "unknown" | "user" | "estimated"
+    "videoFps": 29.97002997002997,
+    "slowMotion": false,
+    "realTimeScale": 1,            // video seconds x this = real seconds; null = unknown
+    "scaleSource": "estimated"     // "unknown" | "user" | "estimated"
   },
-  // Real MHR-70 subset. Names mirror src/biomech/joints.ts EXACTLY.
+  // Real MHR subset. Names mirror web/src/types.ts EXACTLY.
   // pelvis/thorax are DERIVED (midpoints), not model outputs - see below.
   "joints": ["pelvis", "thorax", "neck", "nose",
              "l_acromion", "l_elbow", "l_wrist", "r_acromion", "r_elbow", "r_wrist",
@@ -229,21 +236,22 @@ Frozen in **Task 6**. Both tiers depend on it; changing it later is expensive.
   "frames": [
     {
       "index": 0,
+      "sourceFrame": 0,
       "t": 0.0,
       "keypoints3d": [[x, y, z], /* … one per entry in `joints`, camera frame … */],
-      "keypoints2d": [[u, v], /* … */],
-      "confidence": [0.97, /* … per joint … */]
+      "keypoints2d": [[u, v], /* … */]
     }
   ]
 }
 ```
 
 **Notes.**
-- We map MHR's 127 joints down to a **~19-joint biomechanical subset**. Store the mapping in
+- We map MHR's 127 joints down to a **24-joint biomechanical subset**. Store the mapping in
   `pipeline/joint_map.py` and mirror the names exactly in the TS engine.
 - Keep `frames` flat and index-aligned to `joints`. Do not nest per-joint objects — this file ships to
   the browser and size matters.
-- Budget: ~120 frames × 19 joints × 3 floats ≈ small. Round to 4 decimals. Gzip on the wire.
+- Current public sessions contain 288 and 246 frames × 24 joints. Round to 4 decimals; nginx serves
+  compressible JSON efficiently while source videos use byte-range delivery.
 - `heightMeters: null` is the normal case. Every %-height metric must degrade gracefully to
   `unavailable` rather than guessing.
 
@@ -251,13 +259,14 @@ Frozen in **Task 6**. Both tiers depend on it; changing it later is expensive.
 
 ## 5. Tier B — the biomechanics engine (TypeScript, in-browser)
 
-`src/biomech/` — **pure functions, zero React, fully unit-testable.** This is the scientific core and
+`web/src/biomech/` — **pure functions, zero React, fully unit-testable.** This is the scientific core and
 the thing the WebMCP tools expose. Treat it as a library.
 
 ```
-src/biomech/
-  joints.ts        // joint name constants + vector helpers
-  angles.ts        // signed joint angles from 3D keypoints
+web/src/biomech/
+  vec.ts           // vector helpers
+  frames.ts        // anatomical coordinate-frame helpers
+  angles.ts        // direct angles and observational rotation proxies
   events.ts        // foot contact, MER, ball release detection
   sequence.ts      // angular velocity, peak timing, PDS ordering
   reference.ts     // published reference ranges + citations
@@ -352,34 +361,40 @@ internal/external rotation; that is the empirical basis for the grading.
 
 ## 6. Tier B — frontend
 
-**Stack:** React 18 + TypeScript + **Vite** · **three.js via react-three-fiber** + drei ·
-plain CSS modules or Tailwind (your call — do not spend time on a design system) · **Vitest** for the
+**Stack:** React 19 + TypeScript + **Vite 8** · **three.js via react-three-fiber** + drei ·
+plain CSS in `web/src/styles.css` · Zustand · **Vitest** for the
 biomech unit tests.
 
 **Rationale.** Vite gives a static build that deploys anywhere with zero server. React because the
-`use-webmcp-tool` hook exists in the ecosystem and component-scoped tool lifetime maps cleanly onto
-`AbortSignal` unregistration. react-three-fiber is the shortest path to a credible 3D skeleton viewer
-with camera control.
+UI and shared workspace are stateful. The app uses a document-lifetime imperative WebMCP registry;
+tool handlers resolve live Zustand state when invoked, and `AbortSignal` cleans up on document
+unmount. react-three-fiber provides the synchronized 3D skeleton viewer and manual camera control.
 
 **Layout — three panes, deliberately simple:**
 
 ```
 ┌───────────────────────────┬───────────────────┐
-│                           │  Metrics panel    │
-│   3D viewer (r3f)         │  · at FC / MER /  │
-│   skeleton + joint        │    BR             │
-│   highlights + agent pins │  · vs reference   │
+│  Synchronized source      │  Evidence panel   │
+│  video + 3D viewer        │  · session info   │
+│  skeleton + supported     │  · FC / MER / BR  │
+│  angle geometry           │  · measurements   │
 │                           │  · confidence     │
-├───────────────────────────┤    badges         │
+├───────────────────────────┤  · shared notes   │
 │  Timeline: scrub +        │                   │
-│  FC / MER / BR markers    │  Agent activity   │
+│  FC / MER / BR markers    │                   │
 └───────────────────────────┴───────────────────┘
 ```
 
 **The non-agent UI must stand alone.** Execution is a judging criterion and judges may open the page
 in a plain browser with no WebMCP at all. Feature-detect, and degrade to a fully usable manual tool.
 
-**State:** one `AnalysisStore` (Zustand or a Context reducer) holding session, current frame, selected
+**Supported visual geometry is semantic and application-owned.** When the focused landmark is an
+elbow or knee with a direct flexion construct, the viewer derives the proximal/joint/distal points
+from the active reconstructed frame and renders the two segments, straight-extension reference,
+flexion arc, and existing value. The LLM supplies no coordinates. Preserve whole-body and
+synchronized-source context; do not add generic drawing, pan, zoom, or camera-coordinate tools.
+
+**State:** one Zustand `AnalysisStore` holding session, current frame, selected
 joint, overlays, and agent annotations. **The WebMCP tools read from and write to this same store** —
 that identity is the entire point (SPEC §3). Do not create a parallel state path for tools.
 
@@ -404,13 +419,17 @@ that identity is the entire point (SPEC §3). Do not create a parallel state pat
 
 ## 8. Deployment
 
-- **Static build** → **Vercel** or **Netlify** (both sponsors; both offer participant credits).
+- **Static build** → nginx container on **Google Cloud Run** in `ideaslab-gcp/us-central1`.
 - **HTTPS required** — `document.modelContext` is `SecureContext`-gated.
 - ⚠️ **Verify the response does NOT include `Origin-Agent-Cluster: ?0`.** It silently disables WebMCP.
   This is a deploy-time check with no error message if you get it wrong — put it in the Task 17
   checklist.
 - **Top-level page only, no iframes** — ChatGPT's in-app browser does not discover iframe tools.
 - Keep it up through **Sep 21** for judging.
+- The current service uses the default scale-to-zero floor, concurrency 80, max 100 instances,
+  1 vCPU and 512 MiB. A 2026-09-01 scale-from-zero event produced transient 429 responses before
+  autoscaling recovered. Treat one minimum instance plus exact-revision smoke testing as the
+  preferred release-availability safeguard; it has a small continuous billing cost.
 
 ---
 
@@ -423,6 +442,10 @@ that identity is the entire point (SPEC §3). Do not create a parallel state pat
 | Biomechanics computed in-browser | This is *what makes WebMCP the right choice* — it is architectural, not incidental |
 | React + Vite + react-three-fiber | Ecosystem fit and speed |
 | Imperative WebMCP API only | Declarative API unsupported in ChatGPT's in-app browser |
+| Fixed 13-tool registration | Handlers read live Zustand state at execution time; session changes do not re-register or duplicate tools |
+| Two licensed final sessions | Pexels `delivery-02`; attributed CC BY-SA 4.0 Wikimedia derivative `delivery-03` |
+| Descriptive-only cross-session comparison | Athlete identity, camera and controlled capture protocol are not established |
+| App-owned supported flexion geometry | Makes elbow/knee evidence legible without arbitrary LLM drawing or camera-control APIs |
 | No kinetics, no injury prediction | Not derivable from monocular video; evidence base does not support it |
 | Stride length as % height, never cm | Camera-frame output with estimated focal length |
 | MIT for our code; weights never committed | Submission requirement + SAM License compliance |

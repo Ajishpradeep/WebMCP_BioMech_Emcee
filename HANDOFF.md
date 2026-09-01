@@ -3,15 +3,18 @@
 > **New session? Read this file first, then [`CLAUDE.md`](CLAUDE.md).** This is the live log of what
 > is done, what was learned, and what to do next. Updated at the end of every completed task.
 
-**Last updated:** 2026-09-01, after final-candidate deployment and native WebMCP retest
-**Current state:** **FINAL CANDIDATE LIVE / CHATGPT RETEST PENDING.** The owner application review is complete;
+**Last updated:** 2026-09-01, after final-candidate deployment, native WebMCP retest, availability
+incident diagnosis, and full documentation reconciliation
+**Current state:** **FINAL CANDIDATE LIVE / TWO FREEZE GATES PENDING.** The owner application review is complete;
 its product, UX, and scientific decisions remain preserved below. Tasks 16–18 now advance through
 the ordered release gates in [`docs/devpost-resume.md`](docs/devpost-resume.md): live WebMCP proof,
 cleared evidence, final deployment reconciliation, then judge-experience validation. Cloud Run
 revision `00011-26x` serves the cleared Pexels and attributed CC BY-SA 4.0 Wikimedia sessions; the
 former unverified session and its public assets are removed. Native Chrome 154 passed all 13 tools
-and the visible write chain after deployment. Do not capture final assets or claim submission-final
-ChatGPT compatibility until the remaining owner-observed repeat in
+and the visible write chain after deployment. A later scale-from-zero event returned HTTP 429 for
+about 2½ minutes before Cloud Run provisioned a healthy replacement; the app is serving normally
+again, but availability hardening or explicit risk acceptance is now a release gate. Do not capture
+final assets or claim submission-final ChatGPT compatibility until the owner-observed repeat in
 [`evals/webmcp-live-checklist.md`](evals/webmcp-live-checklist.md) are backed by observed evidence.
 
 ---
@@ -103,8 +106,8 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 | P1 — Human event correction | ✅ | Reviewers can apply the current frame to FC/MER/BR; analysis and WebMCP reads update together. |
 | P1 — Owner-review UX hierarchy | ✅ | Right inspector now reads as event anchors → measurements → shared notes; all four write-tool effects have prominent visible surfaces. |
 | P1 — Reference-view legibility | ✅ deployed | The synchronized 2D source is a resizable lower-right picture-in-picture surface; the 3D canvas retains the full stage, and long joint readouts/pins wrap with compact labels. The licensed portrait reference renders correctly locally and on Cloud Run. |
-| 17 — GCP deploy | ✅ | Commit `7e0561d`, revision `00011-26x`, 100% traffic; cold load, both evidence assets, supported focus geometry and native WebMCP retest passed. |
-| 18 — Submission package | 🟡 | README, license, evidence disposition, and Devpost draft are reconciled; ChatGPT final-revision repeat, screenshots, video, and final form answers remain. |
+| 17 — GCP deploy | 🟡 availability | Commit `7e0561d`, revision `00011-26x`, 100% traffic; artifact/assets/WebMCP passed. A recovered scale-to-zero 429 incident requires a one-instance floor plus smoke test or explicit risk acceptance. |
+| 18 — Submission package | 🟡 | README, license, evidence disposition, and Devpost draft are reconciled; availability decision, ChatGPT final-revision repeat, screenshots, video, and final form answers remain. |
 
 The public UI intentionally shows only precomputed review sessions. The local CUDA upload panel is
 available in development but hidden in the deployed static build, so judges do not encounter a
@@ -397,9 +400,11 @@ evals/pitch-analysis.md           ★ tool-surface verification record + prompt 
 The owner review is complete. Preserve the owner-review history and decisions in §4d; do not reopen
 product strategy or perform another redesign pass.
 
-1. **Current gate: owner-observed ChatGPT repeat.** Exact commit `7e0561d` is live as Cloud Run
+1. **Current gates: hosting availability and owner-observed ChatGPT repeat.** Exact commit `7e0561d` is live as Cloud Run
    `00011-26x`; both evidence sessions, the final viewer behavior and all 13 native WebMCP calls have
-   passed. The owner must now run the supplied natural-language ChatGPT in-app-browser prompts.
+   passed. Cloud Run later exposed a transient scale-from-zero 429; configure one minimum instance
+   and smoke-test the new configuration revision, or explicitly accept the risk. The owner must also
+   run the supplied natural-language ChatGPT in-app-browser prompts.
 2. **Task 16 — record the supported-client result.** Capture client/build if visible, tool choices,
    visible writes, supported elbow geometry, correction readback, descriptive comparison/ranking
    refusal, and unsupported torque refusal against `00011-26x`.

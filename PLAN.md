@@ -26,6 +26,13 @@ experience validation**. Use [`docs/devpost-resume.md`](docs/devpost-resume.md) 
 in [`evals/webmcp-live-checklist.md`](evals/webmcp-live-checklist.md). A critical live WebMCP failure
 stops later submission work until the smallest fix is deployed and retested.
 
+**Current gate (2026-09-01):** application commit `7e0561d` is deployed as Cloud Run revision
+`00011-26x`; native Chrome 154 passed the exact 13-tool runtime and visible supported-elbow flow.
+The owner-observed ChatGPT repeat is pending. A real post-deploy availability incident also remains:
+after scaling to zero, Cloud Run returned 429/no-available-instance responses until autoscaling
+recovered. Decide/configure a one-instance floor and smoke-test the resulting configuration before
+freezing, or record explicit acceptance of that judge-availability risk.
+
 ### Execution rules
 
 1. **Viability before expansion.** Public repo, license, README, HTTPS deployment, live WebMCP test,
@@ -51,8 +58,8 @@ stops later submission work until the smallest fix is deployed and retested.
 | F | P0 | Judge-facing UX | No dead production upload CTA; first-paint loader; narrow layout usable | ✅ local production visual check |
 | G | P0 | WebMCP runtime hardening | Exactly 13 tools or visible failure; success/error contract tests | ✅ final native Chrome 154 pass; ChatGPT exact-revision repeat pending |
 | H | P1 | Human event correction loop | Human changes FC/MER/BR; dependent analysis and agent reads update | ✅ store + tool regression test |
-| I | P0 | Submission package | README, license, and Devpost draft complete; cleared footage, live eval, screenshots, and <3 min demo remain | 🟡 |
-| J | P0 | Post-app-review compliance reconciliation | Re-audit the final app against official fields, judging criteria, draft claims, live tests, screenshots, video, repo, and deployment | ▶️ active; advancing to cleared-evidence gate |
+| I | P0 | Submission package | README, license, and Devpost draft reconciled; ChatGPT repeat, availability hardening/acceptance, screenshots, and <3 min demo remain | 🟡 |
+| J | P0 | Post-app-review compliance reconciliation | Two-session evidence, final app, repository and native live-host validation complete; owner ChatGPT and availability gates remain | 🟡 `7e0561d` / `00011-26x` |
 
 ### P0 acceptance decisions
 
@@ -84,6 +91,8 @@ stops later submission work until the smallest fix is deployed and retested.
 - 🟡 Pinned observations and shared viewer state now have prominent persistent surfaces. A
   chronological tool-call activity log remains deferred unless owner review proves it necessary.
 - Add runtime session-schema validation and cancellation for stale fetches.
+- ✅ Viewer-only supported flexion geometry now explains focused elbow/knee measurements using
+  application-owned landmarks, segments, extension reference, and arc; no tool/schema expansion.
 
 ### P2 / post-submission
 
@@ -144,10 +153,12 @@ name, DOB, country, affiliation, job title. Create a token and `export HF_TOKEN=
 ---
 
 ### Task 2 — Python 3.11 environment + SAM 3D Body install
+> ✅ **DONE** — the active repository environment is `.venv` on Python 3.12; the vendored SAM 3D
+> Body path runs with the approved checkpoints. Person detection uses torchvision Faster R-CNN;
+> detectron2 was not required.
 **Goal:** run the model end-to-end on a single still image.
-**Do:** `uv venv --python 3.11 .venv-pipeline` (system Python is 3.8 — too old). Install PyTorch for
-CUDA 12.4, then the dependency list in tech.md §3.1, then detectron2 at pinned commit `a1ce2f9` with
-`--no-build-isolation --no-deps`. Clone `facebookresearch/sam-3d-body`.
+**Do:** create the isolated environment, install PyTorch for CUDA 12.4 and the dependencies in
+tech.md §3.1, and clone/vendor `facebookresearch/sam-3d-body` without committing checkpoints.
 **Files:** `pipeline/requirements.txt`, `pipeline/README.md`
 **Verify:** the model card's `process_one_image` snippet runs on one photo of a person and
 `visualize_sample_together` writes a recognisable mesh overlay. **Do not proceed until this renders.**
@@ -155,7 +166,9 @@ CUDA 12.4, then the dependency list in tech.md §3.1, then detectron2 at pinned 
 ---
 
 ### Task 3 — Source and prepare demo footage
-**Goal:** 2–3 properly licensed pitching clips.
+> ✅ **DONE** — the final public set is exactly two qualified sources: Pexels `delivery-02` and the
+> attributed CC BY-SA 4.0 Wikimedia derivative `delivery-03`.
+**Goal:** two properly licensed pitching clips.
 **Do:** Self-record, or use clearly-licensed CC footage. **No scraped broadcast video** (tech.md §7).
 Target: side-on or 45°, whole body in frame, ~2 s around the pitch, ≥60 fps if possible. Ideally two
 pitches from the *same* pitcher so `compare_pitches` has real data.
@@ -170,7 +183,7 @@ pitches from the *same* pitcher so `compare_pitches` has real data.
 ### Task 4 — Frame extraction + person crop
 > ✅ **DONE** — implemented in `pipeline/run.py` (streams frames, no intermediate dump). Uses **torchvision Faster R-CNN**, not detectron2.
 **Goal:** video → cropped per-frame images ready for inference.
-**Do:** `ffmpeg` frame dump; detectron2 person detection (already installed); pick the largest/most
+**Do:** stream decoded frames; torchvision Faster R-CNN person detection; pick the largest/most
 central person; crop with padding; keep crop offsets so 2D keypoints can be mapped back to the
 original frame.
 **Files:** `pipeline/extract.py`
@@ -206,7 +219,7 @@ original frame.
 > ✅ **DONE** — `pipeline/joint_map.py` (24 joints) + `web/src/types.ts` mirror each other. **Schema is now frozen.**
 **Goal:** lock the contract between tiers so they can proceed in parallel.
 **Do:** Implement the schema in tech.md §4. Write `pipeline/joint_map.py` mapping MHR's 127 joints to
-our ~19-joint biomechanical subset. **Mirror the joint names exactly in the TS engine.** Round to 4
+our 24-joint biomechanical subset. **Mirror the joint names exactly in the TS engine.** Round to 4
 decimals.
 **Files:** `pipeline/joint_map.py`, `pipeline/schema.py`, `schema/session.schema.json`
 **Verify:** a JSON-Schema validator passes on a real output. **After this task, treat the schema as
@@ -296,8 +309,10 @@ judging criterion and judges may never enable an agent.
 ## Phase 4 — WebMCP (Wed) ★ the graded artifact
 
 ### Task 13 — Registration layer
+> ✅ **DONE** — the fixed 13-tool surface registers once for the document; handlers read live
+> Zustand state at invocation time, and the document-lifetime abort signal owns cleanup.
 **Goal:** infrastructure for all 13 tools.
-**Do:** `src/webmcp/registry.ts` — feature detection, `AbortController` session scoping, the
+**Do:** `web/src/webmcp/registry.ts` — feature detection, document-lifetime `AbortController`, the
 `toolResult()` return-shape choke point, shared `meta` builder, error formatting (webmcp-tools.md §2).
 **Files:** `web/src/webmcp/registry.ts`
 **Verify:** one trivial tool appears in **DevTools → Application → WebMCP**; non-WebMCP browsers no-op
@@ -341,15 +356,20 @@ structured refusal) — and check tool selection and ordering.
 ## Phase 5 — ship (Thu AM)
 
 ### Task 17 — Deploy
+> ✅ **APPLICATION ARTIFACT DEPLOYED** — commit `7e0561d`, Cloud Run revision `00011-26x`, 100%
+> traffic. HTTPS/assets/native Chrome 154 WebMCP passed. Availability remains 🟡 because a recovered
+> scale-from-zero 429 incident needs a one-instance floor plus smoke test or explicit risk acceptance.
 **Goal:** a live URL that survives until Sep 21.
-**Do:** Static build → Vercel or Netlify.
+**Do:** Static build → nginx on the existing Google Cloud Run service.
 **Verify — every box, this is where submissions silently die:**
-- [ ] HTTPS (required: `document.modelContext` is `SecureContext`-gated)
-- [ ] **`curl -I <url>` shows NO `Origin-Agent-Cluster: ?0`** — it disables WebMCP with no error
-- [ ] Tools register on the deployed origin (Chrome 149+ / flag, then ChatGPT in-app browser)
-- [ ] Top-level page, **no iframes**
-- [ ] Cold load in a fresh profile works
-- [ ] No auth required (or credentials ready for the submission form)
+- [x] HTTPS (required: `document.modelContext` is `SecureContext`-gated)
+- [x] **`curl -I <url>` shows NO `Origin-Agent-Cluster: ?0`** — it disables WebMCP with no error
+- [x] Exactly 13 tools register and execute on the deployed origin in native Chrome 154
+- [x] Top-level page, **no iframes**
+- [x] Cold load in a fresh profile works when an instance is available
+- [x] No auth required
+- [ ] Owner-observed ChatGPT repeat on the final application artifact
+- [ ] One minimum instance configured/retested, or scale-to-zero availability risk explicitly accepted
 
 ---
 
@@ -368,9 +388,11 @@ structured refusal) — and check tool selection and ordering.
 
 ---
 
-## Cut list — sacrifice in this order
+## Historical cut list — closed after release qualification
 
-When time runs short, cut from the top. **Never cut Tasks 13–18.**
+This was the implementation-time contingency order. It is retained as history, not authorization to
+remove qualified release features. The final two-session, 13-tool surface is now locked pending the
+remaining availability and ChatGPT gates.
 
 1. `compare_pitches` (needs a second analyzed clip)
 2. `motion_trail` and `reference_ghost` overlays

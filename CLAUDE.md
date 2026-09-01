@@ -42,6 +42,15 @@ The human validates the evidence because **agent and human are looking at the sa
   UI renders from — one state path, not two.
 - **`session.json` is a frozen contract** (tech.md §4) once Task 6 lands.
 - **MIT for our code.** Model weights are under Meta's SAM License and are **never committed**.
+- **Exactly two final evidence sessions.** `delivery-02` is licensed under the Pexels License;
+  `delivery-03` is an attributed trimmed/transcoded CC BY-SA 4.0 Wikimedia derivative. No other
+  judge-facing media ships.
+- **Comparison is descriptive only.** The two reviews do not establish the same athlete, camera, or
+  controlled protocol. Never rank them or infer improvement, regression, cause, performance, or a
+  coaching outcome.
+- **Visual evidence geometry is application-owned.** Focused elbows/knees may show supported
+  reconstructed segments, extension reference, and a flexion arc/value. Never add arbitrary agent
+  drawing or raw pan/zoom/camera-coordinate tools.
 
 ## Hard scientific constraints — these are correctness bugs, not style
 
@@ -68,7 +77,7 @@ they are not, report the quantity as experimental or unavailable for reference c
   `get_metric_definition` both read from there so they can never drift.
 - `web/src/biomech/` is pure TypeScript — no React imports, unit-tested with Vitest.
 - Tool names: snake_case, ≤30 chars. Descriptions ≤500 chars, params ≤150, output ≈≤1.5 K.
-- Tool return shape is funneled through `toolResult()` in `src/webmcp/registry.ts` — one choke point.
+- Tool return shape is funneled through `toolResult()` in `web/src/webmcp/registry.ts` — one choke point.
 - Write tools **update the UI before returning**.
 - **13 tools is the ceiling.** To add one, delete one.
 
@@ -77,6 +86,10 @@ they are not, report the quantity as experimental or unavailable for reference c
 - HTTPS is mandatory — `document.modelContext` is `SecureContext`-gated.
 - **`Origin-Agent-Cluster: ?0` disables WebMCP with no error.** Check `curl -I` on every deploy.
 - Verify in **ChatGPT's in-app browser**, not only Chrome DevTools.
+- Cloud Run currently permits scale-to-zero. On 2026-09-01 it returned transient 429 responses for
+  about 2½ minutes before autoscaling recovered. This is a release-availability blocker until one
+  minimum instance is configured and the resulting revision is smoke-tested, or the risk is
+  explicitly accepted. See `docs/deployment.md`.
 
 ## When time is short
 

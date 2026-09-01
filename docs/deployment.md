@@ -76,6 +76,38 @@ unavailable better/worse ranking and the athlete/camera/timebase/protocol compat
 There were no console errors, page errors or failed requests.
 
 Full per-tool output sizes and client caveats are recorded in
-[`evals/webmcp-live-checklist.md`](../evals/webmcp-live-checklist.md). The remaining release gate is
-an owner-observed natural-language repeat in ChatGPT's in-app browser against this exact revision;
-do not claim final ChatGPT compatibility until that run is recorded.
+[`evals/webmcp-live-checklist.md`](../evals/webmcp-live-checklist.md). The remaining release gates are
+an owner-observed natural-language repeat in ChatGPT's in-app browser against this application
+artifact and the availability decision described below; do not claim engineering freeze until both
+are recorded.
+
+## Scale-from-zero incident and availability gate
+
+At 15:21:21–15:21:22 UTC on 2026-09-01, the two instances used by deployment/live validation
+received normal `SIGTERM` shutdowns and exited cleanly. The service has no configured minimum
+instance floor, so this was an ordinary scale-to-zero transition. From 15:24:06 through 15:25:22,
+the public origin returned HTTP `429` with Cloud Run's platform message:
+`The request was aborted because there was no available instance.` These requests did not reach
+nginx or application code.
+
+Cloud Run recorded a new `AUTOSCALING` instance start at 15:26:38; its startup probe passed on the
+first attempt at 15:26:40. The stable origin then returned `200` again (observed time-to-first-byte
+about 0.31 seconds while warm). Diagnosis found:
+
+- no container/application error at `ERROR` severity, OOM, crash, or failed startup probe;
+- only a small number of document/favicon requests, not an 80-concurrent-request saturation;
+- service max 100 instances, concurrency 80, 1 vCPU, 512 MiB, and ample regional CPU quota;
+- no broad Cloud Run/us-central1 incident listed on the public Service Health dashboard at the time.
+
+The evidence supports a transient Cloud Run inability to provision promptly after scale-to-zero;
+Google does not expose a more specific infrastructure cause in this project's logs. This is not a
+Biomech Emcee rate limiter and is unrelated to ChatGPT tool-call limits.
+
+**Preferred release safeguard:** configure one minimum instance, accept the small continuous
+billing implication, and repeat HTTPS/assets/native WebMCP smoke testing against the resulting
+configuration revision. Until that is done—or the owner explicitly accepts the risk—the deployment
+artifact is qualified but judge-facing availability is not frozen.
+
+The documentation reconciliation rechecked the service on 2026-09-01: revision `00011-26x` remained
+ready with 100% traffic, no minimum-instance annotation was configured, and the stable origin
+returned HTTP `200`. This confirms both recovery and the still-open scale-to-zero risk.

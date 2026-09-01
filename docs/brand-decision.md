@@ -1,7 +1,7 @@
 # Identity and naming decision
 
 **Decision date:** 2026-08-31
-**Workflow state:** owner review hold; current source is live, but do not advance Devpost yet
+**Workflow state:** identity locked; final candidate live; availability and ChatGPT freeze gates pending
 
 ## Participant identity
 
@@ -84,16 +84,19 @@ The durable pitch is:
 - The public GitHub repository is `Ajishpradeep/biomech-emcee`; GitHub redirects from the previous
   URL after the rename, but all judge-facing links use the canonical URL.
 
-## Owner checks before work resumes
+## Current owner/freeze checks
 
-- [ ] Open the local production build and inspect **Biomech Emcee** in the actual UI.
-- [ ] Record desired application changes in a fresh owner-review session.
+- [x] Open the production build and inspect **Biomech Emcee** in the actual UI.
+- [x] Complete and record the owner-review application changes.
 - [ ] Manually correct the Devpost profile name if formal-name consistency is required.
 - [ ] Review any GitHub profile display-name preference separately; it is account-wide and was not
       changed as part of this repository decision.
 - [x] Keep the stable legacy Cloud Run URL; it now serves the current Biomech Emcee build.
 - [x] Replace the provisional footage with cleared Pexels and CC BY-SA 4.0 sources before final screenshots/video.
-- [ ] Run the live WebMCP host checklist only after the desired manual application changes are made.
+- [x] Run the native Chrome 154 live WebMCP host checklist on revision `00011-26x`.
+- [ ] Resolve/accept the Cloud Run scale-to-zero availability risk and run the owner-observed
+      ChatGPT prompt sequence before engineering freeze.
 
-When the owner declares the app review complete, follow [`devpost-resume.md`](devpost-resume.md).
-The source rename and owner-requested deployment are complete; final compliance remains pending.
+The app review, source rename, two-session evidence qualification, deployment, and native WebMCP
+validation are complete. Follow [`devpost-resume.md`](devpost-resume.md) for the remaining
+availability, ChatGPT, screenshots/video, and submission gates.

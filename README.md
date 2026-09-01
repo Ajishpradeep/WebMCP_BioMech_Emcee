@@ -23,7 +23,7 @@ direction, not a current feature.
 
 - Interactive in-browser 3D skeleton review, timeline scrubbing, camera presets, overlays,
   application-owned flexion geometry for focused elbows/knees, and persistent annotations.
-- Two committed, precomputed review sessions that cold-load without a GPU or backend. The licensed
+- Two committed, precomputed review sessions that load without a GPU or analysis backend. The licensed
   Pexels full-body session is the default; the second session is an attributed, trimmed/transcoded
   Wikimedia derivative distributed under CC BY-SA 4.0.
 - Thirteen WebMCP tools: nine read tools for session, measurement, and evidence context; four write
@@ -34,6 +34,8 @@ direction, not a current feature.
   explicitly not a full published five-segment sequence or a quality score.
 - Plain-English review routing: “what stands out?” / “where did I mess up?” returns bounded
   observations and suggested seek/focus/annotation calls using the existing WebMCP tools.
+- Cross-session questions are descriptive only: the shipped reviews depict different athletes and
+  camera protocols, so the tool exposes compatibility limits and refuses better/worse ranking.
 
 ## Why WebMCP
 
@@ -77,6 +79,11 @@ GCP_SERVICE_NAME=pitchlab-webmcp ./scripts/deploy-gcp.sh
 
 See [deployment details](docs/deployment.md), including the WebMCP-critical response-header check.
 
+The exact application artifact currently deployed is commit `7e0561d` on Cloud Run revision
+`pitchlab-webmcp-00011-26x`. Native Chrome 154 passed all 13 tools on that revision. Engineering
+freeze is not yet declared: an owner-observed ChatGPT repeat remains pending, and a transient
+scale-from-zero 429 incident must be resolved or explicitly accepted before judge assets are made.
+
 ## Architecture
 
 ```text
@@ -98,6 +105,10 @@ Their creator, source, license, and modification details are available from each
 and [ATTRIBUTION.md](ATTRIBUTION.md). The demo data must not be used for clinical decisions. The
 project’s claim boundary and technical decisions are in
 [SPEC.md](SPEC.md) and [HANDOFF.md](HANDOFF.md).
+
+Focused elbow and knee arcs visualize only reconstructed landmark geometry already used by the
+measurement. They do not represent force, momentum, energy transfer, causality, injury risk, or a
+recommended technique.
 
 ## Repository map
 

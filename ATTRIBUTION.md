@@ -44,7 +44,7 @@ has a session-level information card with creator, source, license, modification
 non-endorsement language. The source licenses apply to their respective video assets and do not
 replace the repository's MIT code license or Meta's separate model terms.
 
-### Clips currently used for development
+### Final bundled evidence sessions
 
 | sessionId | Subject | Source file | Res / fps | Rights state |
 |---|---|---|---|---|

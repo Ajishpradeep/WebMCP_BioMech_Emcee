@@ -55,9 +55,10 @@ construction. **Three things are materially better because the agent is inside t
 
 2. **The agent can write back into the human's view.** Tools like `seek_to_event`, `focus_joint`,
    and `annotate_frame` let the agent *move the 3D viewer and pin annotations into it*. When the
-   agent identifies an observation at maximum external rotation, the viewer scrubs there, the shoulder
-   highlights, and a labeled pin appears. The agent's reasoning becomes a visible artifact in the
-   human's workspace. This is the "cooperative interplay between a user, a web page, and an agent
+   agent identifies an elbow observation at maximum external rotation, the viewer scrubs there, the
+   elbow highlights with application-owned measurement geometry, and a labeled pin appears. The
+   agent's reasoning becomes a visible artifact in the human's workspace. This is the "cooperative
+   interplay between a user, a web page, and an agent
    with shared context" the WebMCP explainer names as its goal — and it is the single hardest thing
    to fake with any other integration style.
 
@@ -104,10 +105,16 @@ domain adapter and evidence set; generality is architectural intent, not a compl
 - **Per-metric confidence grading** and explicit refusal to report quantities monocular video cannot
   support (see §6)
 - Interactive 3D viewer: skeleton/mesh playback, timeline scrub, event markers, joint highlighting
+- Application-owned flexion explanation for a focused elbow or knee: proximal/distal reconstructed
+  segments, straight-extension reference, angle arc, and value, with whole-body/source context kept.
 - **A WebMCP tool surface** covering query, comparison, evidence lookup, and viewer control
   — see [`.claude/steering/webmcp-tools.md`](.claude/steering/webmcp-tools.md)
-- 2–3 pre-analyzed demo pitches shipped as static assets so the app works instantly, with no GPU in
-  the request path
+- Exactly two licensed, pre-analyzed demo pitches shipped as static assets so the app works without
+  a GPU in the request path: Pexels `delivery-02` and a CC BY-SA 4.0 Wikimedia derivative
+  `delivery-03`
+- Descriptive-only cross-session comparison. Because athlete identity, camera setup, and controlled
+  protocol are not established, better/worse, improvement/regression, causality, and coaching
+  outcome are unavailable by contract
 
 ## 6. The honesty contract (a product feature, not a disclaimer)
 
@@ -159,6 +166,9 @@ supporting rationale is in [`.claude/steering/tech.md`](.claude/steering/tech.md
   is out of scope.
 - ❌ **The declarative WebMCP API.** Unsupported in ChatGPT's in-app browser, which is our primary
   judging surface. Imperative only.
+- ❌ **Generic agent camera or drawing control.** No pixel coordinates, pan/zoom commands, freehand
+  geometry, arbitrary arrows, or LLM-authored anatomical constructions. The application owns
+  semantic framing and supported measurement geometry.
 
 ## 8. Future work (mention in the submission, do not build)
 
@@ -178,7 +188,7 @@ Rubric: [`docs/webmcp-challenge-brief.md`](docs/webmcp-challenge-brief.md) §6.
 
 | Criterion | Self-assessment | Why |
 |---|---|---|
-| **WebMCP Leverage** | **Strong** | ~13 tools across four functional categories, not a mirror of the UI. Bidirectional: the agent both reads analysis *and* drives the 3D viewer. Uses the real API surface — `inputSchema`, `annotations`, `readOnlyHint`, `untrustedContentHint`, `AbortSignal`, `toolchange` on session load. Derived state is genuinely client-side-only, so the "why not a backend MCP server" question answers itself. |
+| **WebMCP Leverage** | **Strong** | Exactly 13 tools across four functional categories, not a mirror of the UI. Bidirectional: the agent both reads analysis *and* drives the 3D viewer. Uses the imperative API surface — `inputSchema`, annotations and `AbortSignal`. Tools resolve current client state at execution time, so the fixed registration remains correct across session changes. Semantic focus now makes supported geometry visible without adding generic camera/drawing tools. |
 | **Execution** | **Medium–strong, and the main risk** | Mitigated by the hard offline/online split: the graded artifact never depends on GPU uptime, and the live URL is a static build. Scope cut to one sport specifically to protect finish quality. |
 | **Potential Impact** | **Strong** | Real audience (coaches, athletes, PTs), real barrier (mocap labs cost thousands and take appointments), credible mechanism. The honesty contract makes the impact claim defensible instead of hype. |
 | **Creativity & Ambition** | **Strong** | Nothing in the sponsor examples or Chrome demos is remotely near this — those are shopping, form-filling, filtering, and reordering. Chrome's own use-cases page names exactly those four, so they are the field's baseline. A specialist 3D vision model exposed as an agent-callable instrument, with the agent manipulating a live 3D reconstruction, is in different territory. |

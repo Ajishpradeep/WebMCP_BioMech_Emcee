@@ -1,15 +1,17 @@
 # The WebMCP Challenge — Team Brief
 
-**Compiled:** 2026-08-30 from <https://webmcp.devpost.com/> (Overview), `/rules`, `/resources`,
-and `/updates`, plus sponsor pages. Companion doc:
+**Compiled:** 2026-08-30 and rechecked 2026-09-01 against
+<https://webmcp.devpost.com/> (Overview), `/rules`, `/resources`, and `/updates`, plus sponsor pages.
+Companion doc:
 [`webmcp-technical-reference.md`](./webmcp-technical-reference.md).
 
 **Sponsor:** OpenAI OpCo, LLC · **Administrator:** Devpost, Inc. · **Support:** support@devpost.com
 **Partners:** Chrome, Cloudflare, Shopify, Vercel, Render, Netlify
 
-> ⏱️ **As of 2026-08-30, roughly 4 days remain.** Deadline is **Thu Sep 3, 2026 @ 1:00 PM PDT**.
+> ⏱️ **Reconfirmed 2026-09-01.** Deadline is **Thu Sep 3, 2026 @ 1:00 PM PDT**.
 > A Devpost update posted ~2026-08-28 ("6 days left to build") reaffirmed the date and stated
-> *"a focused week is enough time to build something real."* No extension has been announced.
+> *"a focused week is enough time to build something real."* No extension was shown in the official
+> rules or overview at the 2026-09-01 recheck.
 
 ---
 

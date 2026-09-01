@@ -1,5 +1,9 @@
 # Licensed pitching candidates
 
+**Final judge-facing evidence set:** exactly `delivery-02` and `delivery-03`. The remaining files in
+this directory are historical/local candidate records; they are not public-build inputs and must not
+appear in screenshots, demo footage, or submission claims.
+
 ## Selected clear demo candidate — Pexels 5182923
 
 Downloaded 2026-09-01 from Pexels' own download endpoint:

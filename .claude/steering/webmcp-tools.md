@@ -53,13 +53,15 @@ auto-serialized. Sources disagree on the MCP-style `{content:[...]}` envelope (t
 the envelope, change it in **one place**:
 
 ```ts
-// src/webmcp/registry.ts — single choke point for the return convention
+// web/src/webmcp/registry.ts — single choke point for the return convention
 export function toolResult<T>(data: T) {
   return data;   // ← if the envelope turns out to be required, wrap it HERE only
 }
 ```
 
-**Every response carries a `meta` block.** This is our honesty contract made machine-readable:
+**Every successful evidence response and scientific-unavailability response carries a `meta`
+block.** Retryable input errors use the smaller `{ ok: false, error, validValues, retryable }`
+contract. The evidence `meta` block makes the honesty contract machine-readable:
 
 ```jsonc
 "meta": {
@@ -73,10 +75,11 @@ export function toolResult<T>(data: T) {
 **Annotations.** Every read-only tool sets `readOnlyHint: true`. Any tool returning user-supplied
 text (session labels, coach notes) sets `untrustedContentHint: true`.
 
-**Registration.** Register once on session load via `src/webmcp/registry.ts`, with an
-`AbortController` scoped to the session. Loading a new session aborts and re-registers, which fires
-`toolchange` — a real, justified use of dynamic registration rather than a gratuitous one. Feature-detect
-first and no-op silently in non-WebMCP browsers:
+**Registration.** Register the fixed 13-tool surface once for the document via
+`web/src/webmcp/registry.ts`. Handlers resolve current Zustand state when executed, so switching sessions
+does not require re-registration and cannot leave stale or duplicate definitions. An
+`AbortController` owns the document-lifetime registration. Feature-detect first and no-op silently
+in non-WebMCP browsers:
 
 ```ts
 if (typeof document.modelContext?.registerTool !== "function") return;
@@ -89,13 +92,15 @@ if (typeof document.modelContext?.registerTool !== "function") return;
 ### Category A — session & context
 
 #### `list_pitch_sessions`
-> Lists the pitch analyses loaded in this browser session, with pitcher handedness, view angle, frame
-> count, and capture quality.
+> Lists the pitch analyses available in this browser, with handedness, view, frame count, analysis
+> state, and quality when loaded.
 
 `readOnlyHint: true` · `untrustedContentHint: true` (labels are user-supplied)
 **Input:** `{}`
-**Returns:** `{ sessions: [{ sessionId, label, handedness, view, frameCount, fps, quality }], activeSessionId }`
+**Returns:** `{ sessions: [{ sessionId, label, handedness, view, frameCount, fps, analysed, quality }], activeSessionId, meta }`
 **Why an agent needs it:** entry point. Without it the agent cannot address anything else by id.
+Source-license details are deliberately human-visible in each session's `i` card and in
+`ATTRIBUTION.md`; the current WebMCP session list does not duplicate that rights record.
 
 ---
 
@@ -103,9 +108,9 @@ if (typeof document.modelContext?.registerTool !== "function") return;
 > Returns what is currently loaded and on screen: the active pitch, the frame the viewer is scrubbed
 > to, the selected joint, active overlays, and overall reconstruction quality.
 
-`readOnlyHint: true`
+`readOnlyHint: true` · `untrustedContentHint: true` (the session label may be user-supplied)
 **Input:** `{ sessionId?: string }`
-**Returns:** `{ sessionId, label, subject, capture, currentFrame, currentTime, selectedJoint, activeOverlays, eventsDetected, meta }`
+**Returns:** `{ sessionId, label, onScreen, subject, capture, viewer, eventsDetected, quality, meta }`
 
 **Why an agent needs it — this is the flagship "why WebMCP" tool.** It answers *"what is the human
 looking at right now?"* That state lives only in this browser tab. **No backend MCP server can answer
@@ -124,9 +129,9 @@ this question.** When demoing, lead with it.
 **Returns:**
 ```jsonc
 { "events": [
-    { "name": "foot_contact",  "frame": 41, "t": 0.683, "method": "lead-ankle velocity minimum", "confidence": "high",   "manualOverride": false },
-    { "name": "max_external_rotation", "frame": 58, "t": 0.967, "method": "shoulder ER series peak", "confidence": "medium", "manualOverride": false },
-    { "name": "ball_release",  "frame": 63, "t": 1.050, "method": "wrist speed peak", "confidence": "medium", "manualOverride": false }
+    { "name": "foot_contact", "frame": 95, "tVideoSeconds": 3.17, "method": "…", "confidence": "medium", "manualOverride": false },
+    { "name": "max_external_rotation", "frame": 120, "tVideoSeconds": 4.004, "method": "…", "confidence": "low", "manualOverride": false },
+    { "name": "ball_release", "frame": 127, "tVideoSeconds": 4.238, "method": "…", "confidence": "high", "manualOverride": false }
   ], "meta": { … } }
 ```
 **Why:** every other measurement is anchored to these. The agent must be able to reason about *when*
@@ -149,15 +154,16 @@ things happen, and to see when detection was uncertain or a human corrected it.
 **Returns:**
 ```jsonc
 {
-  "event": "ball_release", "frame": 63, "t": 1.050,
+  "event": "ball_release", "frame": 127, "tVideoSeconds": 4.238,
   "metrics": [
-    { "name": "lead_knee_flexion", "value": 33.8, "unit": "deg",
-      "reference": { "range": [31.2, 41.0], "typical": 35, "sd": 13 },
-      "status": "within_reference", "confidence": "high" },
-    { "name": "trunk_forward_tilt", "value": 28.1, "unit": "deg",
-      "reference": { "range": [30.0, 33.4], "typical": 36, "sd": 7 },
-      "status": "below_reference", "confidence": "high" }
+    { "name": "lead_knee_flexion", "value": 64.0, "unit": "deg",
+      "reference": { "range": [31.2, 41.0] },
+      "status": "above", "confidence": "medium" },
+    { "name": "elbow_flexion", "value": 77.1, "unit": "deg",
+      "reference": { "range": [24.0, 39.0] },
+      "status": "above", "confidence": "medium" }
   ],
+  "otherMetrics": [ /* measured exploratory angles with no population ranking */ ],
   "meta": { … }
 }
 ```
@@ -177,7 +183,7 @@ snapshot it can reason across — something the UI can only show one panel at a 
   "joint": "shoulder_external_rotation",   // required, enum of supported angles
   "fromEvent": "foot_contact",             // optional, default: whole clip
   "toEvent": "ball_release",               // optional
-  "maxPoints": 60                          // optional, default 60 — keeps output under budget
+  "maxPoints": 40                          // optional, default 40 — keeps output under budget
 }
 ```
 **Returns:** `{ joint, unit, samples: [{ frame, t, value }], peak: { frame, t, value }, meta }`
@@ -192,32 +198,20 @@ snapshot it can reason across — something the UI can only show one panel at a 
 
 `readOnlyHint: true`
 **Input:** `{ sessionId?: string }`
-**Returns:**
-```jsonc
-{
-  "available": true,
-  "quality": "medium",
-  "unavailableReason": null,
-  "observedOrder": ["pelvis", "trunk", "upper arm", "forearm"],
-  "peaks": [ { "segment": "pelvis", "frame": 44, "tVideo": 0.733, "tNormPct": 8.1,
-               "peakAngularVelocity": null,
-               "reason": "Slow-motion source at an unknown factor: absolute angular velocity is not derivable (tech.md 3.2b)." } ],
-  "pelvisToTrunkSeparationPct": 12.4,   // % of the foot-contact -> ball-release window.
-                                        // NOT seconds: clips are slow-motion at an unknown
-                                        // factor, so absolute rates are unavailable (tech.md 3.2b).
-  "isProximalToDistal": false,
-  "intervals": [
-    { "from": "pelvis", "to": "trunk", "frames": 28,
-      "normalizedPctPoints": 20.1, "videoSeconds": 0.934, "realSeconds": null }
-  ],
-  "literatureNote": "Complete proximal-to-distal sequencing is uncommon: across 208 analysed pitches, no pitch showed a fully proximal-to-distal order and 14 distinct patterns were observed. The most prevalent was pelvis → trunk → arm → hand → forearm. A non-PDS order is therefore not itself a fault.",
-  "meta": { "confidence": "medium", … }
-}
-```
+**Returns:** `{ available, quality, unavailableReason, deliveryWindow, observedOrder, peaks,
+pelvisToTrunkSeparationPct, separationUnits, rateUnitsAvailable, isProximalToDistal, intervals,
+literatureNote, meta }`. Each peak carries its segment, frame, video time, normalized delivery-window
+position, and angular rate when the timebase permits it. This is the response shape, not a fixed set
+of session values.
 **Why:** the marquee metric of modern pitching analysis, and impossible to read off a static UI.
 ⚠️ **`literatureNote` is mandatory in the response.** Without it an agent will confidently call a
 normal sequence a defect. Shipping the nuance *inside the tool output* is how we prevent that — and it
 is a concrete demonstration of designing tools that keep a model honest.
+
+Both bundled sessions are marked normal-rate with `realTimeScale: 1` and an `estimated` scale
+source. Rate output is therefore available but capped at medium confidence because 25/29.97 fps
+undersamples the fastest arm motion. Unknown-timebase sessions still return order and normalized
+timing while withholding real-time rates.
 
 ---
 
@@ -229,7 +223,7 @@ is a concrete demonstration of designing tools that keep a model honest.
 
 `readOnlyHint: true`
 **Input:** `{ "metric": "hip_shoulder_separation" }`
-**Returns:** `{ metric, plainLanguage, computation, referenceRange, citations, confidence, limitations, meta }`
+**Returns:** `{ metric, label, available, plainLanguage, computation, measurementPlane, referenceRanges, limitations, note?, meta }`
 
 **Why — this is the anti-hallucination tool, and a deliberate design statement.** Without it, an agent
 asked "is 42° of hip–shoulder separation good?" will invent a range. With it, the agent has a cited
@@ -244,21 +238,23 @@ displayed UI value and the agent's answer can never drift apart.
 
 `readOnlyHint: true`
 **Input:** `{ "event": "optional — restrict to one event", "includeWithinRange": false }`
-**Returns:** `{ deviations: [{ metric, event, value, reference, direction: "above"|"below", magnitude, confidence, citation }], summary, meta }`
+**Returns:** `{ deviations, omitted, summary, comparisonsUnavailable, eventReviewRequired, reviewPlan, causalLimit, meta }`
 **Why:** answers "what stands out?" in one call instead of the agent fetching every metric and
 diffing by hand. Filtering to deviations keeps the response inside the output budget.
 
 ---
 
 #### `compare_pitches`
-> Compares two loaded pitches metric by metric and returns the differences, so an agent can reason
-> about what changed between attempts.
+> Compares two analysed sessions metric by metric at shared events and returns descriptive
+> differences plus the compatibility limits that constrain interpretation.
 
 `readOnlyHint: true`
 **Input:** `{ "sessionIdA": "…", "sessionIdB": "…", "event": "optional" }`
-**Returns:** `{ comparisons: [{ metric, event, valueA, valueB, delta, confidence }], summary, meta }`
-**Why:** before/after is the actual coaching workflow. Note the honest caveat, which the tool
-returns: cross-session comparison is only valid when camera setup is similar — `meta.caveat` says so.
+**Returns:** `{ sessionA, sessionB, comparisonScope: "descriptive_only", ranking: { available: false, reason }, compatibility, comparisons: [{ metric, event, valueA, valueB, deltaDeg, confidence }], excludedLowConfidence, summary, meta }`
+**Why:** lets the agent identify inspectable differences without fabricating a controlled
+before/after claim. The shipped sessions depict different athletes, handedness, views, frame rates,
+and unestablished capture protocols. The tool therefore refuses better/worse ranking and may not
+infer improvement, regression, performance, causality, or coaching outcome.
 
 ---
 
@@ -280,23 +276,25 @@ UI before returning**, per Chrome's best practices.
 ---
 
 #### `focus_joint`
-> Highlights a joint or segment in the 3D viewer and rotates the camera to the plane where that
-> angle is most readable.
+> Highlights a joint or segment, turns on its readout, and selects the anatomical camera plane where
+> its supported angle is most readable.
 
 `readOnlyHint: false`
-**Input:** `{ "joint": "lead_knee", "cameraPlane": "sagittal | frontal | transverse | auto" }`
-**Returns:** `{ focused: joint, cameraPlane, meta }`
-**Why:** a joint angle is only legible from the right viewpoint. The agent knowing *which* view makes
-its point is real expertise expressed through the interface — and it looks superb on video.
+**Input:** `{ "joint": "lead_knee", "cameraPlane": "sagittal | frontal | transverse | free | auto" }`
+**Returns:** `{ focused, joint, cameraPlane, anglesShown, reason, meta }`
+**Why:** a joint angle is only legible from the right viewpoint. For a supported elbow or knee
+flexion focus, the application—not the LLM—also renders the proximal and distal reconstructed
+segments, straight-extension reference, flexion arc, and existing measured value. Whole-body and
+source-video context remain visible, and the human can scrub, orbit, or change focus immediately.
 
 ---
 
 #### `set_overlay`
-> Turns viewer overlays on or off: reference-range ghost, joint-angle readouts, motion trails, and
-> the event-marker track.
+> Turns supported viewer overlays on or off: segment frames, axial dial, joint-angle readouts,
+> motion trail, and event-marker track.
 
 `readOnlyHint: false`
-**Input:** `{ "overlay": "reference_ghost | angle_readouts | motion_trail | event_markers", "enabled": true }`
+**Input:** `{ "overlay": "segment_frames | axial_dial | angle_readouts | motion_trail | event_markers", "enabled": true }`
 **Returns:** `{ activeOverlays: [...], meta }`
 **Why:** lets the agent stage the visual evidence for the point it is making, instead of describing it.
 
@@ -310,9 +308,10 @@ its point is real expertise expressed through the interface — and it looks sup
 **Input:**
 ```jsonc
 {
-  "frame": 58,                                  // required
-  "joint": "r_shoulder",                        // optional anchor
-  "label": "MER 12° below reference",           // required, ≤80 chars
+  "frame": 120,                                 // optional; event or current frame also accepted
+  "event": "max_external_rotation",            // optional alternative to frame
+  "joint": "throwing_elbow",                    // optional semantic anchor
+  "label": "Inspect elbow flexion at MER",       // required, ≤80 chars
   "severity": "info | attention"                // optional, default "info"
 }
 ```
@@ -338,7 +337,7 @@ the explainer names as its goal. **Lead the demo video with this.**
 | 6 | `get_kinematic_sequence` | B | | Marquee metric + literature nuance |
 | 7 | `get_metric_definition` | C | | **Anti-hallucination; single source of truth** |
 | 8 | `compare_to_reference` | C | | "What stands out?" in one call |
-| 9 | `compare_pitches` | C | | Before/after coaching workflow |
+| 9 | `compare_pitches` | C | | Descriptive differences with explicit compatibility/ranking boundary |
 | 10 | `seek_to_event` | D | ✎ | **Agent moves the human's view** |
 | 11 | `focus_joint` | D | ✎ | **Agent chooses the right viewpoint** |
 | 12 | `set_overlay` | D | ✎ | **Agent stages visual evidence** |
@@ -361,21 +360,22 @@ Discipline matters as much as coverage; be ready to say why these are absent.
 | `assess_injury_risk` | We do not make medical claims (SPEC §6). |
 | `score_pitch` / `grade_mechanics` | A single composite score is exactly the false authority this project argues against. |
 | `set_camera_position` | Too low-level; `focus_joint` covers the real intent with better semantics. |
+| generic drawing/arrows | The LLM must not invent anatomy or imply force/energy. Supported metric geometry is application-owned viewer behavior. |
 | Declarative form tools | Unsupported in ChatGPT's in-app browser. |
 
 ---
 
 ## 6. Verification checklist (Task 16)
 
-- [ ] All 13 appear in **DevTools → Application → WebMCP → Available Tools**
-- [ ] Each runs from the DevTools **Run tool** button with correct output
-- [ ] Every response includes a populated `meta` block
-- [ ] `readOnlyHint` / `untrustedContentHint` set correctly on every tool
-- [ ] Write tools visibly change the UI **before** returning
-- [ ] Errors return a descriptive message the model can retry against, not a raw stack trace
-- [ ] Loading a new session fires `toolchange` and re-registers cleanly
-- [ ] Non-WebMCP browser: registration no-ops, app fully usable
+- [x] Exactly 13 unique tools discovered in native Chrome 154 on revision `00011-26x`
+- [x] Every tool completed through the native invocation surface
+- [x] Every successful evidence response includes a populated `meta` block
+- [x] `readOnlyHint` / `untrustedContentHint` set correctly — nine read/four write
+- [x] Write tools visibly change the UI **before** returning
+- [x] Errors return a descriptive structured result the model can retry against, not a stack trace
+- [x] Reload preserves the same 13 unique registrations; live handlers follow session state
+- [x] Non-WebMCP browser: registration no-ops, app fully usable
 - [ ] Verified end-to-end in **ChatGPT's in-app browser**, not only Chrome
-- [ ] Return-shape convention confirmed against the live agent (§2)
+- [x] Return-shape convention confirmed on the live origin: plain objects work
 - [ ] Eval pass: ambiguous prompts ("why is he losing velocity?", "what should he work on?") select
       sensible tools in a sensible order
