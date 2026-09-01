@@ -30,10 +30,10 @@ review billing and access settings before using this configuration with non-demo
 
 ## Final-candidate verification record
 
-On 2026-09-01 at 10:28:43 UTC, revision `pitchlab-webmcp-00010-d65` became ready and received 100%
-of traffic. Its application source milestone is commit `dc4fdf3`
-(`docs: reconcile cleared release evidence`). Documentation-only commits after that milestone do not
-alter the deployed web artifact.
+On 2026-09-01 at 15:17:15 UTC, revision `pitchlab-webmcp-00011-26x` became ready and received 100%
+of traffic. Its application source milestone is commit
+`7e0561d7ed766c5d9a6e4adaf084c561829423a0` (`release: qualify two-session evidence review`).
+Documentation-only commits after that milestone do not alter the deployed web artifact.
 
 Observed against the stable URL:
 
@@ -41,6 +41,8 @@ Observed against the stable URL:
 - Headers omit `Origin-Agent-Cluster: ?0` and include `X-Content-Type-Options: nosniff`.
 - The public index contains exactly the cleared `delivery-02` Pexels session and attributed
   `delivery-03` CC BY-SA 4.0 Wikimedia derivative.
+- `delivery-02.json` returned `200`, `application/json`, 947,715 bytes; a range request for its MP4
+  returned `206` with a total object size of 31,778,448 bytes.
 - `delivery-03.json` returned `200`, `application/json`, 802,942 bytes.
 - A range request for `delivery-03.mp4` returned `206`; total object size is 6,781,930 bytes.
 - Removed-session JSON/video and an internal upload-recovery URL returned `404`.
@@ -68,7 +70,10 @@ The critical chain visibly completed before each tool result:
 A UI correction of MER to f121 was returned by `get_phase_events` with
 `manualOverride: true`. Invalid events returned structured recovery values. Elbow valgus torque
 returned an unavailable response explaining the missing force data/inverse dynamics and did not
-invent a number. There were no console errors, page errors or failed requests.
+invent a number. The focused elbow visibly showed the supported shoulder→elbow→wrist geometry,
+straight-arm reference and flexion arc/value. `compare_pitches` returned `descriptive_only`, an
+unavailable better/worse ranking and the athlete/camera/timebase/protocol compatibility caveats.
+There were no console errors, page errors or failed requests.
 
 Full per-tool output sizes and client caveats are recorded in
 [`evals/webmcp-live-checklist.md`](../evals/webmcp-live-checklist.md). The remaining release gate is

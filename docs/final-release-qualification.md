@@ -115,7 +115,9 @@ by the language model.
 - [x] Real-pair descriptive comparison regression and explicit ranking refusal.
 - [x] Viewer-only supported flexion geometry selected; no WebMCP contract expansion.
 - [x] Full suite (89 tests), typecheck, production build, and final repository/build asset audit.
-- [ ] Atomic release commit and exact Cloud Run deployment.
-- [ ] Post-deploy WebMCP registration/runtime/visible-focus smoke on that revision.
+- [x] Atomic release commit `7e0561d` and exact Cloud Run deployment
+  `pitchlab-webmcp-00011-26x` (100% traffic).
+- [x] Post-deploy WebMCP registration/runtime/visible-focus smoke on that revision: Chrome 154
+  exposed exactly 13 tools, all completed, elbow geometry was visible, and no browser errors occurred.
 - [ ] Owner-observed ChatGPT natural-language repeat and two comparison prompts on that revision.
 - [ ] Clean judge-experience pass, then engineering freeze.

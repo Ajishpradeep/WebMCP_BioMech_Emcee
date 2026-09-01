@@ -2,7 +2,7 @@
 
 **Public origin:** <https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app>
 
-This record covers the cleared-evidence release deployed on 2026-09-01. A status is `PASS` only
+This record covers the final-submission candidate deployed on 2026-09-01. A status is `PASS` only
 when observed against the public origin; source inspection and mocked handlers are not live-host
 proof.
 
@@ -15,23 +15,25 @@ proof.
 | LIVE WEBMCP | All 13 runtime checks | PASS | Every tool returned native status `Completed`; correct structured refusals count as passes |
 | LIVE WEBMCP | Four visible write effects | PASS | f95→f127 seek; left elbow/sagittal focus; 5→4 layers; persistent and revisitable note |
 | LIVE WEBMCP | Return shape confirmed | PASS | Plain object results were preserved in native outputs; no MCP content envelope required |
-| LIVE WEBMCP | ChatGPT natural-language evals | PENDING | Prior deployed revision passed; owner must repeat against revision `00010-d65` |
+| LIVE WEBMCP | ChatGPT natural-language evals | PENDING | Prior deployed revision passed; owner must repeat against revision `00011-26x` |
 | EVIDENCE | Redistribution rights / provenance | PASS | Pexels License and attributed CC BY-SA 4.0 Wikimedia derivative; no unverified session ships |
 | EVIDENCE | Reconstruction QA / event review / bundle | PASS | 288-frame Pexels and 246-frame Wikimedia sessions passed QA and numerical gates |
-| FINAL DEPLOYMENT | Exact revision / HTTPS / cold load | PASS | Commit `dc4fdf3`; revision `00010-d65`; 100% traffic; current session set and assets verified |
+| FINAL DEPLOYMENT | Exact revision / HTTPS / cold load | PASS | Commit `7e0561d`; revision `00011-26x`; 100% traffic; current session set and assets verified |
 | FINAL DEPLOYMENT | Post-deploy WebMCP critical flow | PASS | Chrome 154: inspect → navigate → focus → overlay → annotate/revisit |
 | JUDGE EXPERIENCE | Clean-profile and human-only usability | PASS | Cleared 2D/3D sync, aspect-ratio resize, event confirmation and rights cards observed without errors |
 | JUDGE EXPERIENCE | ChatGPT agent journey and refusal | PENDING | Repeat the prompt set below against the exact final candidate |
 | SUBMISSION | README/repo/license consistency | PASS | Two cleared sessions and current limitations reconciled locally |
 | SUBMISSION | Screenshots / narrated video / Devpost fields | PENDING | Begin only after the final ChatGPT repeat |
 
-## Environment and deployed artifact
+## FINAL SUBMISSION REVISION
 
 - Date: 2026-09-01.
 - Origin tested: `https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app/?session=delivery-03`.
-- Deployed code commit: `dc4fdf3` (`docs: reconcile cleared release evidence`).
-- Cloud Run revision: `pitchlab-webmcp-00010-d65`, 100% traffic; ready at
-  2026-09-01 10:28:43 UTC.
+- Deployed code commit: `7e0561d7ed766c5d9a6e4adaf084c561829423a0`
+  (`release: qualify two-session evidence review`).
+- Cloud Run revision: `pitchlab-webmcp-00011-26x`, 100% traffic; ready at
+  2026-09-01 15:17:15 UTC. Image digest:
+  `sha256:96c6c936058e2892d444d4aedd77edc44571e92e3e394cbf42053f343e68149e`.
 - Passing native client: **Google Chrome for Testing 154.0.8035.0**, fresh ephemeral profile,
   native `--enable-features=WebMCP`; discovery and invocation used GoogleChromeLabs
   `webmcp-evals` 0.0.4's Puppeteer integration. No polyfill was injected.
@@ -55,7 +57,7 @@ specified. Reload exposed the same 13 unique tools with no stale or duplicate re
 | `get_kinematic_sequence` | PASS | 2,210 chars; partial order and known-timebase rate qualification |
 | `get_metric_definition` | PASS | 1,511 chars; torque refusal separately passed without a fabricated value |
 | `compare_to_reference` | PASS | 2,656 chars; compatible flexion constructs and bounded review plan |
-| `compare_pitches` | PASS | 2,145 chars; descriptive-only cross-session result with compatibility warnings |
+| `compare_pitches` | PASS | 2,689 chars; descriptive-only result, explicit unavailable ranking and compatibility warnings |
 | `seek_to_event` | PASS | 496 chars; visible f95→f127 mutation completed before result |
 | `focus_joint` | PASS | 626 chars; throwing elbow resolved left; visible sagittal focus |
 | `set_overlay` | PASS | 598 chars; visible layer count changed 5→4 |
@@ -70,7 +72,8 @@ so no return-envelope change was made.
 
 - `seek_to_event(ball_release)` painted f127 before the result completed (141 ms).
 - `focus_joint(throwing_elbow)` selected the left elbow and sagittal camera before completion
-  (116 ms).
+  (422 ms). The viewer rendered application-owned shoulder→elbow→wrist segments, a straight-arm
+  reference and the supported flexion arc/value while preserving whole-body and source context.
 - `set_overlay(motion_trail, false)` visibly changed five active layers to four (123 ms).
 - `annotate_frame` painted a labelled f127/left-elbow pin and Shared Notes entry. After seeking
   away, selecting the note returned to its evidence frame (179 ms).
@@ -83,6 +86,8 @@ so no return-envelope change was made.
 ## Public application and evidence checks
 
 - Public session index contains exactly `delivery-02` and `delivery-03`.
+- `delivery-02.json` returned `200` (`application/json`, 947,715 bytes).
+- `delivery-02.mp4` returned a valid byte range (`206`, total 31,778,448 bytes).
 - `delivery-03.json` returned `200` (`application/json`, 802,942 bytes).
 - `delivery-03.mp4` returned a valid byte range (`206`, total 6,781,930 bytes).
 - Removed-session JSON/video and an internal upload-recovery URL returned `404`.
@@ -98,17 +103,48 @@ so no return-envelope change was made.
 The owner previously demonstrated natural-language discovery and use on an earlier revision,
 including exact 13-tool enumeration, navigation/focus/annotation, human correction readback, metric
 construct limits and the torque refusal. That proves client capability but not this exact revision.
-Run these on `?session=delivery-03` and record the client/build if visible:
+Run the owner prompt sequence supplied with this release on `?session=delivery-03` and record the
+client/build if visible. It covers session discovery/overview, phase events, event kinematics,
+angle series, sequence, metric definitions, reference comparison, two-session comparison, all four
+visible writes, correction readback, ranking refusal and unsupported-quantity refusal. In
+particular, observe that the elbow-focus prompt produces the supported segment/reference/arc visual
+state and that the comparison prompts remain descriptive only.
 
-1. “What am I looking at?” — agent should call `get_session_overview` and identify the live
-   left-handed, camera-frame reconstruction.
-2. “Show maximum layback and leave a note for the reviewer.” — viewer must seek to MER f120,
-   focus the throwing (left) shoulder and paint a persistent annotation.
-3. Manually confirm a different MER frame, then ask “What are the phase events?” — response must
-   return that frame with `manualOverride: true`.
-4. “Is 42° hip–shoulder separation good?” — explain the construct limit; do not quote a target.
-5. “What is his elbow valgus torque?” — structured refusal; no number.
-6. “Which WebMCP tools can you reach?” — exactly the intended 13, with no stale names.
+### Owner prompt sequence
+
+Run these in order. Before the first prompt, tell ChatGPT: “Use the connected Biomech Emcee tools
+and act on the shared workspace when I ask you to show something; do not merely describe the UI.”
+
+1. “First tell me exactly which Biomech Emcee WebMCP tools you can access. Then discover every
+   available evidence review, including its source/licensing status, and tell me which review is
+   active.”
+2. “What am I looking at right now? Give me the active-session overview, camera and reconstruction
+   caveats, and the detected phase events with frame numbers and confidence. Do not judge the
+   athlete.”
+3. “At MER, inspect the available kinematics, take me to that event, focus the throwing elbow, turn
+   on the angle readout and segment-frame evidence if needed, explain in ordinary language what
+   elbow flexion means and how this value is constructed, then pin a note saying ‘Review elbow
+   flexion geometry at MER.’”
+4. “Show me how throwing-elbow flexion changes from foot contact through ball release. Summarize
+   the sampled series and peak, then take me to release so I can inspect the endpoint.”
+5. “Walk me through the supported kinematic sequence in this review: observed peak order, timing,
+   confidence and timebase limits. Do not describe it as force or energy transfer.”
+6. “Compare this review with the available published reference ranges. Tell me only which
+   compatible measurements differ, which comparisons were omitted, and what I should inspect next.”
+7. “Compare the two available reviews and show me the most meaningful differences you can actually
+   support. State the athlete, camera, timebase and capture-protocol limits.”
+8. “Which review is better, and what caused the difference?”
+9. Manually scrub to a nearby frame and use the event panel to replace MER with that frame. Then
+   ask: “I corrected MER in the workspace. Read the phase events again and tell me whether my human
+   correction is now the evidence the agent sees.”
+10. “What was this pitcher's elbow valgus torque, and what contributed to the power? If the evidence
+    cannot establish that, do not stop at ‘I can’t answer’: show me a supported movement observation
+    near release instead, explain its limitation, and leave a note for review.”
+
+Expected coverage across the sequence: discovery plus all nine read tools; all four write tools;
+visible seek/focus/overlay/annotation effects; supported elbow geometry; persistent shared-note
+revisit; human-state readback; descriptive-only comparison; ranking/causality refusal; and a useful
+unsupported-kinetics redirect.
 
 Do not mark the ChatGPT gate complete from a transcript alone for the write prompt: observe the
 shared viewer changing and the annotation remaining revisitable.
@@ -117,5 +153,5 @@ shared viewer changing and the annotation remaining revisitable.
 
 - [x] Native 13-definition/runtime extraction and temporary validation captures.
 - [x] Browser/client version, deployed revision, output sizes, writes and caveats recorded here.
-- [ ] Owner-observed ChatGPT repeat against revision `00010-d65`.
+- [ ] Owner-observed ChatGPT repeat against revision `00011-26x`.
 - [ ] Final screenshot set and short screen recording of the critical write chain.
