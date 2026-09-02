@@ -15,14 +15,14 @@ proof.
 | LIVE WEBMCP | All 13 runtime checks | PASS | Every tool returned native status `Completed`; correct structured refusals count as passes |
 | LIVE WEBMCP | Four visible write effects | PASS | f95→f127 seek; left elbow/sagittal focus; 5→4 layers; persistent and revisitable note |
 | LIVE WEBMCP | Return shape confirmed | PASS | Plain object results were preserved in native outputs; no MCP content envelope required |
-| LIVE WEBMCP | ChatGPT natural-language evals | PENDING | Prior deployed revision passed; owner must repeat against revision `00011-26x` |
+| LIVE WEBMCP | ChatGPT natural-language evals | PASS (owner accepted) | Owner checked the final-origin flow and explicitly accepted the observed coverage on 2026-09-02 |
 | EVIDENCE | Redistribution rights / provenance | PASS | Pexels License and attributed CC BY-SA 4.0 Wikimedia derivative; no unverified session ships |
 | EVIDENCE | Reconstruction QA / event review / bundle | PASS | 288-frame Pexels and 246-frame Wikimedia sessions passed QA and numerical gates |
 | FINAL DEPLOYMENT | Exact revision / HTTPS / cold load | PASS | Commit `7e0561d`; revision `00011-26x`; 100% traffic; current session set and assets verified |
 | FINAL DEPLOYMENT | Post-deploy WebMCP critical flow | PASS | Chrome 154: inspect → navigate → focus → overlay → annotate/revisit |
-| FINAL DEPLOYMENT | Judge-facing availability | BLOCKED | Recovered scale-from-zero 429 window; configure one minimum instance and retest, or explicitly accept risk |
+| FINAL DEPLOYMENT | Judge-facing availability | PASS | Service-level `minScale: 1` configured 2026-09-02; exact image/revision retained; public shell and session assets passed |
 | JUDGE EXPERIENCE | Clean-profile and human-only usability | PASS | Cleared 2D/3D sync, aspect-ratio resize, event confirmation and rights cards observed without errors |
-| JUDGE EXPERIENCE | ChatGPT agent journey and refusal | PENDING | Repeat the prompt set below against the exact final candidate |
+| JUDGE EXPERIENCE | ChatGPT agent journey and refusal | PASS (owner accepted) | Owner reports most of the prescribed flow checked and directed that the gate be considered complete |
 | SUBMISSION | README/repo/license consistency | PASS | Two cleared sessions and current limitations reconciled locally |
 | SUBMISSION | Screenshots / narrated video / Devpost fields | PENDING | Begin only after the final ChatGPT repeat |
 
@@ -155,7 +155,22 @@ shared viewer changing and the annotation remaining revisitable.
 
 - [x] Native 13-definition/runtime extraction and temporary validation captures.
 - [x] Browser/client version, deployed revision, output sizes, writes and caveats recorded here.
-- [ ] One minimum Cloud Run instance configured and resulting revision smoke-tested, or risk
-      explicitly accepted by the owner.
-- [ ] Owner-observed ChatGPT repeat against revision `00011-26x`.
+- [x] One minimum Cloud Run instance configured at service level; the exact revision/image remained
+      in place and the public origin/assets passed the follow-up smoke test.
+- [x] Owner-observed ChatGPT natural-language check accepted against the final origin. The owner
+      described the prescribed coverage as checked “for most part” and explicitly closed this gate.
 - [ ] Final screenshot set and short screen recording of the critical write chain.
+
+## Final gate closure — 2026-09-02
+
+Cloud Run now has service-level `run.googleapis.com/minScale: '1'`. The application remains revision
+`pitchlab-webmcp-00011-26x` at 100% traffic on image digest
+`sha256:96c6c936058e2892d444d4aedd77edc44571e92e3e394cbf42053f343e68149e`; no application rebuild
+occurred. The shell returned `200` (observed TTFB 0.212 s), both session JSON files returned `200`,
+both MP4 byte-range requests returned `206`, and `Origin-Agent-Cluster: ?0` remained absent.
+
+The owner supplied the ChatGPT shared-record URL
+<https://chatgpt.com/s/cx_6a9802f1f1fc8191944f368870cbf3f9>, reported that most of the
+natural-language sequence had been checked, and explicitly directed that the gate be considered
+done. The link was not readable from the Codex environment, so this ledger records owner acceptance
+rather than independently claiming exhaustive replay of every prompt.

@@ -1,12 +1,12 @@
 # Final release qualification
 
-**Qualification date:** 2026-09-01  
+**Qualification date:** 2026-09-02
 **Scope:** two-session evidence set, descriptive comparison, non-expert evidence presentation, and
 the release gates that precede screenshots/video/submission.
 
 ## Official challenge frame
 
-Live Devpost data was refreshed on 2026-09-01. Submissions close **2026-09-03 20:00 UTC
+Live Devpost data was refreshed on 2026-09-02. Submissions close **2026-09-03 20:00 UTC
 (1:00 PM Pacific)**; judging runs 2026-09-04 17:00 UTC through 2026-09-22 00:00 UTC. The four
 criteria are WebMCP Leverage, Execution, Potential Impact, and Creativity & Ambition, each on the
 same five-point judging scale. Required deliverables include an accessible live URL, the requested
@@ -119,10 +119,11 @@ by the language model.
   `pitchlab-webmcp-00011-26x` (100% traffic).
 - [x] Post-deploy WebMCP registration/runtime/visible-focus smoke on that revision: Chrome 154
   exposed exactly 13 tools, all completed, elbow geometry was visible, and no browser errors occurred.
-- [ ] Resolve or explicitly accept the recovered Cloud Run scale-to-zero availability incident.
-  Preferred safeguard: one minimum instance followed by exact-revision HTTPS/assets/WebMCP smoke.
-- [ ] Owner-observed ChatGPT natural-language repeat and two comparison prompts on that revision.
-- [ ] Clean judge-experience pass, then engineering freeze.
+- [x] Resolve the recovered Cloud Run scale-to-zero availability incident: service-level
+  `minScale: 1` configured 2026-09-02; exact revision/image retained; HTTPS and assets passed.
+- [x] Owner-observed ChatGPT natural-language check accepted against the final origin. The owner
+  reported most of the prescribed flow checked and explicitly closed the gate.
+- [x] Clean judge-experience pass and engineering freeze declared 2026-09-02.
 
 ## Post-qualification deployment incident
 
@@ -131,5 +132,6 @@ requests received Cloud Run platform HTTP 429 responses for about 2½ minutes be
 instance started and passed its first health probe. The app is serving normally again. Logs show no
 application crash, memory failure, traffic saturation, or failed probe; service capacity is max 100
 instances at concurrency 80. This is a genuine judge-availability risk even though it did not
-invalidate the qualified application artifact. Full timestamps and diagnosis are in
-`docs/deployment.md`.
+invalidate the qualified application artifact. On 2026-09-02 a service-level one-instance floor was
+configured and the exact qualified revision/image plus public asset paths were rechecked
+successfully. Full timestamps, diagnosis, and resolution are in `docs/deployment.md`.

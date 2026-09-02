@@ -33,10 +33,11 @@ illustration.
 - [x] **All 13 exposed by native Chrome WebMCP discovery** on the final candidate
 - [x] **Each runs through the native WebMCP invocation surface**
 - [x] **Write tools visibly change the screen when invoked** — the submission's core claim
-- [ ] **Final candidate verified end-to-end in ChatGPT's in-app browser** — owner repeat pending
+- [x] **Final-origin ChatGPT natural-language check owner-accepted** — owner reports most of the
+      prescribed flow checked; exhaustive per-prompt replay was not independently captured
 - [x] **Return-shape convention confirmed against a live host** — plain objects work; leave
       `toolResult()` centralized and unchanged
-- [ ] Tool *selection* eval with ChatGPT against revision `00011-26x` (§3 below)
+- [x] Tool-selection gate accepted by the owner against the final origin (§3 below)
 
 ---
 

@@ -79,10 +79,11 @@ GCP_SERVICE_NAME=pitchlab-webmcp ./scripts/deploy-gcp.sh
 
 See [deployment details](docs/deployment.md), including the WebMCP-critical response-header check.
 
-The exact application artifact currently deployed is commit `7e0561d` on Cloud Run revision
-`pitchlab-webmcp-00011-26x`. Native Chrome 154 passed all 13 tools on that revision. Engineering
-freeze is not yet declared: an owner-observed ChatGPT repeat remains pending, and a transient
-scale-from-zero 429 incident must be resolved or explicitly accepted before judge assets are made.
+The submission-frozen application artifact is commit `7e0561d` on Cloud Run revision
+`pitchlab-webmcp-00011-26x`. Native Chrome 154 passed all 13 tools on that revision, the owner
+accepted the final-origin ChatGPT natural-language check, and Cloud Run has a service-level
+one-instance floor for judge-facing availability. Post-freeze changes are limited to submission
+copy and assets unless a genuine blocker is found.
 
 ## Architecture
 

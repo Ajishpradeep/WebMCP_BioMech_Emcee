@@ -26,12 +26,11 @@ experience validation**. Use [`docs/devpost-resume.md`](docs/devpost-resume.md) 
 in [`evals/webmcp-live-checklist.md`](evals/webmcp-live-checklist.md). A critical live WebMCP failure
 stops later submission work until the smallest fix is deployed and retested.
 
-**Current gate (2026-09-01):** application commit `7e0561d` is deployed as Cloud Run revision
+**Freeze closed (2026-09-02):** application commit `7e0561d` remains deployed as Cloud Run revision
 `00011-26x`; native Chrome 154 passed the exact 13-tool runtime and visible supported-elbow flow.
-The owner-observed ChatGPT repeat is pending. A real post-deploy availability incident also remains:
-after scaling to zero, Cloud Run returned 429/no-available-instance responses until autoscaling
-recovered. Decide/configure a one-instance floor and smoke-test the resulting configuration before
-freezing, or record explicit acceptance of that judge-availability risk.
+The owner accepted the final-origin ChatGPT natural-language check. A service-level one-instance
+floor is configured, and the exact revision/image plus public assets passed follow-up smoke tests.
+Application code is submission-frozen; only submission copy and assets may change absent a blocker.
 
 ### Execution rules
 
@@ -56,10 +55,10 @@ freezing, or record explicit acceptance of that judge-availability risk.
 | D | P0 | Deploy public HTTPS origin | Cold-load assets; no `Origin-Agent-Cluster: ?0`; service public | ✅ `pitchlab-webmcp-00007-tkw` |
 | E | P0 | Scientific truth gate | Incompatible comparisons removed and partial sequence labeled; manual event-frame validation remains | 🟡 `truth gate, phase 1` |
 | F | P0 | Judge-facing UX | No dead production upload CTA; first-paint loader; narrow layout usable | ✅ local production visual check |
-| G | P0 | WebMCP runtime hardening | Exactly 13 tools or visible failure; success/error contract tests | ✅ final native Chrome 154 pass; ChatGPT exact-revision repeat pending |
+| G | P0 | WebMCP runtime hardening | Exactly 13 tools or visible failure; success/error contract tests | ✅ native Chrome pass; owner-accepted final-origin ChatGPT check |
 | H | P1 | Human event correction loop | Human changes FC/MER/BR; dependent analysis and agent reads update | ✅ store + tool regression test |
-| I | P0 | Submission package | README, license, and Devpost draft reconciled; ChatGPT repeat, availability hardening/acceptance, screenshots, and <3 min demo remain | 🟡 |
-| J | P0 | Post-app-review compliance reconciliation | Two-session evidence, final app, repository and native live-host validation complete; owner ChatGPT and availability gates remain | 🟡 `7e0561d` / `00011-26x` |
+| I | P0 | Submission package | README, license, and Devpost draft reconciled; final screenshots, video URL, and personal form confirmations remain | 🟡 |
+| J | P0 | Post-app-review compliance reconciliation | Two-session evidence, deployment, availability, native validation, and owner-accepted ChatGPT gate complete | ✅ `7e0561d` / `00011-26x` |
 
 ### P0 acceptance decisions
 
@@ -368,8 +367,8 @@ structured refusal) — and check tool selection and ordering.
 - [x] Top-level page, **no iframes**
 - [x] Cold load in a fresh profile works when an instance is available
 - [x] No auth required
-- [ ] Owner-observed ChatGPT repeat on the final application artifact
-- [ ] One minimum instance configured/retested, or scale-to-zero availability risk explicitly accepted
+- [x] Owner-accepted ChatGPT natural-language check on the final origin
+- [x] One minimum instance configured; exact revision/image and public assets retested
 
 ---
 

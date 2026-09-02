@@ -1,7 +1,7 @@
 # Identity and naming decision
 
 **Decision date:** 2026-08-31
-**Workflow state:** identity locked; final candidate live; availability and ChatGPT freeze gates pending
+**Workflow state:** identity locked; application submission-frozen; asset packaging active
 
 ## Participant identity
 
@@ -94,9 +94,9 @@ The durable pitch is:
 - [x] Keep the stable legacy Cloud Run URL; it now serves the current Biomech Emcee build.
 - [x] Replace the provisional footage with cleared Pexels and CC BY-SA 4.0 sources before final screenshots/video.
 - [x] Run the native Chrome 154 live WebMCP host checklist on revision `00011-26x`.
-- [ ] Resolve/accept the Cloud Run scale-to-zero availability risk and run the owner-observed
-      ChatGPT prompt sequence before engineering freeze.
+- [x] Configure a Cloud Run one-instance floor, smoke-test the exact artifact, and record the
+      owner-accepted final-origin ChatGPT check before engineering freeze.
 
 The app review, source rename, two-session evidence qualification, deployment, and native WebMCP
-validation are complete. Follow [`devpost-resume.md`](devpost-resume.md) for the remaining
-availability, ChatGPT, screenshots/video, and submission gates.
+validation and engineering freeze are complete. Follow [`submission-assets.md`](submission-assets.md)
+for the remaining screenshots/video package and `devpost-submission.md` for the form copy.

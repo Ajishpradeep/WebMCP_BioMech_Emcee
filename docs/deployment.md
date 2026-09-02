@@ -81,7 +81,7 @@ an owner-observed natural-language repeat in ChatGPT's in-app browser against th
 artifact and the availability decision described below; do not claim engineering freeze until both
 are recorded.
 
-## Scale-from-zero incident and availability gate
+## Scale-from-zero incident and availability resolution
 
 At 15:21:21–15:21:22 UTC on 2026-09-01, the two instances used by deployment/live validation
 received normal `SIGTERM` shutdowns and exited cleanly. The service has no configured minimum
@@ -103,11 +103,9 @@ The evidence supports a transient Cloud Run inability to provision promptly afte
 Google does not expose a more specific infrastructure cause in this project's logs. This is not a
 Biomech Emcee rate limiter and is unrelated to ChatGPT tool-call limits.
 
-**Preferred release safeguard:** configure one minimum instance, accept the small continuous
-billing implication, and repeat HTTPS/assets/native WebMCP smoke testing against the resulting
-configuration revision. Until that is done—or the owner explicitly accepts the risk—the deployment
-artifact is qualified but judge-facing availability is not frozen.
-
-The documentation reconciliation rechecked the service on 2026-09-01: revision `00011-26x` remained
-ready with 100% traffic, no minimum-instance annotation was configured, and the stable origin
-returned HTTP `200`. This confirms both recovery and the still-open scale-to-zero risk.
+**Resolved 2026-09-02:** the service now has service-level
+`run.googleapis.com/minScale: '1'`. Cloud Run retained revision `00011-26x`, 100% traffic, and the
+same qualified image digest; no application rebuild occurred. The public shell and both session
+JSON files returned `200`, both MP4 byte-range requests returned `206`, and the response still
+omitted `Origin-Agent-Cluster: ?0`. Keep the minimum instance configured through judging. This
+closes the judge-facing availability gate while accepting the associated continuous billing.

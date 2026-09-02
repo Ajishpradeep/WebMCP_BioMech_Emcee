@@ -4,41 +4,59 @@ Biomech Emcee — Shared 3D Movement Review with WebMCP
 
 ## One-line Summary
 
-An agent-ready biomechanics workspace where people and agents inspect, navigate, correct, and
-annotate the same motion evidence; baseball pitching is the first end-to-end workflow.
+A WebMCP-native biomechanics workspace where an agent can interpret, navigate, and annotate the
+same live movement evidence as the human reviewing it.
 
 ## Problem
 
-Sports-analysis applications split evidence across video, charts, measurements, notes, and
-conversation. A human can see the movement, but an agent normally has to guess from pixels or rely
-on a separate backend that does not know which motion, frame, camera view, overlay, or observation
-the reviewer is currently using. That makes collaboration slow and makes it easy to discuss the
-wrong moment or overstate uncertain measurements.
+Biomechanics review is visually and technically dense. Evidence is split across source video, a 3D
+reconstruction, event frames, measurements, definitions, confidence limits, comparisons, and notes.
+A non-expert may not know which anatomical term to search for; a coach may need to mark a precise
+moment; and an analyst may need to compare sessions without implying causation. A conventional AI
+chat has none of the page's live context. It can describe biomechanics in general, but it does not
+reliably know which session, frame, joint, camera view, overlay, or human correction is on screen.
 
 ## Solution
 
-Biomech Emcee turns an offline 3D reconstruction into a shared browser workspace. Its first complete
-workflow applies the pattern to baseball pitching: the reviewer can scrub the delivery, change
-anatomical views, inspect bounded kinematic measurements, correct three pitching event frames, and
-see evidence notes in context. Thirteen WebMCP tools let an agent read the live review state,
-retrieve definitions and caveats, navigate the visible viewer, focus relevant joints, toggle
-evidence overlays, show application-owned flexion geometry, compare only compatible measurements,
-and pin notes at the moment they describe.
+Biomech Emcee turns an offline 3D reconstruction into a shared browser workspace and exposes that
+workspace through 13 WebMCP tools. Nine read tools give the agent structured access to the active
+session, phase events, measurements, definitions, confidence, references, and comparison limits.
+Four write tools let it seek the visible timeline, focus anatomy, change evidence overlays, and pin
+a note at the frame it describes.
+
+That creates a continuous interaction instead of a detached answer. A person can ask, “Show me what
+elbow flexion means at MER and leave a note.” The agent resolves the ordinary-language request,
+navigates the application to the evidence, focuses the throwing elbow, and leaves a persistent
+evidence-linked observation. The application draws the supported geometry; the agent does not
+invent a diagram. A coach can use the same workspace to review and annotate a precise frame, while
+a less experienced user can ask the connected GPT model for an explanation at the level they need.
 
 The product deliberately acts as a shared instrument rather than an autonomous coach. It refuses
 kinetic quantities that monocular video cannot establish and does not convert exploratory angles
 into clinical conclusions.
 
-## Why This Matters
+## Why This Matters — and Why WebMCP Is Essential Here
 
-The target users are movement specialists, coaches, athletes, sports-science practitioners, and
-technical reviewers who need to discuss motion evidence together. WebMCP reduces the gap between an
-agent's explanation and the evidence the human is viewing: agent actions visibly move the same
-interface, and human corrections immediately become the source used by the agent tools.
+This is not a generic “read the page and summarize it” integration. The useful state is transient
+and visual: what the human is inspecting now, which evidence layers are active, and which event the
+human has corrected. WebMCP gives an external agent a stable, typed interface to that state without
+forcing Biomech Emcee to embed its own assistant or forcing the agent to guess through screenshots
+and DOM clicks. The user can bring a compatible agent and model through the in-app browser; the
+specialist website contributes domain tools and evidence, while the agent contributes language,
+reasoning, and an explanation shaped to the user's question.
 
-Without WebMCP, the agent would need brittle UI interpretation or a separate server-side context
-that cannot reliably represent transient browser state. With WebMCP, the page exposes a precise,
-bounded vocabulary for collaborative review.
+The loop works in both directions. Agent writes visibly change the human's 3D workspace, and human
+event corrections immediately change subsequent agent reads because both use the same browser
+store. The result is shared evidence with shared control—not two parallel versions of the session.
+
+For the implemented pitching workflow, this reduces several kinds of friction:
+
+- A casual question can become a precise event, joint, view, and supported visual explanation.
+- A specialist can turn the same interaction into a persistent frame-linked review note.
+- A comparison request can retrieve actual session differences while preserving capture and
+  confidence caveats.
+- An unsupported request can return a structured refusal plus the nearest observation the evidence
+  can support, instead of producing a plausible-sounding biomechanical claim.
 
 ## How We Used AI
 
@@ -75,6 +93,19 @@ need their own event taxonomy, measurements, references, and validation.
   timebase limitations, and structured refusals.
 - Static public deployment with precomputed sessions; no GPU or backend is needed for judging.
 
+## What Makes It Distinctive
+
+Biomech Emcee uses WebMCP as an interaction architecture, not as an export button or a chat wrapper.
+The read tools are paired with visible, domain-aware writes; the human can correct evidence that the
+agent then consumes; and the tool contract encodes what must be refused. The same natural-language
+surface therefore supports teaching, specialist review, evidence navigation, annotation, and
+cautious comparison without transferring scientific authority to the language model.
+
+Baseball pitching is the working example, not a claim that every sport is already supported. A new
+sport would require its own events, measurements, references, and validation. What generalizes is
+the WebMCP pattern: a complex specialist website can expose its live state and safe actions to the
+agent the user chooses.
+
 ## Architecture
 
 ```text
@@ -102,11 +133,10 @@ offline; session review and WebMCP execution are browser-local.
    WebMCP tools. No login is required.
 3. Ask: “What am I looking at?” The agent should call `get_session_overview` and mention the
    camera-frame and timebase limitations.
-4. Ask: “Show maximum layback and leave a note for the reviewer.” The agent should seek to MER,
-   focus the throwing shoulder, and pin a visible annotation.
-5. Ask: “Show me what the elbow measurement means at MER.” The agent should seek to MER and focus
-   the throwing elbow; the viewer should emphasize shoulder→elbow→wrist and show the supported
-   flexion arc/value without drawing arbitrary agent-supplied geometry.
+4. Ask: “At MER, show me what elbow flexion means and leave a note for the reviewer.” The agent
+   should seek to MER, focus the throwing elbow, and pin a visible annotation.
+5. Observe that the viewer emphasizes shoulder→elbow→wrist and shows the supported flexion
+   arc/value without drawing arbitrary agent-supplied geometry.
 6. Scrub to a nearby frame and select **Use f123** (with the displayed frame number) for an event
    in **Review event frames**.
    Ask for the phase events again; the changed frame should return with `manualOverride: true`.
@@ -143,6 +173,8 @@ completes. The final-candidate native live-host results are recorded in
 
 **TODO before submission:** add a public YouTube URL for an audio demo shorter than three minutes.
 
+The exact 2:45 recording plan and narration are in `docs/submission-assets.md`.
+
 Suggested outline:
 
 - **0:00–0:15 — Working product first:** open on the 3D delivery and ask the agent what is on screen.
@@ -162,11 +194,12 @@ Suggested outline:
 
 ## Screenshot Shot List
 
-1. Full 3D workspace at an event, including timeline, evidence chart, and measurements.
-2. WebMCP-capable browser showing all 13 registered tools.
-3. Agent-driven focused-elbow view with supported flexion geometry and an annotation pinned at MER.
-4. Human event-review control displaying a `reviewed` event.
-5. Evidence/refusal result showing a limitation communicated honestly.
+1. **Captured:** `submission-assets/screenshots/01-main-workspace.png`, the frozen synchronized 2D/3D
+   workspace at MER with event anchors, measurements, and the partial sequence.
+2. **Capture during the final recording:** agent-driven focused-elbow view with supported flexion
+   geometry and a persistent annotation pinned at MER. Use this as the hero image.
+3. **Optional if legible:** two-session `descriptive_only` comparison plus unavailable ranking.
+4. **Optional:** exactly-13-tool proof. Omit if it is less understandable than the product images.
 
 ## Submission Readiness Notes
 
@@ -187,12 +220,10 @@ Suggested outline:
 
 ### Required before submission
 
-- Configure one minimum Cloud Run instance and smoke-test the resulting configuration revision, or
-  explicitly accept the observed scale-from-zero 429 risk. The current service recovered and is
-  serving, but judge-facing availability is not frozen.
-- Repeat the critical natural-language WebMCP flow in ChatGPT's in-app browser against deployed
-  application artifact `7e0561d` (currently revision `00011-26x`); the native Chrome retest passes
-  and is recorded in `evals/webmcp-live-checklist.md`.
+- Keep the configured Cloud Run one-instance floor active through judging. The 2026-09-02 update
+  retained the exact qualified revision/image and passed HTTPS plus asset smoke checks.
+- Retain the owner-supplied ChatGPT shared record with the evidence. The owner checked most of the
+  prescribed final-origin flow and explicitly accepted the gate; do not call it exhaustive replay.
 - Capture 3–5 final screenshots from the cleared-data build.
 - Record and publish the narrated under-three-minute YouTube demo.
 - Confirm the official form answers listed below.
@@ -212,12 +243,11 @@ Suggested outline:
 - Event detection is heuristic. Humans can correct events, but a manually labelled accuracy
   benchmark for the final dataset remains required.
 - The cleared-evidence revision passed native Chrome 154 registration and all 13 executions,
-  including visible writes. An earlier revision passed owner-observed ChatGPT in-app-browser tool
-  selection; the exact ChatGPT build was not captured, and application artifact `7e0561d` requires the same
-  owner-observed natural-language repeat.
-- The current Cloud Run configuration permits scale-to-zero. One transient 429/no-available-instance
-  window occurred after idle shutdown and recovered automatically; configure a one-instance floor
-  and retest, or explicitly accept the availability risk before freeze.
+  including visible writes. The owner accepted a final-origin ChatGPT natural-language check; the
+  exact ChatGPT build and exhaustive per-prompt replay were not independently captured.
+- A transient Cloud Run scale-from-zero 429 window occurred during qualification. A service-level
+  one-instance floor was configured on 2026-09-02 and the exact revision/image plus public assets
+  were rechecked successfully; keep that floor active through judging.
 - Baseball pitching is the only implemented domain workflow. The WebMCP interaction pattern is
   designed for reuse, but no other sport is represented as implemented or validated.
 
@@ -228,18 +258,18 @@ personal answers.
 
 | Field | Draft answer / status |
 |---|---|
-| Submitter Type | **TODO confirm:** Individual / Team of Individuals / Organization |
-| Country of residence | **TODO confirm** |
-| Organization name | Not applicable unless submitting as an organization |
-| App Status | **TODO confirm:** likely New; choose Existing only if Biomech Emcee predates Aug 25, 2026 |
+| Submitter Type | **Individual** — the project is being entered by one person, not by the employer |
+| Country of residence | **Taiwan** — the form asks residence, not citizenship; Indian citizenship does not change this answer |
+| Organization name | Not applicable |
+| App Status | **New** — repository history begins Aug 30, 2026, after the submission period opened |
 | Existing-project updates | If Existing: document WebMCP tools, shared-state actions, event correction, deployment, and evidence hardening added during the submission period |
 | Live URL | https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app |
 | Testing instructions / credentials | Use the Testing Instructions above; no credentials required |
 | Public code repository | https://github.com/Ajishpradeep/biomech-emcee |
-| Agents/clients used to test WebMCP | ChatGPT in-app browser (owner-tested 2026-09-01; exact app/build not captured) and Google Chrome for Testing 154.0.8035.0 with native WebMCP enabled |
-| AI tools leveraged | OpenAI Codex; Meta SAM 3D Body; **TODO add any others actually used** |
-| Learning level | **TODO choose:** None / Moderate / Significant |
-| AI value useful in career | **TODO choose:** Yes / No |
+| Agents/clients used to test WebMCP | ChatGPT in-app browser (owner-accepted final-origin check on 2026-09-02; exact app/build and exhaustive replay not captured) and Google Chrome for Testing 154.0.8035.0 with native WebMCP enabled |
+| AI tools leveraged | OpenAI Codex; Meta SAM 3D Body |
+| Learning level | **Significant** — the project required substantial new work across WebMCP interaction design, live browser tooling, human-agent shared state, scientific claim boundaries, testing, and deployment |
+| AI value useful in career | **Yes** — the reusable experience of designing agent-operable specialist interfaces directly applies to work as an AI Research Engineer |
 
 ### Official-field IDs for final submission
 
