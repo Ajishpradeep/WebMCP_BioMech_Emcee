@@ -1,5 +1,5 @@
 /**
- * session.json contract — mirrors pipeline/joint_map.py and .claude/steering/tech.md §4.
+ * session.json contract — mirrors pipeline/joint_map.py.
  *
  * ⚠️ FROZEN. `JOINT_NAMES` order must match pipeline/joint_map.py exactly; the
  * `keypoints3d` rows are index-aligned to it.
@@ -37,7 +37,7 @@ export interface Timebase {
   /**
    * Multiply video seconds by this to get real seconds. `null` means unknown, which
    * makes every rate-derived metric (deg/s, separation time in seconds) `unavailable`.
-   * See .claude/steering/tech.md §3.2b.
+   * Unknown or estimated time scaling must remain explicit because it bounds rate confidence.
    */
   realTimeScale: number | null
   scaleSource: 'unknown' | 'user' | 'estimated'

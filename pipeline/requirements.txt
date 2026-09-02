@@ -12,7 +12,7 @@
 #                 explicit `bboxes`. We use torchvision Faster R-CNN instead (BSD, no build).
 #   pyrender    — needs OpenGL; we only render 2D skeleton overlays with OpenCV.
 #   MoGe / SAM3 — optional FOV estimator and mask prompts. Not used; default FOV is fine
-#                 because we never rely on absolute metric scale (tech.md §3.2).
+#                 because the product does not claim absolute metric scale.
 #   wandb, tensorboard, pytest, black, xtcocotools, pycocotools, seaborn — training/dev only.
 
 # --- core inference ---

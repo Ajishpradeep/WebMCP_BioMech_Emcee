@@ -2,7 +2,7 @@
 
 This exists ONLY for local development and demos. The deployed Biomech Emcee build is a static
 bundle with no backend: it serves pre-computed sessions from web/public/sessions/ so a
-judge with no GPU gets a working app instantly. See .claude/steering/tech.md §1.
+judge with no GPU gets a working app instantly. See DEVELOPMENT.md.
 
 SAM 3D Body is 840M params and needs CUDA, so it can never sit in the request path of a
 free static deployment.
@@ -105,7 +105,7 @@ def _analyze(job_id: str, video_path: Path, session_id: str) -> None:
                 "view": "uploaded",
                 # Unknown for an arbitrary upload; assume real time unless told otherwise.
                 # A wrong guess here would silently corrupt every rate metric, so we mark
-                # it unknown rather than assuming (tech.md §3.2b).
+                # it unknown rather than silently corrupting rate-derived measurements.
                 "slowMotion": False,
                 "realTimeScale": None,
             }

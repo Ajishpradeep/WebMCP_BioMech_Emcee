@@ -12,7 +12,7 @@ wheels/
 
 # ── NEVER COMMIT MODEL WEIGHTS ──────────────────────────────────
 # SAM 3D Body checkpoints are under Meta's SAM License and must not
-# be redistributed. See .claude/steering/tech.md §7.
+# be redistributed. See ATTRIBUTION.md and DEVELOPMENT.md.
 pipeline/checkpoints/
 
 # Vendored upstream repo (cloned by pipeline/setup.sh, not ours to ship)
@@ -27,9 +27,6 @@ pipeline/out/
 # See ATTRIBUTION.md. Keep even expressly licensed candidate binaries local until one passes QA;
 # retain the small provenance/readme record so source and license details are not lost.
 input_baseball/*
-!input_baseball/licensed_candidates/
-input_baseball/licensed_candidates/*
-!input_baseball/licensed_candidates/README.md
 
 # OS noise
 .DS_Store
@@ -43,3 +40,16 @@ pipeline/data/uploads/
 web/tsconfig.tsbuildinfo
 # Local Devpost workflow progress (not project source or submission content)
 .devpost-hackathon-state.json
+
+# Local project-management and submission-working materials
+/.claude/
+/docs/
+/evals/
+/submission-assets/
+/CLAUDE.md
+/HANDOFF.md
+/PLAN.md
+/SPEC.md
+/devpost-submission.md
+/main.py
+/pyproject.toml

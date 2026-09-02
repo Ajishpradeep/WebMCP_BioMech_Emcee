@@ -2,57 +2,97 @@
 
 **Shared 3D movement review for people and agents, powered by WebMCP.**
 
-Biomech Emcee is an agent-ready biomechanics workspace where a human specialist and an agent inspect
-the same motion evidence. The current end-to-end reference workflow is baseball pitching: the human
-controls a live 3D reconstruction while WebMCP gives the agent structured access to the current
-session, evidence definitions, limitations, and visible viewer actions such as seeking, focusing,
-overlays, and annotations.
+[Live application](https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app) ·
+[2:40 demo video](https://youtu.be/yAUan4TGnl8) ·
+[Development and inference guide](DEVELOPMENT.md) ·
+[Attribution and licenses](ATTRIBUTION.md)
 
-**Live app:** <https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app>
+Biomech Emcee is a WebMCP-native movement-evidence workspace where a person and an AI agent inspect
+and operate the same live biomechanics session. Baseball pitching is the implemented reference
+workflow: synchronized source video and a 3D reconstruction are presented with phase events,
+bounded measurements, confidence, references, comparison limits, and persistent notes.
 
-**Demo video:** <https://youtu.be/yAUan4TGnl8>
+This is not a dashboard with a chatbot attached. The browser exposes its live review state through
+13 imperative WebMCP tools. Nine tools let an agent read the active session, events, measurements,
+definitions, series, sequence, references, and comparison limits. Four write tools visibly seek the
+timeline, focus anatomy, change evidence overlays, and add frame-linked notes to the workspace the
+human is already using.
 
-Built for [The WebMCP Challenge](https://webmcp.devpost.com/). The product thesis is simple: an
-agent should help a reviewer navigate and document movement evidence, not impersonate a coach or
-manufacture clinical conclusions. Baseball is the implemented reference workflow, not the intended
-boundary of the human-agent review pattern.
-
-## What is working
-
-Everything currently implemented below is for the baseball-pitching workflow. Other sports would
-require their own event taxonomy, metric definitions, references, and validation; they are a product
-direction, not a current feature.
-
-- Interactive in-browser 3D skeleton review, timeline scrubbing, camera presets, overlays,
-  application-owned flexion geometry for focused elbows/knees, and persistent annotations.
-- Two committed, precomputed review sessions that load without a GPU or analysis backend. The licensed
-  Pexels full-body session is the default; the second session is an attributed, trimmed/transcoded
-  Wikimedia derivative distributed under CC BY-SA 4.0.
-- Thirteen WebMCP tools: nine read tools for session, measurement, and evidence context; four write
-  tools that visibly navigate and annotate the shared review surface.
-- Published-range comparisons only for construct-compatible direct two-segment elbow and lead-knee
-  flexion measurements. Other angles remain exploratory measurements, not rankings.
-- A partial four-segment peak-order view with normalized intervals and clip-quality refusal,
-  explicitly not a full published five-segment sequence or a quality score.
-- Plain-English review routing: “what stands out?” / “where did I mess up?” returns bounded
-  observations and suggested seek/focus/annotation calls using the existing WebMCP tools.
-- Cross-session questions are descriptive only: the shipped reviews depict different athletes and
-  camera protocols, so the tool exposes compatibility limits and refuses better/worse ranking.
+![Biomech Emcee running in ChatGPT's in-app browser](assets/biomech-emcee-webmcp.png)
 
 ## Why WebMCP
 
-The key state lives in the page: current pitch, frame, selection, view, overlays, and review notes.
-WebMCP lets the agent read that live state and act on the same visual workspace the human sees. A
-useful interaction is: inspect the event list → ask for a bounded measurement with caveats → seek
-the viewer to the relevant frame → focus the joint and show its supported geometry → pin an
-observation for the human to review.
+The useful context in specialist software is often transient and visual: which session and frame is
+open, what anatomy is selected, which layers are visible, and what the reviewer corrected. Without
+WebMCP, an external agent must guess through pixels or DOM interactions, or work from a separate
+backend representation that does not match the human's current view.
 
-The app remains useful in ordinary browsers. In a WebMCP-capable HTTPS host, the header reports
-whether all 13 tools registered; a partial registration is surfaced instead of being hidden.
+Biomech Emcee gives the agent a typed, bounded interface to the same browser state:
 
-## Run locally
+- A casual question can become a precise event, joint, camera view, and visual explanation.
+- An agent can navigate to evidence and leave a persistent note for a human reviewer.
+- A human event-frame correction immediately changes subsequent agent reads.
+- Two sessions can be compared descriptively while better/worse ranking remains unavailable.
+- Unsupported requests—such as elbow torque, ground-reaction force, pitch velocity, or injury
+  risk—return structured refusals instead of plausible-looking numbers.
 
-Prerequisites: Node 24+ and npm.
+The website owns domain evidence and valid actions; the connected agent contributes language and
+reasoning; the human retains judgment.
+
+## What is implemented
+
+- Synchronized source-video and interactive Three.js 3D skeleton review.
+- Timeline, event anchors, anatomical camera planes, focus controls, and evidence overlays.
+- Application-owned elbow/knee flexion geometry grounded in reconstructed landmarks.
+- Human correction of foot contact, maximum external rotation, and ball-release frames.
+- Browser-side biomechanics analysis with confidence, citations, and explicit limitations.
+- Partial four-segment peak-order display, never presented as force transfer or a quality score.
+- Exactly 13 WebMCP tools: nine read and four write.
+- Two licensed, precomputed sessions that run without a GPU or backend.
+
+Baseball pitching is the only implemented domain workflow. Supporting another sport would require
+its own events, measurements, references, interface review, and validation.
+
+## Architecture
+
+```text
+licensed source video
+  → offline Python pipeline: person detection + SAM 3D Body
+  → session JSON with 2D/3D landmarks
+  → static React/Three.js browser workspace
+      ├─ browser-side bounded biomechanics analysis
+      ├─ one Zustand store shared by UI and tools
+      └─ 13 document.modelContext.registerTool definitions
+            ↕
+         human and agent operate one evidence surface
+```
+
+Heavy reconstruction is offline. The deployed application is a static Vite build served by nginx;
+it loads the committed sessions and performs the review analysis in the browser.
+
+## Included data
+
+The exact judge-facing inputs and generated payloads are already committed:
+
+```text
+web/public/sessions/
+  delivery-02.mp4   # Pexels licensed reference video
+  delivery-02.json  # SAM 3D Body-derived session payload
+  delivery-03.mp4   # CC BY-SA 4.0 Wikimedia derivative
+  delivery-03.json  # SAM 3D Body-derived session payload
+  index.json        # public session manifest
+```
+
+The MP4 files are the synchronized inputs shown by the app; the JSON files contain the smoothed 2D
+and 3D landmark trajectories used by the browser analysis. Creator, source, license, modification,
+and model terms are documented in [ATTRIBUTION.md](ATTRIBUTION.md) and shown inside the application.
+
+Model checkpoints are not included. They are gated and remain under Meta's SAM License. Raw working
+clips, vendored upstream source, uploaded clips, and QA intermediates are intentionally local-only.
+
+## Quick start: review the included sessions
+
+Prerequisites: Node.js 24+ and npm.
 
 ```bash
 cd web
@@ -60,8 +100,9 @@ npm ci
 npm run dev
 ```
 
-Open the printed Vite URL. The static app loads session data from `web/public/sessions/`; it does
-not require the Python inference environment to review the included sessions.
+Open the Vite URL. No Python environment, GPU, model checkpoint, login, or backend is needed.
+
+Verify the project with:
 
 ```bash
 cd web
@@ -70,61 +111,25 @@ npx vitest run
 npm run build
 ```
 
-## Deploy
+The frozen release baseline is 89 passing tests plus a clean typecheck and production build.
 
-The production app is a static Vite build served by nginx on Cloud Run. With authenticated gcloud:
+For complete environment setup, gated model download, video-to-3D inference, local upload analysis,
+data layout, and deployment instructions, see [DEVELOPMENT.md](DEVELOPMENT.md).
 
-```bash
-GCP_PROJECT_ID=ideaslab-gcp GCP_REGION=us-central1 \
-GCP_SERVICE_NAME=pitchlab-webmcp ./scripts/deploy-gcp.sh
-```
+## Scientific boundary
 
-See [deployment details](docs/deployment.md), including the WebMCP-critical response-header check.
+Biomech Emcee is a review and evidence-navigation system—not a diagnostic system, injury predictor,
+autonomous coach, medical device, or validated replacement for marker-based motion capture. The
+monocular reconstruction uses camera-frame coordinates with estimated focal length. It cannot
+establish kinetics or absolute metric distances.
 
-The submission-frozen application artifact is commit `7e0561d` on Cloud Run revision
-`pitchlab-webmcp-00011-26x`. Native Chrome 154 passed all 13 tools on that revision, the owner
-accepted the final-origin ChatGPT natural-language check, and Cloud Run has a service-level
-one-instance floor for judge-facing availability. Post-freeze changes are limited to submission
-copy and assets unless a genuine blocker is found.
-
-## Architecture
-
-```text
-video → offline SAM 3D Body pipeline → session.json → static React review workspace
-                                                     ↕
-                                     WebMCP tools read and act on live page state
-```
-
-The heavyweight reconstruction pipeline runs offline and writes the frozen `session.json` contract.
-The deployed review application computes its bounded kinematic display in the browser. This keeps
-the public demo reproducible and makes WebMCP appropriate for the live, human-visible workspace.
-
-## Important boundaries
-
-Biomech Emcee is not a marker-based motion-capture replacement, diagnostic system, injury-risk
-predictor, medical device, or autonomous pitching coach. It uses camera-frame reconstruction. The
-two synchronized sources are cleared through the Pexels License and CC BY-SA 4.0 respectively.
-Their creator, source, license, and modification details are available from each session's `i` card
-and [ATTRIBUTION.md](ATTRIBUTION.md). The demo data must not be used for clinical decisions. The
-project’s claim boundary and technical decisions are in
-[SPEC.md](SPEC.md) and [HANDOFF.md](HANDOFF.md).
-
-Focused elbow and knee arcs visualize only reconstructed landmark geometry already used by the
-measurement. They do not represent force, momentum, energy transfer, causality, injury risk, or a
-recommended technique.
-
-## Repository map
-
-- `web/` — React/Vite app, biomechanics engine, and WebMCP tools.
-- `pipeline/` — optional offline inference and session export pipeline.
-- `evals/` — tool-level and live-host verification materials.
-- `docs/` — challenge facts, WebMCP references, and deployment record.
-- `PLAN.md` — pre-submission execution plan and verified milestones.
-- `docs/brand-decision.md` — locked product identity and positioning boundary.
-- `docs/devpost-resume.md` — complete reconciliation protocol after the owner app review.
-- `docs/final-release-qualification.md` — final evidence, comparison, presentation, and freeze ledger.
+Only construct-compatible direct two-segment elbow and lead-knee flexion measurements are compared
+with published ranges. Other displayed angles are exploratory. The two bundled sessions show
+different athletes and capture conditions, so their differences are descriptive only and cannot
+support improvement, regression, performance, or causal claims.
 
 ## License
 
-Biomech Emcee’s source code is released under the [MIT License](LICENSE). Third-party model
-weights and their terms are not redistributed; see [ATTRIBUTION.md](ATTRIBUTION.md).
+Biomech Emcee source code is released under the [MIT License](LICENSE). The bundled videos retain
+their own Pexels and CC BY-SA 4.0 terms. SAM 3D Body code and checkpoints remain under their upstream
+terms and are not redistributed here. See [ATTRIBUTION.md](ATTRIBUTION.md).

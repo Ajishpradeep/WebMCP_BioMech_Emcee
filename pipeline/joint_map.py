@@ -5,7 +5,7 @@ pipeline/vendor/sam-3d-body/sam_3d_body/metadata/mhr70.py). We keep a 24-joint s
 relevant to pitching biomechanics and drop the 40 finger keypoints.
 
 ⚠️ JOINT_NAMES is the frozen contract. web/src/biomech/joints.ts MUST mirror it exactly,
-in this order. See .claude/steering/tech.md §4.
+in this order. See the matching contract in web/src/types.ts.
 """
 
 from __future__ import annotations

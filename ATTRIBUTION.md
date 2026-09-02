@@ -106,8 +106,8 @@ the full left-handed delivery despite protective netting. Automatic candidates a
 MER f120 (low; human review required), and ball release f127 (high). At 29.97 fps, fast arm motion is
 undersampled; rate-derived observations remain medium-confidence rather than laboratory-validated.
 
-The other locally reviewed candidates and their provenance remain recorded in
-`input_baseball/README.md`; they are not bundled or judge-facing assets.
+Other reviewed candidates and working provenance notes remain local-only; they are not bundled or
+judge-facing assets.
 
 ---
 
@@ -122,5 +122,5 @@ Reference ranges in `web/src/biomech/reference.ts` are drawn from:
 - **Kinematic sequence patterns in the overhead baseball pitch.** *Sports Biomechanics.* 2020;19(5).
   [PMID 30213227](https://pubmed.ncbi.nlm.nih.gov/30213227/)
 
-Measurement-uncertainty framing (markerless vs marker-based agreement, RMSD 6.3–23.0° in sports
-settings, weakest on internal/external rotation) is summarized in `SPEC.md` §6.
+The application treats markerless reconstruction as observational evidence and keeps internal/
+external rotation, kinetics, absolute distances, and diagnostic claims outside its validated scope.
