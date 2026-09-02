@@ -3,8 +3,8 @@
 > **New session? Read this file first, then [`CLAUDE.md`](CLAUDE.md).** This is the live log of what
 > is done, what was learned, and what to do next. Updated at the end of every completed task.
 
-**Last updated:** 2026-09-02, after availability hardening, owner-accepted ChatGPT check, and freeze
-**Current state:** **SUBMISSION FROZEN / ASSET PACKAGING ACTIVE.** The owner application review is complete;
+**Last updated:** 2026-09-03, after video publication, asset reconciliation, and final preflight
+**Current state:** **SUBMISSION FROZEN / DEVPOST FINAL PREFLIGHT READY.** The owner application review is complete;
 its product, UX, and scientific decisions remain preserved below. Tasks 16–18 now advance through
 the ordered release gates in [`docs/devpost-resume.md`](docs/devpost-resume.md): live WebMCP proof,
 cleared evidence, final deployment reconciliation, then judge-experience validation. Cloud Run
@@ -12,8 +12,11 @@ revision `00011-26x` serves the cleared Pexels and attributed CC BY-SA 4.0 Wikim
 former unverified session and its public assets are removed. Native Chrome 154 passed all 13 tools
 and the visible write chain after deployment. Cloud Run now has a service-level one-instance floor,
 and the exact revision/assets passed the follow-up smoke test. The owner accepted the final-origin
-ChatGPT natural-language check with its recorded coverage caveat. Application code is frozen;
-change only submission copy and assets unless a genuine blocker appears.
+ChatGPT natural-language check with its recorded coverage caveat. The public YouTube demo is live at
+<https://youtu.be/yAUan4TGnl8>, reports 160–161 seconds, and is playable/embeddable. Final screenshots
+and form answers are prepared. Application code is frozen; the next session should perform the
+final security/consistency check, create the Devpost entry, obtain explicit approval, submit, and
+verify the public project page.
 
 ---
 
@@ -105,7 +108,7 @@ Python env is **`.venv` (3.12)** at the repo root. Rebuild everything with `pipe
 | P1 — Owner-review UX hierarchy | ✅ | Right inspector now reads as event anchors → measurements → shared notes; all four write-tool effects have prominent visible surfaces. |
 | P1 — Reference-view legibility | ✅ deployed | The synchronized 2D source is a resizable lower-right picture-in-picture surface; the 3D canvas retains the full stage, and long joint readouts/pins wrap with compact labels. The licensed portrait reference renders correctly locally and on Cloud Run. |
 | 17 — GCP deploy | ✅ | Commit `7e0561d`, revision `00011-26x`, 100% traffic; service-level `minScale: 1`; artifact/assets/WebMCP passed. |
-| 18 — Submission package | 🟡 | Engineering freeze declared; screenshots, video, confirmed personal form answers, and Devpost entry remain. |
+| 18 — Submission package | ✅ local packet | Screenshots, public video, confirmed form answers, copy, repo, and deployment are ready; Devpost project creation/submission remains. |
 
 The public UI intentionally shows only precomputed review sessions. The local CUDA upload panel is
 available in development but hidden in the deployed static build, so judges do not encounter a
@@ -393,27 +396,17 @@ evals/pitch-analysis.md           ★ tool-surface verification record + prompt 
 
 ---
 
-## 8. Next: post-owner-review submission convergence
+## 8. Next: final Devpost preflight and submission
 
-The owner review is complete. Preserve the owner-review history and decisions in §4d; do not reopen
-product strategy or perform another redesign pass.
+The owner review, runtime gates, evidence qualification, deployment hardening, screenshots, video,
+repository reconciliation, and form-answer drafting are complete. Preserve the frozen application
+and do not reopen product strategy.
 
-1. **Current gates: hosting availability and owner-observed ChatGPT repeat.** Exact commit `7e0561d` is live as Cloud Run
-   `00011-26x`; both evidence sessions, the final viewer behavior and all 13 native WebMCP calls have
-   passed. Cloud Run later exposed a transient scale-from-zero 429; configure one minimum instance
-   and smoke-test the new configuration revision, or explicitly accept the risk. The owner must also
-   run the supplied natural-language ChatGPT in-app-browser prompts.
-2. **Task 16 — record the supported-client result.** Capture client/build if visible, tool choices,
-   visible writes, supported elbow geometry, correction readback, descriptive comparison/ranking
-   refusal, and unsupported torque refusal against `00011-26x`.
-3. **Task 18 — submission assets.** After the supported-client repeat, perform
-   the clean-profile judge run, capture final screenshots, and record the public narrated demo under
-   three minutes.
-4. **Task 18 — final form.** Reconcile [`devpost-submission.md`](devpost-submission.md) against the
-   final app and live official form. **Lead with `annotate_frame`** — the
-   agent's reasoning becoming a persistent pin in the human's workspace is the strongest single
-   argument in the submission. The line for the Devpost description: *4 of 13 tools are write tools
-   that act on the human's live 3D view.*
+1. Read `docs/final-submission-handoff.md` and the files it routes to.
+2. Refresh the official Devpost requirements/status and run the final security/consistency audit.
+3. Create or synchronize the Devpost project only through the required confirmation gates.
+4. Present the exact payload and ask the owner for an explicit “yes, submit.”
+5. Submit through Devpost, verify `submitted_at` live, and report the public project URL.
 
 Both intended synchronized references now have recorded redistribution terms. Keep their Pexels and
 CC BY-SA attribution/modification notices aligned across the session cards, repository, screenshots,

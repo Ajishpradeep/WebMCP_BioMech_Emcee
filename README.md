@@ -10,6 +10,8 @@ overlays, and annotations.
 
 **Live app:** <https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app>
 
+**Demo video:** <https://youtu.be/yAUan4TGnl8>
+
 Built for [The WebMCP Challenge](https://webmcp.devpost.com/). The product thesis is simple: an
 agent should help a reviewer navigate and document movement evidence, not impersonate a coach or
 manufacture clinical conclusions. Baseball is the implemented reference workflow, not the intended

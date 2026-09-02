@@ -1,11 +1,14 @@
 # Devpost, testing, and validation resume protocol
 
-**Status:** active — post-owner-review submission convergence
+**Status:** final preflight ready — actual Devpost project creation/submission remains
 
 **Resume trigger satisfied:** the owner explicitly declared the application review complete on
 2026-09-01. Tasks 16–18 are active.
 
-This document is the execution protocol for the post-owner-review convergence session. It prevents
+As of 2026-09-03, the application is frozen, the deployment/runtime/repository gates pass, final
+screenshots are present, and the public 160–161 second YouTube demo is
+<https://youtu.be/yAUan4TGnl8>. This document remains the execution protocol for the final Devpost
+preflight. It prevents
 the submission packet from drifting away from the reviewed product. Do not assume the current
 Devpost draft, screenshots, deployment, test counts, feature list, or claims remain correct.
 

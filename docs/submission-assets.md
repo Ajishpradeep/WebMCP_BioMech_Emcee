@@ -5,6 +5,9 @@ commit `7e0561d7ed766c5d9a6e4adaf084c561829423a0`, Cloud Run revision
 `pitchlab-webmcp-00011-26x`, image digest
 `sha256:96c6c936058e2892d444d4aedd77edc44571e92e3e394cbf42053f343e68149e`.
 
+**Published video:** <https://youtu.be/yAUan4TGnl8> — YouTube metadata checked 2026-09-03;
+playable/embeddable and 160–161 seconds. Owner confirms narrated audio.
+
 ## Judge journey
 
 Lead with one idea: **the agent operates the same evidence workspace as the human; it does not
@@ -38,6 +41,122 @@ as a public YouTube video with spoken narration and verify the final duration is
 | 2:22–2:39 | Brief code view: `registerTool`, tool index, `9 read / 4 write`; return to app. | “Thirteen WebMCP tools—nine read and four write—share the browser state rendered by the interface. This is not a chat wrapper; WebMCP is the interaction architecture.” |
 | 2:39–2:48 | End on focused evidence and the note. | “Biomech Emcee is shared movement-evidence review: an expert website, an agent the user chooses, and one evidence surface they can operate together.” |
 
+## Word-for-word recording script
+
+Only text marked **SAY** is narration. Text marked **SCREEN** is a silent production direction.
+Paste the prompts; do not type them during the recording. Trim waits longer than about two seconds.
+
+### 0:00–0:12 — Open with the WebMCP action
+
+**SCREEN:** Start already inside ChatGPT's in-app browser with the frozen `delivery-03` workspace
+loaded. Keep the application and conversation visible. Paste and send this prompt immediately:
+
+> I’m new to biomechanics. At MER, show me what throwing-elbow flexion means. Navigate to that
+> moment, focus the correct elbow, turn on the useful evidence layers, explain how the displayed
+> angle is constructed in plain language, and leave a note saying “Review elbow flexion geometry at
+> MER.”
+
+**SAY:** “This is Biomech Emcee. The agent is not merely describing a biomechanics website. Through
+WebMCP, it can operate the same live evidence workspace as the person reviewing it.”
+
+### 0:12–0:42 — Show the read-and-write chain
+
+**SCREEN:** Let the agent work. Keep the visible viewer in frame as it seeks to MER and focuses the
+throwing elbow. When the geometry appears, pause for two seconds. Point briefly to the synchronized
+source video, the focused elbow, the angle arc, and the shared-view status. Do not orbit the model.
+
+**SAY:** “A casual question is resolved into a precise event, joint, camera view, and measurement.
+The agent reads the detected phase events, retrieves the measurement and its definition, moves the
+timeline to maximum external rotation, and focuses the correct elbow. The application itself draws
+the shoulder, elbow, and wrist geometry behind the angle. The language model does not invent the
+visual evidence.”
+
+### 0:42–1:00 — Show the persistent note
+
+**SCREEN:** Wait until the annotation is visible in Shared notes. Point to it. Seek briefly to
+another event, then click the note so the workspace returns to its evidence frame.
+
+**SAY:** “The agent also leaves a persistent note at the frame it describes. If the reviewer moves
+away, opening that note returns to the same evidence. The conversation has produced a usable review
+artifact inside the specialist application.”
+
+### 1:00–1:20 — Show the human-to-agent direction
+
+**SCREEN:** In Review event anchors, move to a valid nearby frame between foot contact and ball
+release and confirm it as MER. Then paste and send:
+
+> I corrected MER in the workspace. Read the phase events again and tell me whether my correction
+> is now the evidence you see.
+
+Show the `reviewed` state and the agent's readback. If doing the correction live feels risky, record
+this as a separate clip and join it with a cut.
+
+**SAY:** “The collaboration also runs in the other direction. A human can correct an event frame,
+and the next agent read uses that reviewed frame. The interface and the WebMCP tools share one
+browser state, rather than maintaining separate versions of the analysis.”
+
+### 1:20–1:54 — Show comparison with an honesty boundary
+
+**SCREEN:** Paste and send:
+
+> Compare the two available reviews. Show the most meaningful differences the evidence can support,
+> explain the athlete, camera, frame-rate, and capture-protocol limitations, and tell me what I
+> should inspect next.
+
+After the result appears, paste and send:
+
+> Which review is better, and what caused the difference?
+
+Keep the descriptive-only result and ranking refusal readable on screen.
+
+**SAY:** “Biomech Emcee can compare the two licensed sessions, but only descriptively. These clips
+show different athletes, viewpoints, frame rates, and capture protocols. The tool can report
+observed differences, but it refuses to call one review better or claim what caused the difference.
+That boundary is part of the product, not a disclaimer added afterward.”
+
+### 1:54–2:20 — Show an unsupported-quantity refusal
+
+**SCREEN:** Paste and send:
+
+> What was this pitcher’s elbow valgus torque, and what generated the power? If this evidence cannot
+> establish those quantities, explain exactly why, take me to a supported movement observation near
+> release, focus the relevant anatomy, and leave a note about what can actually be reviewed.
+
+Show the unavailable result, supported redirect, viewer navigation, and note if completed.
+
+**SAY:** “The same tool contract refuses quantities this evidence cannot establish. Elbow torque
+requires force data and inverse dynamics, while power and causality cannot be recovered from this
+monocular reconstruction. Instead of fabricating an answer, the agent explains the missing evidence
+and redirects the reviewer to a supported movement observation.”
+
+### 2:20–2:39 — Prove the implementation briefly
+
+**SCREEN:** Cut to a prepared code view showing `document.modelContext.registerTool` and the tool
+index. Highlight or overlay the text `13 WebMCP tools · 9 read · 4 write`. Return to the focused
+workspace before the sentence ends. Do not scroll through source code.
+
+**SAY:** “The application exposes thirteen imperative WebMCP tools: nine read tools and four write
+tools. They inspect session evidence, events, measurements, definitions, and comparisons, and they
+visibly seek, focus, change evidence layers, and annotate the human workspace.”
+
+### 2:39–2:52 — Close
+
+**SCREEN:** End on the focused elbow geometry with the synchronized source and persistent note
+visible. Add a simple title overlay: `Shared evidence, not automated coaching.`
+
+**SAY:** “Biomech Emcee shows what WebMCP enables for specialist software: an expert website, an
+agent the user chooses, and one evidence surface they can understand and operate together. Shared
+evidence, not automated coaching.”
+
+### Optional title and description
+
+**YouTube title:** `Biomech Emcee — Shared 3D Movement Review with WebMCP`
+
+**YouTube description:** `Biomech Emcee is a WebMCP-native biomechanics evidence workspace. Its 13
+tools let an external agent inspect the live session, navigate and focus the 3D viewer, explain
+supported measurements, compare sessions descriptively, and leave persistent evidence-linked notes
+in the same workspace used by the human reviewer. Built for The WebMCP Challenge.`
+
 ## Rubric strategy
 
 - **WebMCP Leverage:** strongest dimension. Demonstrate a multi-tool read→seek→focus→annotate chain,
@@ -59,8 +178,9 @@ Use no more than four images, in this order:
 
 1. `submission-assets/screenshots/01-main-workspace.png` — synchronized 2D/3D workspace, event
    anchors, measurement cards, and partial sequence. Captured from the frozen deployment.
-2. `02-agent-focused-elbow-note.png` — capture during the video after the agent focuses the throwing
-   elbow and the persistent MER note is visible. This is the hero image.
+2. `submission-assets/BioMech_EmmCee_Screen_Capture.png` — high-resolution hero capture from
+   ChatGPT's in-app browser, visibly showing 13 WebMCP tools, synchronized evidence, throwing-elbow
+   focus, and supported flexion geometry.
 3. `03-descriptive-comparison.png` — capture the app plus agent result showing `descriptive_only`
    and the unavailable better/worse ranking, only if the result is legible at gallery size.
 4. `04-webmcp-proof.png` — optional code/browser proof showing exactly 13 tools (9 read / 4 write).

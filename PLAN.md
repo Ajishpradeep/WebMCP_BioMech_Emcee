@@ -57,7 +57,7 @@ Application code is submission-frozen; only submission copy and assets may chang
 | F | P0 | Judge-facing UX | No dead production upload CTA; first-paint loader; narrow layout usable | ✅ local production visual check |
 | G | P0 | WebMCP runtime hardening | Exactly 13 tools or visible failure; success/error contract tests | ✅ native Chrome pass; owner-accepted final-origin ChatGPT check |
 | H | P1 | Human event correction loop | Human changes FC/MER/BR; dependent analysis and agent reads update | ✅ store + tool regression test |
-| I | P0 | Submission package | README, license, and Devpost draft reconciled; final screenshots, video URL, and personal form confirmations remain | 🟡 |
+| I | P0 | Submission package | README, license, final screenshots, 160–161 s public YouTube demo, Devpost copy, and form answers reconciled | ✅ |
 | J | P0 | Post-app-review compliance reconciliation | Two-session evidence, deployment, availability, native validation, and owner-accepted ChatGPT gate complete | ✅ `7e0561d` / `00011-26x` |
 
 ### P0 acceptance decisions
@@ -375,14 +375,14 @@ structured refusal) — and check tool selection and ordering.
 ### Task 18 — Submission package
 **Goal:** clear Stage One and score well.
 **Do:**
-- [ ] `LICENSE` (MIT) at repo root, **auto-detected and visible in GitHub's About sidebar** — hard requirement
-- [ ] README: what it is, setup instructions someone else can follow, SAM 3D Body attribution + SAM License note, **no committed checkpoints**
-- [ ] **Demo video, <3 min, with audio, public YouTube.** Structure: problem (20 s) → app solo (30 s) →
+- [x] `LICENSE` (MIT) at repo root, **auto-detected and visible in GitHub's About sidebar** — hard requirement
+- [x] README: what it is, setup instructions someone else can follow, SAM 3D Body attribution + SAM License note, **no committed checkpoints**
+- [x] **Demo video, <3 min, with audio, public YouTube.** Structure: problem (20 s) → app solo (30 s) →
       **agent asks a question, viewer scrubs, pin appears** (60 s) → the honest refusal on valgus torque
       (20 s) → tool surface in DevTools (20 s). **Lead with `annotate_frame`.**
-- [ ] Devpost description covering all four required points: WebMCP fit · UX improvement · new
+- [x] Devpost description covering all four required points: WebMCP fit · UX improvement · new
       human+agent capability · implementation. Reuse SPEC §3 and the "4 of 13 are write tools" line.
-- [ ] App matches the video and description exactly
+- [x] App matches the video and description exactly
 - [ ] Submit **before Thu Sep 3, 1:00 PM PDT**
 
 ---

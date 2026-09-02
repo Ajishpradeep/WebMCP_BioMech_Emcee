@@ -24,7 +24,7 @@ proof.
 | JUDGE EXPERIENCE | Clean-profile and human-only usability | PASS | Cleared 2D/3D sync, aspect-ratio resize, event confirmation and rights cards observed without errors |
 | JUDGE EXPERIENCE | ChatGPT agent journey and refusal | PASS (owner accepted) | Owner reports most of the prescribed flow checked and directed that the gate be considered complete |
 | SUBMISSION | README/repo/license consistency | PASS | Two cleared sessions and current limitations reconciled locally |
-| SUBMISSION | Screenshots / narrated video / Devpost fields | PENDING | Begin only after the final ChatGPT repeat |
+| SUBMISSION | Screenshots / narrated video / Devpost fields | PASS | Final workspace and ChatGPT/WebMCP hero captures present; YouTube demo playable/embeddable at 160–161 s; exact form answers prepared |
 
 ## FINAL SUBMISSION REVISION
 
@@ -159,7 +159,8 @@ shared viewer changing and the annotation remaining revisitable.
       in place and the public origin/assets passed the follow-up smoke test.
 - [x] Owner-observed ChatGPT natural-language check accepted against the final origin. The owner
       described the prescribed coverage as checked “for most part” and explicitly closed this gate.
-- [ ] Final screenshot set and short screen recording of the critical write chain.
+- [x] Final workspace and ChatGPT/WebMCP hero screenshots retained; public YouTube recording of the
+      critical workflow available at <https://youtu.be/yAUan4TGnl8>.
 
 ## Final gate closure — 2026-09-02
 

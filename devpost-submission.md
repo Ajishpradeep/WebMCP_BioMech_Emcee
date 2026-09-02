@@ -171,9 +171,11 @@ completes. The final-candidate native live-host results are recorded in
 
 ## Demo Video
 
-**TODO before submission:** add a public YouTube URL for an audio demo shorter than three minutes.
+<https://youtu.be/yAUan4TGnl8>
 
-The exact 2:45 recording plan and narration are in `docs/submission-assets.md`.
+Verified 2026-09-03 through YouTube metadata: playable and embeddable, title matches Biomech Emcee,
+and reported duration is 160–161 seconds. The owner confirms the published recording contains the
+required narration. The recording plan and narration are retained in `docs/submission-assets.md`.
 
 Suggested outline:
 
@@ -196,8 +198,9 @@ Suggested outline:
 
 1. **Captured:** `submission-assets/screenshots/01-main-workspace.png`, the frozen synchronized 2D/3D
    workspace at MER with event anchors, measurements, and the partial sequence.
-2. **Capture during the final recording:** agent-driven focused-elbow view with supported flexion
-   geometry and a persistent annotation pinned at MER. Use this as the hero image.
+2. **Captured hero:** `submission-assets/BioMech_EmmCee_Screen_Capture.png`, ChatGPT's in-app browser
+   showing 13 registered tools, the synchronized workspace, throwing-elbow focus, and supported
+   flexion geometry.
 3. **Optional if legible:** two-session `descriptive_only` comparison plus unavailable ranking.
 4. **Optional:** exactly-13-tool proof. Omit if it is less understandable than the product images.
 
@@ -217,6 +220,9 @@ Suggested outline:
 - Both final sessions passed rights, decode/freeze, reconstruction, event-order, coverage, timebase,
   series and partial-sequence qualification. `compare_pitches` reports `descriptive_only` and makes
   better/worse ranking unavailable.
+- The public YouTube demo is playable/embeddable and 160–161 seconds, within the three-minute limit.
+- Final screenshots include the full workspace and a high-resolution ChatGPT/WebMCP focused-elbow
+  hero image from the frozen deployment.
 
 ### Required before submission
 
@@ -224,9 +230,8 @@ Suggested outline:
   retained the exact qualified revision/image and passed HTTPS plus asset smoke checks.
 - Retain the owner-supplied ChatGPT shared record with the evidence. The owner checked most of the
   prescribed final-origin flow and explicitly accepted the gate; do not call it exhaustive replay.
-- Capture 3–5 final screenshots from the cleared-data build.
-- Record and publish the narrated under-three-minute YouTube demo.
-- Confirm the official form answers listed below.
+- Run the final Devpost readiness/security check and create the Devpost project.
+- Verify the completed form and public project page visually before the explicit submit action.
 - Freeze the submitted repository and deployment after the deadline until judging ends.
 
 ## Known Limitations
@@ -251,10 +256,9 @@ Suggested outline:
 - Baseball pitching is the only implemented domain workflow. The WebMCP interaction pattern is
   designed for reuse, but no other sport is represented as implemented or validated.
 
-## TODO Official Form Fields
+## Official Form Answers
 
-The following labels and options are copied from the live Devpost form. Do not infer the remaining
-personal answers.
+The following labels and options were refreshed from the live Devpost form on 2026-09-03.
 
 | Field | Draft answer / status |
 |---|---|
@@ -266,6 +270,7 @@ personal answers.
 | Live URL | https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app |
 | Testing instructions / credentials | Use the Testing Instructions above; no credentials required |
 | Public code repository | https://github.com/Ajishpradeep/biomech-emcee |
+| Demo video | https://youtu.be/yAUan4TGnl8 |
 | Agents/clients used to test WebMCP | ChatGPT in-app browser (owner-accepted final-origin check on 2026-09-02; exact app/build and exhaustive replay not captured) and Google Chrome for Testing 154.0.8035.0 with native WebMCP enabled |
 | AI tools leveraged | OpenAI Codex; Meta SAM 3D Body |
 | Learning level | **Significant** — the project required substantial new work across WebMCP interaction design, live browser tooling, human-agent shared state, scientific claim boundaries, testing, and deployment |
