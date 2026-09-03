@@ -163,6 +163,10 @@ After deploying, confirm HTTPS and ensure responses do not include `Origin-Agent
 disables WebMCP registration. Configure an appropriate minimum-instance policy for reliability and
 test from a fresh WebMCP-capable browser.
 
+The public judging service keeps one minimum instance configured. Its Quick-start prompts guide
+is presentation-only UI; it does not change the 13 tools, scientific analysis, or two bundled sessions.
+Demo narration and caption tooling are not application dependencies and need not be installed.
+
 ## Data and license responsibilities
 
 - Do not commit Meta model checkpoints or the vendored upstream repository.

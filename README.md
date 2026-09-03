@@ -3,13 +3,14 @@
 **Shared 3D movement review for people and agents, powered by WebMCP.**
 
 [Live application](https://pitchlab-webmcp-rv45k2kgyq-uc.a.run.app) ·
-[2:40 demo video](https://youtu.be/yAUan4TGnl8) ·
+[2:47 demo video](https://www.youtube.com/watch?v=GgpMeqoZfM4) ·
 [Development and inference guide](DEVELOPMENT.md) ·
 [Attribution and licenses](ATTRIBUTION.md)
 
-For the judge review, open the live application in **ChatGPT’s in-app browser** and select
-**Try 3 prompts** in the header. The collapsible guide walks through visible elbow evidence, a human
-foot-contact correction that changes subsequent agent reads, and a shared frame-linked note.
+For the judge review, open the live application in **ChatGPT’s in-app browser**. **Quick-start
+prompts** is visible below the header: “Show me the elbow angle when the front foot lands.” Select
+**2 more prompts** for a human foot-contact correction and a shared frame-linked note. These are
+examples, not a prescribed script—use your own words and questions.
 The demo was recorded in ChatGPT’s in-app browser; native tools were also verified in
 Chrome for Testing 154. No app login or local setup is required for the included sessions.
 
@@ -25,6 +26,10 @@ timeline, focus anatomy, change evidence overlays, and add frame-linked notes to
 human is already using.
 
 ![Biomech Emcee running in ChatGPT's in-app browser](assets/biomech-emcee-webmcp.png)
+
+The demo and hero capture show the same review tools and evidence before the optional Quick-start
+guide was added. The guide changes discoverability, not the analysis or tool capabilities.
+[See the current Quick-start guide](assets/biomech-emcee-quick-start.png).
 
 ## Why WebMCP
 
@@ -117,7 +122,7 @@ npx vitest run
 npm run build
 ```
 
-The release baseline is 91 passing tests plus a clean typecheck and production build.
+The release baseline is 93 passing tests plus a clean typecheck and production build.
 
 For complete environment setup, gated model download, video-to-3D inference, local upload analysis,
 data layout, and deployment instructions, see [DEVELOPMENT.md](DEVELOPMENT.md).
@@ -139,3 +144,6 @@ support improvement, regression, performance, or causal claims.
 Biomech Emcee source code is released under the [MIT License](LICENSE). The bundled videos retain
 their own Pexels and CC BY-SA 4.0 terms. SAM 3D Body code and checkpoints remain under their upstream
 terms and are not redistributed here. See [ATTRIBUTION.md](ATTRIBUTION.md).
+
+The demo voiceover uses Kokoro v1.0 (`af_heart`), synthesized locally. This is presentation-only AI
+usage, not a speech feature or dependency of the application.

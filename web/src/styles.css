@@ -43,8 +43,8 @@ body {
 .app {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 400px;
-  grid-template-rows: 56px 1fr;
-  grid-template-areas: "top top" "stage panel";
+  grid-template-rows: 56px auto minmax(0, 1fr);
+  grid-template-areas: "top top" "guide guide" "stage panel";
   height: 100%;
 }
 
@@ -66,17 +66,29 @@ body {
 .topbar-right { display: flex; align-items: center; gap: 12px; }
 .session-name { font-size: 12px; color: var(--fg-dim); }
 
-/* Optional judge handoff: collapsed on arrival; floats without shifting the workspace. */
-.judge-quick-start { flex: none; }
+/* First invitation is visible on arrival; follow-ups float without shifting the evidence. */
+.judge-quick-start { grid-area: guide; position: relative; z-index: 40; padding: 12px 18px; border-bottom: 1px solid #28524f; background: #0d1a1d; }
+.judge-startline { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 24px; }
+.judge-lead { display: flex; flex-direction: column; gap: 3px; }
+.judge-lead strong { font-size: 16px; line-height: 18px; color: var(--accent-2); }
+.judge-lead span { font-size: 10px; color: var(--fg-dim); }
+@media (max-width: 360px) {
+  .judge-lead strong { font-size: 13px; }
+}
+.judge-first-prompt { position: relative; margin: 0; font-size: 15px; line-height: 21px; color: var(--fg); }
+.judge-first-prompt::before { content: ''; position: absolute; left: -12px; top: 50%; width: 1px; height: 28px; background: #367067; transform: translateY(-50%); }
+.judge-actions { display: flex; gap: 8px; align-items: center; }
+.judge-quick-start .judge-copy { background: #173b3b; color: #baf8ea; border-color: #367067; white-space: nowrap; }
+.judge-quick-start .judge-copy:hover { background: #21504d; }
 .judge-quick-start .judge-trigger { white-space: nowrap; color: var(--accent-2); }
 .judge-trigger span { margin-left: 6px; }
 .judge-card {
-  position: fixed;
+  position: absolute;
   z-index: 40;
-  top: 64px;
-  right: 16px;
+  top: calc(100% + 8px);
+  right: 18px;
   width: min(420px, calc(100vw - 32px));
-  max-height: calc(100dvh - 80px);
+  max-height: calc(100dvh - 170px);
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 16px;
@@ -98,8 +110,8 @@ body {
 .judge-manual-step { padding-left: 9px; border-left: 2px solid var(--accent-2); color: var(--fg-dim); }
 .judge-card .judge-prompt-hint, .judge-card .judge-tested { font-size: 11px; }
 .judge-card .judge-footnote { border-top: 1px solid var(--line); padding-top: 12px; }
-.judge-card .judge-copy-status { color: var(--accent-2); font-size: 11px; }
-.judge-copy-status:empty { margin: 0; }
+.judge-copy-status { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.judge-copy-status.copy-error { position: static; width: auto; height: auto; margin: 8px 0 0; overflow: visible; clip-path: none; white-space: normal; color: var(--amber); font-size: 11px; }
 .judge-quick-start button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 .stage {
@@ -955,12 +967,15 @@ body {
     min-height: 100vh;
     height: auto;
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
-    grid-template-areas: "top" "stage" "panel";
+    grid-template-rows: auto auto auto auto;
+    grid-template-areas: "top" "guide" "stage" "panel";
   }
   .topbar { min-height: 56px; padding: 8px 14px; gap: 10px; flex-wrap: wrap; }
   .topbar-right { margin-left: auto; gap: 8px; min-width: 0; }
   .session-name { display: none; }
+  .judge-startline { grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; }
+  .judge-lead { grid-column: 1 / -1; flex-direction: row; align-items: baseline; gap: 12px; }
+  .judge-first-prompt::before { left: 0; top: -4px; width: 100%; height: 1px; transform: none; }
   .stage { min-height: min(72vh, 680px); }
   .viewer { min-height: 420px; }
   .panel { border-left: 0; border-top: 1px solid var(--line); overflow: visible; }
@@ -969,6 +984,12 @@ body {
 }
 
 @media (max-width: 520px) {
+  .judge-quick-start { padding: 12px 14px; }
+  .judge-startline { grid-template-columns: 1fr; }
+  .judge-lead { flex-wrap: wrap; gap: 4px 12px; }
+  .judge-first-prompt { font-size: 14px; line-height: 19.5px; }
+  .judge-actions { justify-content: space-between; }
+  .judge-card { right: 10px; width: calc(100vw - 20px); max-height: calc(100dvh - 250px); }
   .brand p { display: none; }
   .topbar-right { margin-left: 0; max-width: 100%; flex-wrap: wrap; }
   .webmcp { font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

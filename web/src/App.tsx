@@ -81,7 +81,6 @@ export default function App() {
         </div>
         <div className="topbar-right">
           {session && <span className="session-name">{session.source.label}</span>}
-          <JudgeQuickStart />
           <span
             className={`tag webmcp ${webmcp.state === 'ready' ? 'ok' : webmcp.state === 'partial' || webmcp.state === 'error' ? 'warn' : ''}`}
             title={webmcpTitle}
@@ -90,6 +89,8 @@ export default function App() {
           </span>
         </div>
       </header>
+
+      <JudgeQuickStart />
 
       <main className="stage">
         <div className="review-views">

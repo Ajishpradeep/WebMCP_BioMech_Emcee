@@ -111,6 +111,23 @@ judge-facing assets.
 
 ---
 
+## Demo production only — not application dependencies
+
+The [published demo](https://www.youtube.com/watch?v=GgpMeqoZfM4) uses **Kokoro v1.0**, voice
+`af_heart` (Heart), for locally synthesized narration. The
+[official model](https://huggingface.co/hexgrad/Kokoro-82M) and
+[inference library](https://github.com/hexgrad/kokoro) are Apache-2.0 licensed. No Kokoro weights
+or runtime are included in the application or public repository. Speech recognition with Whisper
+`small.en` through faster-whisper was used only to check narration/caption wording.
+
+The original screen recording and cursor timing are preserved, with a three-second title card,
+four-second closing card, replacement narration, and English captions. FFmpeg handled media
+assembly; it is not an AI model. The demo still shows the review interface before the optional
+Quick-start guide addition; no new tool or scientific capability is implied by that UI change.
+All source-footage credits and derivative license notices above continue to apply.
+
+---
+
 ## Scientific references
 
 Reference ranges in `web/src/biomech/reference.ts` are drawn from:

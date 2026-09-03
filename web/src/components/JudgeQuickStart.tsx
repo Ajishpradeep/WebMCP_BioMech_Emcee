@@ -3,23 +3,23 @@ import { useEffect, useRef, useState } from 'react'
 const prompts = [
   {
     title: 'See the evidence',
-    text: 'Show me how bent the throwing arm is when the front foot lands. Go to that moment, focus the elbow, and explain the angle. Note the time from foot contact to ball release.',
+    text: 'Show me the elbow angle when the front foot lands.',
     hint: 'Watch the timeline, camera and elbow geometry move together.',
   },
   {
     title: 'Correct, then re-read',
-    before: 'Your turn: in Review event anchors, open Lead foot contact (FC), scrub to a different contact frame, then click Use f… on that row. Keep FC before MER.',
-    text: 'I corrected foot contact. Re-read the data: how did the elbow angle and time to release change? Update your explanation of this pitch, keeping it descriptive.',
-    hint: 'The agent should use your corrected event, not its earlier snapshot.',
+    before: 'In Review event anchors, move foot contact to another frame and confirm it.',
+    text: 'I changed foot contact. What changed in the analysis?',
+    hint: 'Your correction becomes the evidence the agent reads.',
   },
   {
     title: 'Leave a shared note',
-    text: 'At my corrected foot-contact frame, pin a short note on the throwing elbow summarizing what changed and what still needs review.',
-    hint: 'Scrub away, then click the Shared notes entry to return to its evidence.',
+    text: 'Pin a note here summarizing what we found.',
+    hint: 'Return to this moment from Shared notes.',
   },
 ]
 
-/** Optional judge handoff only: no analysis state, tool registration or automatic actions. */
+/** Visible first prompt; optional follow-ups. No analysis state or automatic agent actions. */
 export function JudgeQuickStart() {
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState<number | null>(null)
@@ -58,25 +58,40 @@ export function JudgeQuickStart() {
       event.stopPropagation()
       if (event.key === 'Escape' && open) close()
     }}>
-      <button
-        ref={trigger}
-        type="button"
-        className="btn small judge-trigger"
-        aria-expanded={open}
-        aria-controls="judge-quick-start-panel"
-        onClick={() => { setOpen(!open); setCopied(null); setCopyError(false) }}
-      >
-        Try 3 prompts <span aria-hidden="true">{open ? '−' : '+'}</span>
-      </button>
+      <div className="judge-startline">
+        <div className="judge-lead">
+          <strong>Quick-start prompts</strong>
+          <span>ChatGPT’s in-app browser</span>
+        </div>
+        <p className="judge-prompt-text judge-first-prompt">{prompts[0].text}</p>
+        <div className="judge-actions">
+          <button type="button" className="btn small judge-copy" aria-label="Copy prompt 1" onClick={() => void copy(0)}>
+            {copied === 0 ? 'Copied' : 'Copy prompt'}
+          </button>
+          <button
+            ref={trigger}
+            type="button"
+            className="btn small judge-trigger"
+            aria-expanded={open}
+            aria-controls="judge-quick-start-panel"
+            onClick={() => { setOpen(!open); setCopied(null); setCopyError(false) }}
+          >
+            2 more prompts <span aria-hidden="true">{open ? '−' : '+'}</span>
+          </button>
+        </div>
+      </div>
+      <p className={`judge-copy-status${copyError ? ' copy-error' : ''}`} role="status">{copyError ? 'Clipboard unavailable — select the prompt text to copy it.' : copied !== null ? `Prompt ${copied + 1} copied.` : ''}</p>
       {open && (
         <section id="judge-quick-start-panel" className="judge-card" aria-labelledby="judge-quick-start-title">
           <div className="judge-card-heading">
-            <h2 id="judge-quick-start-title">One shared review, three prompts</h2>
+            <h2 id="judge-quick-start-title">Keep the review going</h2>
             <button type="button" className="btn tiny" aria-label="Close prompt guide" onClick={close}>×</button>
           </div>
-          <p className="judge-intro">Open in <strong>ChatGPT’s in-app browser</strong>. Use either included session and keep the same chat for all three prompts.</p>
-          <ol className="judge-prompts">
-            {prompts.map((prompt, index) => (
+          <p className="judge-intro">Use the same session and chat.</p>
+          <ol className="judge-prompts" start={2}>
+            {prompts.slice(1).map((prompt, offset) => {
+              const index = offset + 1
+              return (
               <li key={prompt.title}>
                 <div className="judge-prompt-heading">
                   <h3><span>{index + 1}</span> {prompt.title}</h3>
@@ -88,11 +103,12 @@ export function JudgeQuickStart() {
                 <p className="judge-prompt-text">{prompt.text}</p>
                 <p className="judge-prompt-hint">{prompt.hint}</p>
               </li>
-            ))}
+              )
+            })}
           </ol>
-          <p className="judge-copy-status" role="status">{copyError ? 'Clipboard unavailable — select the prompt text to copy it.' : copied !== null ? `Prompt ${copied + 1} copied.` : ''}</p>
-          <p className="judge-footnote">Corrections update measurements, not the recorded pitch. Notes preserve observations; they do not change measurements.</p>
+          <p className="judge-footnote">Corrections update measurements, not the recorded pitch. Notes preserve observations.</p>
           <p className="judge-tested">Demo recorded in ChatGPT’s in-app browser; native tools verified in Chrome for Testing 154.</p>
+          <p className="judge-explore">These are just examples. Feel free to use your own words and ask other questions.</p>
         </section>
       )}
     </div>
