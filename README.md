@@ -7,6 +7,12 @@
 [Development and inference guide](DEVELOPMENT.md) ·
 [Attribution and licenses](ATTRIBUTION.md)
 
+For the judge review, open the live application in **ChatGPT’s in-app browser** and select
+**Try 3 prompts** in the header. The collapsible guide walks through visible elbow evidence, a human
+foot-contact correction that changes subsequent agent reads, and a shared frame-linked note.
+The demo was recorded in ChatGPT’s in-app browser; native tools were also verified in
+Chrome for Testing 154. No app login or local setup is required for the included sessions.
+
 Biomech Emcee is a WebMCP-native movement-evidence workspace where a person and an AI agent inspect
 and operate the same live biomechanics session. Baseball pitching is the implemented reference
 workflow: synchronized source video and a 3D reconstruction are presented with phase events,
@@ -111,7 +117,7 @@ npx vitest run
 npm run build
 ```
 
-The frozen release baseline is 89 passing tests plus a clean typecheck and production build.
+The release baseline is 91 passing tests plus a clean typecheck and production build.
 
 For complete environment setup, gated model download, video-to-3D inference, local upload analysis,
 data layout, and deployment instructions, see [DEVELOPMENT.md](DEVELOPMENT.md).

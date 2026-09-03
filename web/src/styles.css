@@ -66,6 +66,42 @@ body {
 .topbar-right { display: flex; align-items: center; gap: 12px; }
 .session-name { font-size: 12px; color: var(--fg-dim); }
 
+/* Optional judge handoff: collapsed on arrival; floats without shifting the workspace. */
+.judge-quick-start { flex: none; }
+.judge-quick-start .judge-trigger { white-space: nowrap; color: var(--accent-2); }
+.judge-trigger span { margin-left: 6px; }
+.judge-card {
+  position: fixed;
+  z-index: 40;
+  top: 64px;
+  right: 16px;
+  width: min(420px, calc(100vw - 32px));
+  max-height: calc(100dvh - 80px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 16px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius);
+  background: var(--bg-1);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+}
+.judge-card-heading, .judge-prompt-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.judge-card h2 { margin: 0; font-size: 14px; font-weight: 600; }
+.judge-card h3 { margin: 0; font-size: 12px; font-weight: 600; }
+.judge-card h3 span { color: var(--accent-2); margin-right: 5px; }
+.judge-card p { margin: 8px 0 0; font-size: 12px; line-height: 1.5; }
+.judge-intro, .judge-prompt-hint, .judge-footnote, .judge-tested { color: var(--fg-dim); }
+.judge-intro strong { color: var(--fg); font-weight: 500; }
+.judge-prompts { list-style: none; margin: 0; padding: 0; }
+.judge-prompts li { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+.judge-prompt-text { user-select: text; }
+.judge-manual-step { padding-left: 9px; border-left: 2px solid var(--accent-2); color: var(--fg-dim); }
+.judge-card .judge-prompt-hint, .judge-card .judge-tested { font-size: 11px; }
+.judge-card .judge-footnote { border-top: 1px solid var(--line); padding-top: 12px; }
+.judge-card .judge-copy-status { color: var(--accent-2); font-size: 11px; }
+.judge-copy-status:empty { margin: 0; }
+.judge-quick-start button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
 .stage {
   grid-area: stage;
   display: grid;
@@ -934,7 +970,7 @@ body {
 
 @media (max-width: 520px) {
   .brand p { display: none; }
-  .topbar-right { margin-left: 0; max-width: 180px; overflow: hidden; }
+  .topbar-right { margin-left: 0; max-width: 100%; flex-wrap: wrap; }
   .webmcp { font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .viewer { min-height: 340px; }
   .reference-video {

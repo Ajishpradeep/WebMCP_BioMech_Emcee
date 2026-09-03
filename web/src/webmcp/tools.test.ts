@@ -366,6 +366,46 @@ describe('viewer-control tools move the store the UI renders from', () => {
   })
 })
 
+describe('judge quick-start evidence loop', () => {
+  for (const session of [active, bundledComparison]) {
+    it(`supports correction readback and a non-measurement note in ${session.sessionId}`, async () => {
+      useAnalysis.getState().adoptSession(session)
+      const before = await call('get_phase_events') as Result
+      const first = await call('get_kinematics_at_event', { event: 'foot_contact' }) as Result
+      const fc = before.events.find((event: any) => event.name === 'foot_contact')
+      const br = before.events.find((event: any) => event.name === 'ball_release')
+      const beforeAngle = first.metrics.find((metric: any) => metric.name === 'elbow_flexion').value
+      await call('seek_to_event', { event: 'foot_contact' })
+      await call('focus_joint', { joint: 'throwing elbow' })
+      expect(useAnalysis.getState().currentFrame).toBe(fc.frame)
+      expect(useAnalysis.getState().cameraPlane).toBe('sagittal')
+
+      // A reviewer changes an event label, not the reconstructed movement.
+      const correctedFrame = fc.frame + 3
+      expect(useAnalysis.getState().setEventFrame('foot_contact', correctedFrame)).toBe(true)
+      const after = await call('get_phase_events') as Result
+      const corrected = after.events.find((event: any) => event.name === 'foot_contact')
+      const second = await call('get_kinematics_at_event', { event: 'foot_contact' }) as Result
+      expect(corrected.manualOverride).toBe(true)
+      expect(second.frame).toBe(correctedFrame)
+      expect(after.deliveryWindow.frames).toBe(before.deliveryWindow.frames - 3)
+      expect(br.tVideoSeconds - corrected.tVideoSeconds).toBeLessThan(br.tVideoSeconds - fc.tVideoSeconds)
+      expect(second.metrics.find((metric: any) => metric.name === 'elbow_flexion').value).not.toBe(beforeAngle)
+      expect(useAnalysis.getState().session?.frames).toBe(session.frames)
+
+      const analysisBeforeNote = useAnalysis.getState().analysis
+      const note = await call('annotate_frame', {
+        event: 'foot_contact', joint: 'throwing elbow', label: 'FC reviewed; angle and release interval updated. Verify contact.',
+      }) as Result
+      expect(note.frame).toBe(correctedFrame)
+      expect(note.truncated).toBe(false)
+      expect(useAnalysis.getState().analysis).toBe(analysisBeforeNote)
+      await call('seek_to_event', { event: 'ball_release' })
+      expect(useAnalysis.getState().annotations[0].frame).toBe(correctedFrame)
+    })
+  }
+})
+
 describe('errors are retryable, never stack traces', () => {
   const expectRetryable = (res: Result, mustList: string) => {
     expect(res.ok).toBe(false)
